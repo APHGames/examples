@@ -2,6 +2,7 @@ import Component from './Component';
 import Scene from './Scene'
 import Msg from './Msg';
 import { PIXICmp } from './PIXIObject';
+import Flags from './Flags';
 
 import {
 	MSG_OBJECT_ADDED, MSG_OBJECT_REMOVED, MSG_ANY,
@@ -10,6 +11,7 @@ import {
 
 /**
  * Game entity that aggregates generic attributes and components
+ * Is used as a proxy by objects directly inherited from PIXI objects 
  */
 export default class GameObjectProxy {
 	private static idCounter = 0;
@@ -18,31 +20,33 @@ export default class GameObjectProxy {
 	id = 0;
 	// string tag
 	tag: string = null;
+	// bit-array of flags
+	flags = new Flags();
+	// state of this object
+	state = 0;
 	// game object this proxy is attached to
-	gameObject: PIXI.Container = null;
+	pixiObj: PIXI.Container = null;
 	// set of all components, mapped by their id
 	components = new Map<number, Component>();
-	scene: Scene = null;
 	// generic attributse
 	attributes: Map<string, any> = new Map<string, any>();
+	// link to scene
+	scene: Scene = null;
 
-
-	constructor(tag: string, gameObject: PIXICmp.ComponentObject) {
+	constructor(tag: string, pixiObj: PIXICmp.ComponentObject) {
 		this.id = GameObjectProxy.idCounter++;
 		this.tag = tag;
-		this.gameObject = <PIXI.Container><any>gameObject;
+		this.pixiObj = <PIXI.Container><any>pixiObj;
 	}
 
 	/**
 	 * Adds a new component
 	 */
 	addComponent(component: Component) {
-		component.owner = <PIXICmp.ComponentObject><any>this.gameObject;
+		component.owner = <PIXICmp.ComponentObject><any>this.pixiObj;
 		component.scene = this.scene;
 		this.components.set(component.id, component);
 		component.onInit();
-		// there is no need to inform the scene. The scene keeps only
-		// collections of components that have subscribed for a message
 	}
 
 	/**
@@ -51,16 +55,16 @@ export default class GameObjectProxy {
 	removeComponent(component: Component) {
 		component.onRemove();
 		this.components.delete(component.id);
-		this.scene._removeComponentSubscribing(component);
+		this.scene._removeComponentSubscription(component);
 	}
 
 	/**
 	 * Removes a component by class if it exists
-	 * Returns true if the component has been removed
+	 * Returns true if the component was removed
 	 */
 	removeComponentByClass(name: string): boolean {
 		for (let [key, cmp] of this.components) {
-			// can be optimized by adding a new map
+			// can be optimized by adding a new type-cmp map
 			if (cmp.constructor.name == name) {
 				this.removeComponent(cmp);
 				return true;
@@ -98,7 +102,7 @@ export default class GameObjectProxy {
 	/**
 	 * Gets an attribute by its key
 	 */
-	getAttribute(key: string): any {
+	getAttribute<T>(key: string): T {
 		return this.attributes.get(key);
 	}
 
@@ -107,6 +111,48 @@ export default class GameObjectProxy {
 	 */
 	removeAttribute(key: string): boolean {
 		return this.attributes.delete(key);
+	}
+
+	/**
+	 * Sets flag at given index
+	 */
+	setFlag(flag: number) {
+		this.flags.setFlag(flag);
+	}
+
+	/**
+	 * Resets flag at given index
+	 */
+	resetFlag(flag: number) {
+		this.flags.resetFlag(flag);
+	}
+
+	/**
+	 * Returns true, if a flag at given index is set
+	 */
+	hasFlag(flag: number): boolean {
+		return this.flags.hasFlag(flag);
+	}
+
+	/**
+	 * Inverts a flag at given index
+	 */
+	invertFlag(flag: number) {
+		this.flags.invertFlag(flag);
+	}
+
+	/**
+	 * Gets state of this object
+	 */
+	getState(): number {
+		return this.state;
+	}
+	
+	/**
+	 * Sets state of this object
+	 */
+	setState(state: number) {
+		this.state = state;
 	}
 
 	/**
@@ -124,14 +170,14 @@ export default class GameObjectProxy {
 		this.scene._removeGameObject(object);
 	}
 
-	update(delta, absolute) {
+	update(delta: number, absolute: number) {
 		// update all components
 		for (let [key, cmp] of this.components) {
 			cmp.onUpdate(delta, absolute);
 		}
 
 		// update all children
-		for (let child of this.gameObject.children) {
+		for (let child of this.pixiObj.children) {
 			let cmpChild = <PIXICmp.ComponentObject><any>child;
 			cmpChild.proxy.update(delta, absolute);
 		}
