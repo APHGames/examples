@@ -6,8 +6,6 @@ PixiJS boilerplate for MI-APH
 * Clone content of this repository into your local folder
 * Install [Node Package Manager](https://www.npmjs.com)
 * Execute command `npm install` and `npm start`
-* Open `localhost:1234/creature.html` in your browser
+* Open `localhost:1234/index.html` in your browser to see the list of examples
 
 
-## Examples
-* Creature - a simple rotation

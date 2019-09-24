@@ -1,13 +1,13 @@
 {
     "compilerOptions": {
       "target": "es5",    
-      "lib": ["es6", "dom"], // we need this in order to use ES6 structures (e.g. Map)   
-      "module": "commonJS",  // will disable imports/exports. If you want to use them, use commonJS
+      "lib": ["es6", "dom"], 
+      "module": "commonJS", 
       "outDir": "./www",    
-      "downlevelIteration": true // this will enable us to iterate over map
+      "downlevelIteration": true 
     },
-    "include": ["./ts/**/*", "./examples/*"],
+    "include": ["./src/**/*", "./libs/**/*"],
     "exclude": [
-      "node_modules"
+      "./node_modules", "./scripts"
     ]
   }
