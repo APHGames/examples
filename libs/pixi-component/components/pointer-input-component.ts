@@ -77,7 +77,12 @@ export class PointerInputComponent extends Component {
 
   protected handleStart = (evt: TouchEvent | MouseEvent) => {
     evt.preventDefault();
-    let isTouch = evt instanceof TouchEvent;
+    let isTouch = false;
+    try { // ugly hack
+      isTouch = evt instanceof TouchEvent;
+    } catch {
+
+    }
     if (isTouch && (evt as TouchEvent).changedTouches.length === 1) {
       // only single-touch
       this.lastTouch = (evt as TouchEvent).changedTouches[0];
@@ -105,7 +110,12 @@ export class PointerInputComponent extends Component {
   protected handleEnd = (evt: TouchEvent | MouseEvent) => {
     evt.preventDefault();
     let posX, posY;
-    let isTouch = evt instanceof TouchEvent;
+    let isTouch = false;
+    try { // ugly hack
+      isTouch = evt instanceof TouchEvent;
+    } catch {
+
+    }
     if (this.lastTouch != null) {
       if (isTouch && (evt as TouchEvent).changedTouches.length === 1) {
         posX = (evt as TouchEvent).changedTouches[0].pageX;

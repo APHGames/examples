@@ -1,0 +1,36 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta content="text/html;charset=utf-8" http-equiv="Content-Type">
+    <meta content="utf-8" http-equiv="encoding">
+    <title>Lab06: Network Interactive</title>
+</head>
+<style type="text/css">
+    body {
+        background-color: black;
+    }
+    .container {
+        display: flex;
+        flex-direction: row;
+        color: white;
+        font-size: 20pt;
+        font-family: 'Arial';
+        text-align: center;
+    }
+</style>
+
+<body>
+    <div class="container">
+        <div class="screen">
+            <canvas id="gameCanvasClient" width="800" height="600"></canvas>
+            <p>Client</p>
+        </div>
+        <div class="screen">
+            <canvas id="gameCanvasServer" width="800" height="600"></canvas>
+            <p>Server</p>
+        </div>        
+    </div>
+    <script src="../src/labs/lab06/example-network-interactive.ts"></script>
+</body>
+</html>
