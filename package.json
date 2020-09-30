@@ -1,24 +1,29 @@
 {
-  "name": "mi-aph-materials",
-  "author": "Adam Vesecky",
+  "name": "ni-aph",
+  "author": "Adam Vesecký",
+  "version": "4.1.0",
+  "license": "MIT",
   "scripts": {
-    "start": "node scripts/copy.js && tsc --noEmit && parcel templates/*.html templates/*.pug --out-dir build",
-    "deploy": "node scripts/copy.js && tsc --noEmit && parcel build templates/*.html templates/*.pug --out-dir build --no-cache --no-source-maps",
-    "lint": "tslint --project tslint.json"
-  },
-  "devDependencies": {
-    "@types/matter-js": "^0.10.4",
-    "parcel-bundler": "^1.12.3",
-    "parcel-plugin-json-url-loader": "^0.1.2",
-    "pug": "^2.0.4",
-    "sass": "^1.23.0",
-    "tslint": "^5.20.0",
-    "typescript": "^3.6.3"
+    "dev": "npm run prebuild && npm run serve",
+    "serve": "parcel examples/view/*.html examples/view/*.pug --out-dir build",
+    "prebuild": "node scripts/prebuild.js",
+    "deploy": "npm run prebuild && parcel build examples/view/*.html examples/view/*.pug --out-dir build --public-url PUBLICURL --no-cache --no-source-maps && node scripts/fix-links.js",
+    "lint": "eslint ./src ./libs --ext .js,.jsx,.ts,.tsx"
   },
   "dependencies": {
-    "matter-js": "^0.14.2",
-    "pixi-sound": "^3.0.3",
-    "pixi.js": "5.1.3",
-    "poly-decomp": "^0.3.0"
+    "pixi-sound": "^3.0.5",
+    "pixi.js": "^5.3.3",
+    "three": "^0.120.1"
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "4.0.1",
+    "@typescript-eslint/parser": "4.0.1",
+    "eslint": "7.8.1",
+    "eslint-plugin-babel": "5.3.1",
+    "eslint-plugin-import": "2.22.0",
+    "eslint-plugin-node": "11.1.0",
+    "eslint-plugin-standard": "4.0.1",
+    "parcel": "1.12.4",
+    "typescript": "^4.0.3"
   }
 }

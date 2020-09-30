@@ -1,27 +1,41 @@
 {
 	"rules": {
-		"align": [false,
+		"align": [
+			false,
 			"parameters",
 			"arguments",
-			"statements"],
-		"ban": [true,
-			["angular", "forEach"]
+			"statements"
+		],
+		"ban": [
+			true,
+			[
+				"angular",
+				"forEach"
+			]
 		],
 		"class-name": true,
-		"comment-format": [false,
+		"comment-format": [
+			false,
 			"check-space",
 			"check-lowercase"
 		],
 		"curly": true,
 		"eofline": false,
 		"forin": true,
-		"indent": [true, "spaces", 2],
+		"indent": [
+			true,
+			"tabs",
+			4
+		],
 		"interface-name": false,
 		"jsdoc-format": true,
 		"only-arrow-functions": true,
 		"label-position": true,
 		"label-undefined": true,
-		"max-line-length": [false, 140],
+		"max-line-length": [
+			false,
+			140
+		],
 		"member-ordering": [
 			true,
 			{
@@ -40,7 +54,8 @@
 		],
 		"no-any": false,
 		"no-arg": true,
-		"no-console": [false,
+		"no-console": [
+			false,
 			"debug",
 			"info",
 			"time",
@@ -66,17 +81,25 @@
 		"no-use-before-declare": true,
 		"no-var-keyword": true,
 		"no-var-requires": false,
-		"one-line": [true,
+		"one-line": [
+			true,
 			"check-catch",
 			"check-else",
 			"check-open-brace",
 			"check-whitespace"
 		],
-		"quotemark": [true, "single"],
+		"quotemark": [
+			true,
+			"single"
+		],
 		"radix": false,
 		"semicolon": true,
-		"triple-equals": [true, "allow-null-check"],
-		"typedef": [true,
+		"triple-equals": [
+			true,
+			"allow-null-check"
+		],
+		"typedef": [
+			true,
 			"callSignature",
 			"propertyDeclaration",
 			"catchClause",
@@ -85,19 +108,27 @@
 			"propertySignature",
 			"variableDeclarator"
 		],
-		"typedef-whitespace": [true, {
-			"call-signature": "nospace",
-			"index-signature": "nospace",
-			"parameter": "nospace",
-			"property-declaration": "nospace",
-			"variable-declaration": "nospace"
-		}],
-		"use-strict": [true,
+		"typedef-whitespace": [
+			true,
+			{
+				"call-signature": "nospace",
+				"index-signature": "nospace",
+				"parameter": "nospace",
+				"property-declaration": "nospace",
+				"variable-declaration": "nospace"
+			}
+		],
+		"use-strict": [
+			true,
 			"check-module",
 			"check-function"
 		],
-		"variable-name": [true, "allow-leading-underscore"],
-		"whitespace": [false,
+		"variable-name": [
+			true,
+			"allow-leading-underscore"
+		],
+		"whitespace": [
+			false,
 			"check-branch",
 			"check-decl",
 			"check-operator",
