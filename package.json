@@ -1,7 +1,7 @@
 {
   "name": "ni-aph",
   "author": "Adam Vesecký",
-  "version": "4.5.0",
+  "version": "4.8.0",
   "license": "MIT",
   "scripts": {
     "dev": "npm run prebuild && npm run serve",
@@ -11,6 +11,7 @@
     "lint": "eslint ./src ./libs --ext .js,.jsx,.ts,.tsx"
   },
   "dependencies": {
+    "matter-js": "^0.18.0",
     "pixi-sound": "^3.0.5",
     "pixi.js": "^5.3.3",
     "three": "^0.120.1"

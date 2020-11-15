@@ -1,26 +1,27 @@
 import * as PIXI from 'pixi.js';
 import PIXISound from 'pixi-sound';
-
-class SoundExample extends PIXI.Application {
+import { PIXIExample, getBaseUrl } from '../utils/APHExample';
+export class Sound extends PIXIExample {
 	
 	sonic: PIXI.Sprite;
 	
-	constructor(view: HTMLCanvasElement) {
-		super({
-			view,
-			width: view.clientWidth,
-			height: view.clientHeight,
-		});
+	load() {
+		this.sonic = PIXI.Sprite.from(`${getBaseUrl()}/assets/02-pixi-intro/sonic.png`);
+		this.sonic.position.set(this.app.screen.width / 2, this.app.screen.height / 2);
+		this.sonic.anchor.set(0.5);
 
-		this.init();
+		this.sonic.interactive = true;
+		this.sonic.buttonMode = true;
+
+		PIXISound.add('sound', `${getBaseUrl()}/assets/02-pixi-intro/sound.mp3`);
+
+		this.sonic.on('pointerdown', () => {
+			PIXISound.play('sound')
+		});
+		this.app.stage.addChild(this.sonic);
 	}
 
-	init() {
-		// TODO put your code here
-		// 1) load assets/02-pixi-intro-sonic.png
-		// 2) upon click, play this sound: ./assets/02-pixi-intro/sound.mp3
+	update() {
+		// no-op
 	}
 }
-
-
-new SoundExample(<HTMLCanvasElement>document.getElementById('gameCanvas'));
