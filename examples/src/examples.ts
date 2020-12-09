@@ -30,8 +30,19 @@ import { MatterCar } from './06-physics/matter-car';
 import { MatterChains } from './06-physics/matter-chains'; 
 import { MatterCradle } from './06-physics/matter-cradle'; 
 import { MatterMixedShapes } from './06-physics/matter-mixed-shapes'; 
+import { ClothView as Cloth } from './06-physics/cloth'; 
+import { MatterBinding } from './06-physics/matter-binding';
+
+import { Raycaster } from './07-graphics/raycaster';
+import { ShaderBasic } from './07-graphics/shader-basic';
+import { ShaderNoise } from './07-graphics/shader-noise';
+import { ShaderWave } from './07-graphics/shader-wave';
+import { TweenRotation } from './07-graphics/tween-rotation';
+import { TweenTranslation } from './07-graphics/tween-translation';
+import { VisionCone } from './07-graphics/vision-cone';
 
 import { PixiHitTest } from './others/pixi-hittest';
+import { Dialog } from './others/dialog/dialog';
 
 (window as any).APH = {
     PixiHelloWorld,
@@ -67,5 +78,15 @@ import { PixiHitTest } from './others/pixi-hittest';
     MatterChains,
     MatterCradle,
     MatterMixedShapes,
-    PixiHitTest
+    MatterBinding,
+    Cloth,
+    Raycaster,
+    ShaderBasic,
+    ShaderNoise,
+    ShaderWave,
+    TweenRotation,
+    TweenTranslation,
+    VisionCone,
+    PixiHitTest,
+    Dialog,
 };
