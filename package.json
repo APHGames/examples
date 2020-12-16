@@ -1,7 +1,7 @@
 {
   "name": "ni-aph",
   "author": "Adam Vesecký",
-  "version": "4.10.0",
+  "version": "4.11.0",
   "license": "MIT",
   "scripts": {
     "dev": "npm run prebuild && npm run serve",
