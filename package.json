@@ -1,30 +1,33 @@
-{
-  "name": "ni-aph",
+{   "name": "aphgames-examples",
   "author": "Adam Vesecký",
-  "version": "4.11.0",
+  "version": "5.1.0",
   "license": "MIT",
   "scripts": {
-    "dev": "npm run prebuild && npm run serve",
-    "serve": "parcel examples/view/*.html examples/view/*.pug --out-dir build",
-    "prebuild": "node scripts/prebuild.js",
-    "deploy": "npm run prebuild && parcel build examples/view/*.html examples/view/*.pug --out-dir build --public-url PUBLICURL --no-cache --no-source-maps && node scripts/fix-links.js",
-    "lint": "eslint ./src ./libs --ext .js,.jsx,.ts,.tsx"
+    "dev": "node scripts/prebuild-project && parcel view/index.html --out-dir build",
+    "deploy": "node scripts/prebuild-project && parcel build view/index.html --out-dir build --public-url PUBLICURL --no-cache --no-source-maps && node scripts/fix-links.js",
+    "lint": "eslint . --ext ts",
+    "compile-test": "tsc --project tsconfig.json --noemit"
   },
   "dependencies": {
-    "matter-js": "^0.18.0",
+    "eventemitter3": "^4.0.7",
+    "matter-js": "^0.17.1",
     "pixi-sound": "^3.0.5",
-    "pixi.js": "^5.3.3",
-    "three": "^0.120.1"
+    "pixi.js": "^6.1.2",
+    "three": "^0.131.3"
   },
   "devDependencies": {
-    "@typescript-eslint/eslint-plugin": "4.0.1",
-    "@typescript-eslint/parser": "4.0.1",
-    "eslint": "7.8.1",
-    "eslint-plugin-babel": "5.3.1",
-    "eslint-plugin-import": "2.22.0",
-    "eslint-plugin-node": "11.1.0",
-    "eslint-plugin-standard": "4.0.1",
-    "parcel": "1.12.4",
-    "typescript": "^4.0.3"
+    "@types/matter-js": "^0.17.5",
+    "@types/offscreencanvas": "^2019.6.4",
+    "@typescript-eslint/eslint-plugin": "^4.29.3",
+    "@typescript-eslint/eslint-plugin-tslint": "^5.1.0",
+    "@typescript-eslint/parser": "^4.29.3",
+    "eslint": "^7.32.0",
+    "eslint-plugin-babel": "^5.3.1",
+    "eslint-plugin-import": "^2.24.2",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-prefer-arrow": "^1.2.3",
+    "eslint-plugin-standard": "^5.0.0",
+    "parcel": "1.12.3",
+    "typescript": "^4.3.5"
   }
 }

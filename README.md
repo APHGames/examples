@@ -1,11 +1,17 @@
-Examples for NI-APH course
-=========
+# Examples and minigames for PIXIJs and ECSLite library
 
-## How to start
+## Live demo
+- all examples can bee found live on the [official webpage](https://aphgames.io/docs/niaph/examples/pixi-intro/animation)
 
-* Clone content of this repository into your local folder
-* Install [Node Package Manager](https://www.npmjs.com)
-* Execute command `npm install` and `npm run dev`
-* Open `localhost:1234/index.html` in your browser to see the list of examples
+## Docs
+- documentation can be found live [here](https://aphgames.io/docs/niaph/tutorials/ecsdocs)
 
+## How to run this project
+- the project is powered by ParcelJS, TypeScript, PixiJS and ECSLite libraries
+- install [NodeJS](https://nodejs.org/en/download/)
+- execute `npm install`
+- execute `npm run dev`
+- go to `localhost:1234/index.html` to browse all examples
 
+## Deployment
+- run `npm run deploy` and find your project in the `build` folder

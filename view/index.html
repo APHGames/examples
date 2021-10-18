@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<title>APHGames examples</title>
+	<meta name="description" content="Examples">
+	<meta name="author" content="Adam Vesecký">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+
+<style type="text/css">
+	body {
+		font-family: "Arial";
+		background-color: #1d232d;
+		color: #e8eaec;
+	}
+
+	h1 {
+		font-size: 60px;
+	}
+
+	h2 {
+		font-size: 40px;
+	}
+
+
+	.container {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		margin-top: 100px;
+		margin-bottom: 100px;
+	}
+
+	.list {
+		width: 80%;
+		display: flex;
+		flex-direction: column;
+	}
+
+	.list a {
+		width: 100%;
+		padding: 20px;
+		font-size: 40px;
+		text-align: left;
+		text-decoration: none;
+		color: #e8eaec; 
+		background-color: #535e70;
+	}
+
+	.list a:nth-child(2n+2) {
+		background-color: #2f3744;
+	}
+
+	a:hover, a:active {
+		background-color: #676f81 !important;
+	}
+
+
+</style>
+
+<body>
+	<div class="container">
+		<h1>NI-APH Examples</h1>
+		<h2>Hello World</h2>
+		<div class='list'>
+			<a href='./01_pixi_scene.html'>PIXIJS</a>
+			<a href='./01_threejs_scene.html'>ThreeJS</a>
+		</div>
+		<h2>PixiJS Introduction</h2>
+		<div class='list'>
+			<a href='./02_button.html'>Button</a>
+			<a href='./02_loop.html'>Loop</a>
+			<a href='./02_particles.html'>Particles</a>
+			<a href='./02_primitives.html'>Primitives</a>
+			<a href='./02_sound.html'>Sound</a>
+			<a href='./02_text.html'>Text</a>
+			<a href='./02_bitmap_text.html'>Bitmap Text</a>
+			<a href='./02_animation.html'>Animation</a>
+		</div>
+		<h2>ThreeJS Introduction</h2>
+		<div class='list'>
+			<a href='./02_scene.html'>Scene</a>
+			<a href='./02_sprites.html'>Sprites</a>
+		</div>
+		<h2>Components</h2>
+		<div class='list'>
+			<a href='./03_squares.html'>Squares</a>
+			<a href='./03_graphics.html'>Graphics</a>
+			<a href='./03_animation.html'>Animation</a>
+		</div>
+		<h2>Space</h2>
+		<div class='list'>
+			<a href='./04_distribution_normal.html'>Normal Distribution</a>
+			<a href='./04_distribution_uniform.html'>Uniform Distribution</a>
+			<a href='./04_pathfinding.html'>Pathfinding</a>
+			<a href='./04_perlin.html'>Perlin Noise</a>
+			<a href='./04_quadtree.html'>QuadTree</a>
+		</div>
+		<h2>Dynamics</h2>
+		<div class='list'>
+			<a href='./05_missile.html'>Missile</a>
+			<a href='./05_rotation.html'>Rotation</a>
+			<a href='./05_steering_seek.html'>Steering Behavior: Seek</a>
+			<a href='./05_steering_evade.html'>Steering Behavior: Evade</a>
+			<a href='./05_steering_pursuit.html'>Steering Behavior: Pursuit</a>
+			<a href='./05_steering_wander.html'>Steering Behavior: Wander</a>
+			<a href='./05_steering_combined.html'>Steering Behavior: Combined</a>
+		</div>
+		<h2>Physics</h2>
+		<div class='list'>
+			<a href='./06_matter_friction.html'>MatterJS Friction</a>
+			<a href='./06_matter_air_friction.html'>MatterJS Air friction</a>
+			<a href='./06_matter_bridge.html'>MatterJS Bridge</a>
+			<a href='./06_matter_car.html'>MatterJS Car</a>
+			<a href='./06_matter_chains.html'>MatterJS Chains</a>
+			<a href='./06_matter_cradle.html'>MatterJS Newton's Cradle</a>
+			<a href='./06_matter_mixed.html'>MatterJS Mixed Shapes</a>
+			<a href='./06_cloth.html'>Cloth</a>
+		</div>
+		<h2>Graphics</h2>
+		<div class='list'>
+			<a href='./07_raycaster.html'>Raycaster</a>
+			<a href='./07_shader_basic.html'>Basic Shader</a>
+			<a href='./07_shader_noise.html'>Noise Shader</a>
+			<a href='./07_shader_wave.html'>Wave Shader</a>
+			<a href='./07_tween_rotation.html'>Rotation Tween</a>
+			<a href='./07_tween_translation.html'>Translation Tween</a>
+			<a href='./07_vision_cone.html'>Vision Cone</a>
+			<a href='./07_mandelbrot.html'>Mandelbrot</a>
+		</div>
+		<h2>Bots</h2>
+		<div class='list'>
+			<a href='./08_bots.html'>Bots</a>
+		</div>
+		<h2>Other examples</h2>
+		<div class='list'>
+			<a href='./others_hittest.html'>Pixel-perfect hit test</a>
+			<a href='./others_dialog.html'>Dialog</a>
+			<a href='./others_matrices.html'>Matrices</a>
+		</div>
+		<h2>Games</h2>
+		<div class='list'>
+			<a href='./game_blockbreaker.html'>Block Breaker (Solution #4)</a>
+		</div>
+	</div>
+</body>
+
+</html>
