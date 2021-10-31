@@ -1,6 +1,13 @@
 # Changelog
 All notable changes to this project/subject will be documented in this file.
 
+## [5.5.0] - 2021-10-31
+### Added
+Clone of the game VLAK
+
+### Changed
+Fixed bug in ECSLite library (detached child object)
+
 ## [5.1.0] - 2021-10-18
 ### Added
 New examples

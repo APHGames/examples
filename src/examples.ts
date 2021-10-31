@@ -49,6 +49,8 @@ import { PixiHitTest } from './others/pixi-hittest';
 import { Dialog } from './others/dialog/dialog';
 import { Matrices } from './others/matrices';
 
+import { Vlak } from './game_vlak';
+
 (window as any).APH = {
 	PixiHelloWorld,
 	ThreeHelloWorld,
@@ -98,4 +100,5 @@ import { Matrices } from './others/matrices';
 	PixiHitTest,
 	Dialog,
 	Matrices,
+	Vlak,
 };
