@@ -29,6 +29,7 @@ export class GameMap {
 	// size of the map
 	width = 0;
 	height = 0;
+	type = MAP_TYPE_TILE;
 
 	getBlock(x: number, y: number): MapBlock {
 	    return this.blocks.get(y * this.width + x);
@@ -37,12 +38,11 @@ export class GameMap {
 	setBlock(x: number, y: number, block: MapBlock) {
 	    this.blocks.set(y * this.width + x, block);
 	}
-
 	/**
-		* Initializes grid map for pathfinding
-		*/
+	* Initializes grid map for pathfinding
+	*/
 	initGridMap() {
-	    this.gridMap = new GridMap(MAP_TYPE_TILE, 10, this.width, this.height);
+	    this.gridMap = new GridMap(this.type, 10, this.width, this.height);
 	    for (let [, block] of this.blocks) {
 	        if (block.type === MapBlocks.WALL) {
 	            this.gridMap.addObstruction(new ECS.Vector(block.x, block.y));

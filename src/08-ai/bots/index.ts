@@ -8,14 +8,14 @@ export class Bots extends ECSExample {
 	engine: ECS.Engine;
 
 	load() {
-	    this.engine.app.loader
-	        .reset()    // for hot reload
-	        .add(Assets.TEXTURE, `${getBaseUrl()}/assets/08-ai/spritesheet.png`)
-	        .load(() => this.onAssetsLoaded());
+		this.engine.app.loader
+			.reset()    // for hot reload
+			.add(Assets.TEXTURE, `${getBaseUrl()}/assets/08-ai/spritesheet.png`)
+			.load(() => this.onAssetsLoaded());
 	}
 
 	onAssetsLoaded() {
-	    let factory = new BotFactory();
-	    factory.initializeGame(this.engine.scene.stage, new GameModel());
+		let factory = new BotFactory();
+		factory.initializeGame(this.engine.scene.stage, new GameModel());
 	}
 }

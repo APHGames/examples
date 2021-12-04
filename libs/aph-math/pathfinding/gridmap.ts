@@ -31,8 +31,11 @@ export class GridMap {
 	 */
 	indexMapper = (pos: Vector) => {
 	    return pos.y * this.width + pos.x;
-	};
+	}
 
+	vectorMapper = (block: number) => {
+		return new Vector(block % this.width, Math.floor(block / this.width));
+	}
 
 	/**
 	 * Returns true, if there is an obstruction in given location

@@ -1,6 +1,10 @@
 # Changelog
 All notable changes to this project/subject will be documented in this file.
 
+## [5.10.0] - 2021-12-04
+### Added
+New examples
+
 ## [5.5.0] - 2021-10-31
 ### Added
 Clone of the game VLAK

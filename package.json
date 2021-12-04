@@ -1,6 +1,6 @@
 {   "name": "aphgames-examples",
   "author": "Adam Vesecký",
-  "version": "5.5.0",
+  "version": "5.10.0",
   "license": "MIT",
   "scripts": {
     "dev": "node scripts/prebuild-project && parcel view/index.html --out-dir build",
@@ -13,7 +13,7 @@
     "matter-js": "^0.17.1",
     "pixi-sound": "^3.0.5",
     "pixi.js": "^6.1.2",
-    "three": "^0.131.3"
+    "three": "^0.134.0"
   },
   "devDependencies": {
     "@types/matter-js": "^0.17.5",
