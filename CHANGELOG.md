@@ -1,6 +1,10 @@
 # Changelog
 All notable changes to this project/subject will be documented in this file.
 
+## [5.11.0] - 2021-12-11
+### Added
+Tetris clone
+
 ## [5.10.0] - 2021-12-04
 ### Added
 New examples

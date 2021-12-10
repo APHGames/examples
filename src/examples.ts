@@ -54,6 +54,7 @@ import { PixiHitTest } from './others/pixi-hittest';
 import { Dialog } from './others/dialog/dialog';
 
 import { Vlak } from './game_vlak';
+import { Tetris } from './game_tetris';
 
 (window as any).APH = {
 	PixiHelloWorld,
@@ -111,4 +112,5 @@ import { Vlak } from './game_vlak';
 	Dialog,
 	Matrices,
 	Vlak,
+	Tetris,
 };

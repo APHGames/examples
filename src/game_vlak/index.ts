@@ -9,7 +9,6 @@ import { ECSExample } from '../utils/APHExample';
  * Wrapper for markdown gallery
  */
 export class Vlak extends ECSExample {
-	engine: ECS.Engine;
 
 	constructor(config: ECS.EngineConfig = {}) {
 		super({
