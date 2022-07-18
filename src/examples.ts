@@ -19,6 +19,8 @@ import { PerlinNoiseView as PerlinNoise } from './04-space/perlin-noise';
 import { QuadTreeView as QuadTree } from './04-space/quadtree';
 import { Missile } from './05-dynamics/missile';
 import { Rotation } from './05-dynamics/rotation';
+import { AckermannSimple } from './05-dynamics/ackermann-simple';
+import { AckermannAdvanced } from './05-dynamics/ackermann-advanced';
 import { SteeringCombined } from './05-dynamics/steering-combined';
 import { SteeringSeek } from './05-dynamics/steering-seek';
 import { SteeringEvade } from './05-dynamics/steering-evade';
@@ -79,6 +81,8 @@ import { Tetris } from './game_tetris';
 	QuadTree,
 	Missile,
 	Rotation,
+	AckermannSimple,
+	AckermannAdvanced,
 	SteeringCombined,
 	SteeringSeek,
 	SteeringEvade,

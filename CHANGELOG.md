@@ -1,6 +1,13 @@
 # Changelog
 All notable changes to this project/subject will be documented in this file.
 
+## [6.3.0] - 2022-07-18
+### Added
+Ackermann Steering
+
+### Changed
+Updated packages
+
 ## [5.11.0] - 2021-12-11
 ### Added
 Tetris clone

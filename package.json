@@ -1,11 +1,12 @@
-{   "name": "aphgames-examples",
+{
+  "name": "aphgames-examples",
   "author": "Adam Vesecký",
-  "version": "5.11.0",
+  "version": "6.3.0",
   "license": "MIT",
   "scripts": {
     "dev": "node scripts/prebuild-project && parcel view/index.html --out-dir build",
     "deploy": "node scripts/prebuild-project && parcel build view/index.html --out-dir build --public-url PUBLICURL --no-cache --no-source-maps && node scripts/fix-links.js",
-    "lint": "eslint . --ext ts",
+    "lint": "eslint ./src --ext .js,.jsx,.ts,.tsx",
     "compile-test": "tsc --project tsconfig.json --noemit"
   },
   "dependencies": {
@@ -13,11 +14,12 @@
     "matter-js": "^0.17.1",
     "pixi-sound": "^3.0.5",
     "pixi.js": "^6.1.2",
-    "three": "^0.134.0"
+    "three": "^0.131.3"
   },
   "devDependencies": {
     "@types/matter-js": "^0.17.5",
     "@types/offscreencanvas": "^2019.6.4",
+    "@types/three": "^0.134.0",
     "@typescript-eslint/eslint-plugin": "^4.29.3",
     "@typescript-eslint/eslint-plugin-tslint": "^5.1.0",
     "@typescript-eslint/parser": "^4.29.3",

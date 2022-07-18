@@ -1,10 +1,11 @@
 # Examples and minigames for PIXIJs and ECSLite library
 
+![Preview](./docs/preview.png)
 ## Live demo
-- all examples can bee found live on the [official webpage](https://aphgames.io/docs/niaph/examples/pixi-intro/animation)
+- all examples can bee found live on the [official webpage](https://aphgames.io/docs/learning/examples/pixi-intro/animation)
 
 ## Docs
-- documentation can be found live [here](https://aphgames.io/docs/niaph/tutorials/ecsdocs)
+- documentation of the ECSLite library that is used for most examples can be found live [here](https://aphgames.io/docs/learning/tutorials/ecsdocs)
 
 ## How to run this project
 - the project is powered by ParcelJS, TypeScript, PixiJS and ECSLite libraries
