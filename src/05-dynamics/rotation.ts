@@ -91,7 +91,7 @@ export class Rotation extends ECSExample {
 
 	load() {
 		const { width, height } = this.engine.scene.app.screen;
-		const updateFrequency = (this.engine.config as RotationConfig).frequency;
+		const updateFrequency = (this.engine.config as RotationConfig).frequency ?? 10;
 		let center = new ECS.Graphics();
 		center.beginFill(0xFFFFFF);
 		center.drawCircle(width / 2, height / 2, 50);

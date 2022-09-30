@@ -1,0 +1,29 @@
+<!doctype html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<title>#TITLE</title>
+</head>
+<style type="text/css">
+body {
+    background-color: #202020;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center; /*centers items on the line (the x-axis by default)*/
+    align-items: center; /*centers items on the cross-axis (y by default)*/
+  }
+</style>
+
+<body>
+	<canvas id="gameCanvas" width="800" height="600"></canvas>
+	<script src="../src/examples.ts"></script>
+	<script type="text/javascript">new window.APH.#OBJECT().init('gameCanvas')</script>
+</body>
+
+</html>

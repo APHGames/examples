@@ -17,7 +17,7 @@ export class BotAI extends ECS.Component {
 	onInit() {
 	    this.gameModel = this.scene.getGlobalAttribute(Attributes.GAME_MODEL);
 	    this.botModel = this.owner.getAttribute(Attributes.BOT_MODEL);
-	    this.moveComponent = this.owner.findComponentByName<BotMove>(BotMove.name);
+	    this.moveComponent = this.owner.findComponentByName<BotMove>('BotMove');
 	}
 
 	onUpdate(delta: number, absolute: number) {

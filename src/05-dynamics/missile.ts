@@ -154,7 +154,7 @@ export class Missile extends ECSExample {
 	}
 
 	load() {
-		const updateFrequency = (this.engine.config as MissileConfig).frequency;
+		const updateFrequency = (this.engine.config as MissileConfig).frequency ?? 10;
 		let emitter = new ECS.Graphics();
 		emitter.beginFill(PIXI.utils.string2hex(colors.rhino80));
 		emitter.drawPolygon([0, 0, 40, 0, 40, 20, 0, 20, 0, 0]);

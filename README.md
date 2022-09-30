@@ -10,8 +10,9 @@
 ## How to run this project
 - the project is powered by ParcelJS, TypeScript, PixiJS and ECSLite libraries
 - install [NodeJS](https://nodejs.org/en/download/)
-- execute `npm install`
-- execute `npm run dev`
+- run `npm install`
+- run `npm run generate-views` to generate HTML files from examples-info.json
+- run `npm run dev`
 - go to `localhost:1234/index.html` to browse all examples
 
 ## Deployment

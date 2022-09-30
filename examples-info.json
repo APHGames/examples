@@ -1,0 +1,350 @@
+[
+	{
+		"group": "Hello World",
+		"name": "PIXI example",
+		"file_name": "01_pixi_scene",
+		"object": "PixiHelloWorld"
+	},
+	{
+		"group": "Hello World",
+		"name": "ThreeJS example",
+		"file_name": "01_threejs_scene",
+		"object": "ThreeHelloWorld"
+	},
+	{
+		"group": "PixiJS Introduction",
+		"name": "Button example",
+		"file_name": "02_button",
+		"object": "Button"
+	},
+	{
+		"group": "PixiJS Introduction",
+		"name": "Loop example",
+		"file_name": "02_loop",
+		"object": "Loop"
+	},
+	{
+		"group": "PixiJS Introduction",
+		"name": "Particles example",
+		"file_name": "02_particles",
+		"object": "Particles"
+	},
+	{
+		"group": "PixiJS Introduction",
+		"name": "Primitives Examples",
+		"file_name": "02_primitives",
+		"object": "Primitives"
+	},
+	{
+		"group": "PixiJS Introduction",
+		"name": "Sound example",
+		"file_name": "02_sound",
+		"object": "Sound"
+	},
+	{
+		"group": "PixiJS Introduction",
+		"name": "ThreeJS Sprites",
+		"file_name": "02_text",
+		"object": "Sprites"
+	},
+	{
+		"group": "PixiJS Introduction",
+		"name": "Text example",
+		"file_name": "02_bitmap_text",
+		"object": "Text"
+	},
+	{
+		"group": "PixiJS Introduction",
+		"name": "Animation example",
+		"file_name": "02_animation",
+		"object": "PIXIAnimation"
+	},
+	{
+		"group": "ThreeJS Introduction",
+		"name": "ThreeJS Simple Scene",
+		"file_name": "02_scene",
+		"object": "Scene"
+	},
+	{
+		"group": "ThreeJS Introduction",
+		"name": "ThreeJS Sprites",
+		"file_name": "02_sprites",
+		"object": "Sprites"
+	},
+	{
+		"group": "Components",
+		"name": "Components example",
+		"file_name": "03_squares",
+		"object": "Squares"
+	},
+	{
+		"group": "Components",
+		"name": "Graphics",
+		"file_name": "03_graphics",
+		"object": "Graphics"
+	},
+	{
+		"group": "Components",
+		"name": "ECS Animation",
+		"file_name": "03_animation",
+		"object": "ECSAnimation"
+	},
+	{
+		"group": "Space",
+		"name": "Normal Distribution",
+		"file_name": "04_distribution_normal",
+		"object": "DistributionNormal"
+	},
+	{
+		"group": "Space",
+		"name": "Normal Distribution",
+		"file_name": "04_distribution_uniform",
+		"object": "DistributionUniform"
+	},
+	{
+		"group": "Space",
+		"name": "Pathfinding",
+		"file_name": "04_pathfinding",
+		"object": "Pathfinding"
+	},
+	{
+		"group": "Space",
+		"name": "Perlin Noise",
+		"file_name": "04_perlin",
+		"object": "PerlinNoise"
+	},
+	{
+		"group": "Space",
+		"name": "QuadTree",
+		"file_name": "04_quadtree",
+		"object": "QuadTree"
+	},
+	{
+		"group": "Dynamics",
+		"name": "Missile",
+		"file_name": "05_missile",
+		"object": "Missile"
+	},
+	{
+		"group": "Dynamics",
+		"name": "Rotation",
+		"file_name": "05_rotation",
+		"object": "Rotation"
+	},
+	{
+		"group": "Dynamics",
+		"name": "Ackermann Steering: Simple",
+		"file_name": "05_ackermann_simple",
+		"object": "AckermannSimple"
+	},
+	{
+		"group": "Dynamics",
+		"name": "Ackermann Steering: Advanced",
+		"file_name": "05_ackermann_advanced",
+		"object": "AckermannAdvanced"
+	},
+	{
+		"group": "Dynamics",
+		"name": "Steering Seek",
+		"file_name": "05_steering_seek",
+		"object": "SteeringSeek"
+	},
+	{
+		"group": "Dynamics",
+		"name": "Steering Evade",
+		"file_name": "05_steering_evade",
+		"object": "SteeringEvade"
+	},
+	{
+		"group": "Dynamics",
+		"name": "Steering Pursuit",
+		"file_name": "05_steering_pursuit",
+		"object": "SteeringPursuit"
+	},
+	{
+		"group": "Dynamics",
+		"name": "Steering Wander",
+		"file_name": "05_steering_wander",
+		"object": "SteeringWander"
+	},
+	{
+		"group": "Dynamics",
+		"name": "Steering Combined",
+		"file_name": "05_steering_combined",
+		"object": "SteeringCombined"
+	},
+	{
+		"group": "Dynamics",
+		"name": "MatterJS Friction",
+		"file_name": "06_matter_friction",
+		"object": "MatterFriction"
+	},
+	{
+		"group": "Dynamics",
+		"name": "MatterJS Air Friction",
+		"file_name": "06_matter_air_friction",
+		"object": "MatterAirFriction"
+	},
+	{
+		"group": "Dynamics",
+		"name": "MatterJS Bridge",
+		"file_name": "06_matter_bridge",
+		"object": "PixiHelloWorld"
+	},
+	{
+		"group": "Dynamics",
+		"name": "MatterJS Car",
+		"file_name": "06_matter_car",
+		"object": "MatterBridge"
+	},
+	{
+		"group": "Dynamics",
+		"name": "MatterJS Chains",
+		"file_name": "06_matter_chains",
+		"object": "MatterChains"
+	},
+	{
+		"group": "Dynamics",
+		"name": "MatterJS Cradle",
+		"file_name": "06_matter_cradle",
+		"object": "MatterCradle"
+	},
+	{
+		"group": "Dynamics",
+		"name": "MatterJS Mixed Shapes",
+		"file_name": "06_matter_mixed",
+		"object": "MatterMixedShapes"
+	},
+	{
+		"group": "Dynamics",
+		"name": "Cloth",
+		"file_name": "06_cloth",
+		"object": "Cloth"
+	},
+	{
+		"group": "Dynamics",
+		"name": "Collisions of a ball",
+		"file_name": "06_collisions_ball",
+		"object": "CollisionsBall"
+	},
+	{
+		"group": "Dynamics",
+		"name": "Collisions between Balls",
+		"file_name": "06_collisions_balls",
+		"object": "CollisionsBalls"
+	},
+	{
+		"group": "Dynamics",
+		"name": "Collisions between Rectangles",
+		"file_name": "06_collisions_rectangles",
+		"object": "CollisionsRectangles"
+	},
+	{
+		"group": "Dynamics",
+		"name": "Raycast Collisions",
+		"file_name": "06_collisions_raycasting",
+		"object": "CollisionsRaycasting"
+	},
+	{
+		"group": "Graphics",
+		"name": "Raycaster",
+		"file_name": "07_raycaster",
+		"object": "Raycaster"
+	},
+	{
+		"group": "Graphics",
+		"name": "Basic Shader",
+		"file_name": "07_shader_basic",
+		"object": "ShaderBasic"
+	},
+	{
+		"group": "Graphics",
+		"name": "Noise Shader",
+		"file_name": "07_shader_noise",
+		"object": "ShaderNoise"
+	},
+	{
+		"group": "Graphics",
+		"name": "Wave Shader",
+		"file_name": "07_shader_wave",
+		"object": "ShaderWave"
+	},
+	{
+		"group": "Graphics",
+		"name": "Rotation Tween",
+		"file_name": "07_tween_rotation",
+		"object": "TweenRotation"
+	},
+	{
+		"group": "Graphics",
+		"name": "Translation Tween",
+		"file_name": "07_tween_translation",
+		"object": "TweenTranslation"
+	},
+	{
+		"group": "Graphics",
+		"name": "Vision Cone",
+		"file_name": "07_vision_cone",
+		"object": "VisionCone"
+	},
+	{
+		"group": "Graphics",
+		"name": "Mandelbrot",
+		"file_name": "07_mandelbrot",
+		"object": "Mandelbrot"
+	},
+	{
+		"group": "Graphics",
+		"name": "Matrices",
+		"file_name": "07_matrices",
+		"object": "Matrices"
+	},
+	{
+		"group": "Graphics",
+		"name": "Lighting",
+		"file_name": "07_lighting",
+		"object": "Lighting"
+	},
+	{
+		"group": "Bots",
+		"name": "Bots",
+		"file_name": "08_bots",
+		"object": "Bots"
+	},
+	{
+		"group": "Bots",
+		"name": "Pursue",
+		"file_name": "08_pursue",
+		"object": "Pursue"
+	},
+	{
+		"group": "Other examples",
+		"name": "Pixel-perfect hit-test",
+		"file_name": "others_hittest",
+		"object": "PixiHitTest"
+	},
+	{
+		"group": "Other examples",
+		"name": "Dialog",
+		"file_name": "others_dialog",
+		"object": "Dialog"
+	},
+	{
+		"group": "Minigames",
+		"name": "Block Breaker",
+		"file_name": "game_blockbreaker",
+		"object": "BlockBreaker"
+	},
+	{
+		"group": "Minigames",
+		"name": "Tetris",
+		"file_name": "game_vlak",
+		"object": "Tetris"
+	},
+	{
+		"group": "Minigames",
+		"name": "Vlak",
+		"file_name": "game_tetris",
+		"object": "Vlak"
+	}
+]

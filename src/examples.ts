@@ -37,7 +37,6 @@ import { ClothView as Cloth } from './06-physics/cloth';
 import { MatterBinding } from './06-physics/matter-binding';
 import { CollisionsRectangles, CollisionsBalls, CollisionsBall } from './06-physics/collisions';
 import { CollisionsRaycasting } from './06-physics/collisions-raycasting';
-
 import { Raycaster } from './07-graphics/raycaster';
 import { ShaderBasic } from './07-graphics/shader-basic';
 import { ShaderNoise } from './07-graphics/shader-noise';
@@ -48,16 +47,15 @@ import { VisionCone } from './07-graphics/vision-cone';
 import { Mandelbrot } from './07-graphics/mandelbrot';
 import { Matrices } from './07-graphics/matrices';
 import { Lighting } from './07-graphics/lighting';
-
 import { Bots } from './08-ai/bots';
 import { Pursue } from './08-ai/pursue';
-
 import { PixiHitTest } from './others/pixi-hittest';
 import { Dialog } from './others/dialog/dialog';
-
+import { BlockBreaker } from './game_blockbreaker/block-breaker';
 import { Vlak } from './game_vlak';
 import { Tetris } from './game_tetris';
 
+// create a global variable with respective examples
 (window as any).APH = {
 	PixiHelloWorld,
 	ThreeHelloWorld,
@@ -115,6 +113,7 @@ import { Tetris } from './game_tetris';
 	PixiHitTest,
 	Dialog,
 	Matrices,
+	BlockBreaker,
 	Vlak,
 	Tetris,
 };

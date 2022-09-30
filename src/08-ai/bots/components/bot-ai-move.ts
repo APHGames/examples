@@ -85,12 +85,12 @@ class FollowSteering extends SteeringComponent {
  * Component for movement
  */
 export class BotMove extends FollowSteering {
-
 	gameModel: GameModel;
 	botModel: BotModel;
 
 	constructor() {
 	    super(new Path(), 15, 15, 5, 3);
+		this._name = 'BotMove';
 	}
 
 	onInit() {

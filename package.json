@@ -1,12 +1,13 @@
 {
   "name": "aphgames-examples",
   "author": "Adam Vesecký",
-  "version": "6.3.0",
+  "version": "6.3.1",
   "license": "MIT",
   "scripts": {
     "dev": "node scripts/prebuild-project && parcel view/index.html --out-dir build",
-    "deploy": "node scripts/prebuild-project && parcel build view/index.html --out-dir build --public-url PUBLICURL --no-cache --no-source-maps && node scripts/fix-links.js",
+    "build": "npm run generate-views && node scripts/prebuild-project && parcel build view/index.html --out-dir build --public-url PUBLICURL --no-cache --no-source-maps && node scripts/fix-links.js && node scripts/remove-hash.js",
     "lint": "eslint ./src --ext .js,.jsx,.ts,.tsx",
+    "generate-views": "node scripts/generate-views.js",
     "compile-test": "tsc --project tsconfig.json --noemit"
   },
   "dependencies": {

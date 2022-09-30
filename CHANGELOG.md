@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project/subject will be documented in this file.
 
+## [6.3.1] - 2022-09-30
+### Added
+Gitlab Actions for release
+Automatic index generator
+
 ## [6.3.0] - 2022-07-18
 ### Added
 Ackermann Steering
