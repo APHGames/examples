@@ -21,7 +21,7 @@ export class PasswordComponent extends ECS.Component {
 	keyCmp: KeyInputComponent;
 
 	onInit() {
-		this.keyCmp = this.scene.findGlobalComponentByName<KeyInputComponent>(KeyInputComponent.name);
+		this.keyCmp = this.scene.getGlobalAttribute('key_input');
 	}
 
 	onUpdate() {

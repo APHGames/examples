@@ -12,8 +12,8 @@ export class LevelSelector extends ECS.Component {
 	currentLevel = 0;
 
 	onInit() {
-		this.cli = this.scene.findGlobalComponentByName(CLISpriteRenderer.name);
-		this.keyInput = this.scene.findGlobalComponentByName(ECS.KeyInputComponent.name);
+		this.cli = this.scene.getGlobalAttribute('cli');
+		this.keyInput = this.scene.getGlobalAttribute('key_input');
 	}
 
 	onUpdate() {

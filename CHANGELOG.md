@@ -1,6 +1,10 @@
 # Changelog
 All notable changes to this project/subject will be documented in this file.
 
+## [6.3.2] - 2022-10-01
+### Changed
+Temporarily fix problems with findComponentByName for minified code
+
 ## [6.3.1] - 2022-09-30
 ### Added
 Gitlab Actions for release

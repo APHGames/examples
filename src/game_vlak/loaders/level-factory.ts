@@ -111,6 +111,8 @@ export class LevelFactory {
 		scene.stage.sortableChildren = true;
 		scene.assignGlobalAttribute(Attributes.GAME_DATA, gameState.gameData);
 		scene.assignGlobalAttribute(Attributes.GAME_STATE, gameState);
-		scene.addGlobalComponentAndRun(Builders.keyboardBuilder());
+		const keyInput = Builders.keyboardBuilder();
+		scene.addGlobalComponentAndRun(keyInput);
+		scene.assignGlobalAttribute('key_input', keyInput);
 	}
 }

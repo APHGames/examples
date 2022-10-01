@@ -10,7 +10,7 @@ export class TrainKeyboardController extends TrainController {
 
 	onInit() {
 		super.onInit();
-		this.keyInputCmp = this.scene.findGlobalComponentByName<ECS.KeyInputComponent>(ECS.KeyInputComponent.name);
+		this.keyInputCmp = this.scene.getGlobalAttribute('key_input');
 	}
 
 	onUpdate() {

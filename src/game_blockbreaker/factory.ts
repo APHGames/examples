@@ -12,7 +12,11 @@ export class Factory {
 	loadLevel(level: Level, scene: ECS.Scene) {
 		let bricks = new ECS.Container('bricksLayer');
 		scene.stage.addChild(bricks);
-		scene.addGlobalComponentAndRun(new ECS.KeyInputComponent());
+
+		const keyInput = new ECS.KeyInputComponent();
+		scene.addGlobalComponentAndRun(keyInput);
+		// todo refactor this in ECSLite library
+		scene.assignGlobalAttribute('key_input', keyInput);
 
 		for (let i = 0; i < level.columns; i++) {
 			for (let j = 0; j < level.rows; j++) {

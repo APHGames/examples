@@ -14,40 +14,32 @@ import { SoundComponent } from './components/sound-component';
 export class Factory {
 	loadIntro(scene: ECS.Scene) {
 		scene.clearScene();
-		const text = this.buildCLI(scene);
-		scene.addGlobalComponentAndRun(text);
-		scene.addGlobalComponentAndRun(new ECS.KeyInputComponent());
+		this.buildGlobalDefaults(scene);
 		scene.addGlobalComponentAndRun(new IntroComponent());
 	}
 
 	loadLevelSelector(scene: ECS.Scene) {
 		scene.clearScene();
-		const text = this.buildCLI(scene);
-		scene.addGlobalComponentAndRun(text);
-		scene.addGlobalComponentAndRun(new ECS.KeyInputComponent());
+		this.buildGlobalDefaults(scene);
 		scene.addGlobalComponentAndRun(new LevelSelector());
 	}
 
 	loadHighScoreSaver(scene: ECS.Scene, score: number) {
 		scene.clearScene();
-		const text = this.buildCLI(scene);
-		scene.addGlobalComponentAndRun(text);
-		scene.addGlobalComponentAndRun(new ECS.KeyInputComponent());
+		this.buildGlobalDefaults(scene);
 		scene.addGlobalComponentAndRun(new HighScoreSaver(score));
 	}
 
 	loadGame(scene: ECS.Scene, level: number = 0) {
 		scene.clearScene();
-		const text = this.buildCLI(scene);
+		this.buildGlobalDefaults(scene);
 		const model = new GameModel(GAME_COLUMNS, GAME_ROWS, GAME_EXTRA_ROWS, level);
-		scene.addGlobalComponentAndRun(text);
-		scene.addGlobalComponentAndRun(new ECS.KeyInputComponent());
 		scene.addGlobalComponentAndRun(new GameKeyboardController(model));
 		scene.addGlobalComponentAndRun(new GameRenderer({ model }));
 		scene.addGlobalComponentAndRun(new SoundComponent());
 	}
 
-	private buildCLI(scene: ECS.Scene) {
+	private buildGlobalDefaults(scene: ECS.Scene) {
 		const fontTexture = PIXI.Texture.from(Assets.FONT_DOS_TEXTURE);
 		const xmlContent = scene.app.loader.resources[Assets.FONT_DOS].data;
 		const xmlParsed = new DOMParser().parseFromString(xmlContent, 'text/xml');
@@ -61,6 +53,11 @@ export class Factory {
 			highlightColor: CGAColors.LBLUE,
 			highlightedTextColor: CGAColors.WHITE,
 		});
-		return text;
+		scene.addGlobalComponentAndRun(text);
+		// todo refactor this
+		scene.assignGlobalAttribute('cli', text);
+		const keyInput = new ECS.KeyInputComponent();
+		scene.assignGlobalAttribute('key_input', keyInput);
+		scene.addGlobalComponentAndRun(keyInput);
 	}
 }

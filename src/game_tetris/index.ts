@@ -38,6 +38,16 @@ export class Tetris extends ECSExample {
 			.add(Assets.SOUND_ROWCLEAR, `${getBaseUrl()}/assets/game_tetris/snd_rowclear.mp3`)
 			.add(Assets.MUSIC, `${getBaseUrl()}/assets/game_tetris/music.mp3`)
 			.load(() => this.loadGame());
+
+		// todo refactor this
+		PIXISound.add(Assets.SOUND_GAMEOVER, `${getBaseUrl()}/assets/game_tetris/snd_gameover.mp3`);
+		PIXISound.add(Assets.SOUND_LEVELUP, `${getBaseUrl()}/assets/game_tetris/snd_levelup.mp3`);
+		PIXISound.add(Assets.SOUND_MOVEDOWN, `${getBaseUrl()}/assets/game_tetris/snd_movedown.mp3`);
+		PIXISound.add(Assets.SOUND_PLACE, `${getBaseUrl()}/assets/game_tetris/snd_place.mp3`);
+		PIXISound.add(Assets.SOUND_ROTATE, `${getBaseUrl()}/assets/game_tetris/snd_rotate.mp3`);
+		PIXISound.add(Assets.SOUND_ROWCLEAR, `${getBaseUrl()}/assets/game_tetris/snd_rowclear.mp3`);
+		PIXISound.add(Assets.MUSIC, `${getBaseUrl()}/assets/game_tetris/music.mp3`);
+
 	}
 
 	/**

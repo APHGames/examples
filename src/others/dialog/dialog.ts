@@ -22,7 +22,8 @@ export class Dialog extends ECSExample {
 
 	onAssetsLoaded() {
 		const scene = this.engine.scene;
-		scene.addGlobalComponent(new ECS.KeyInputComponent());
+		const keyInput = new ECS.KeyInputComponent();
+		scene.addGlobalComponent(keyInput);
 
 		const fontData = this.engine.app.loader.resources[Assets.FONT].data;
 		const fontTxt = PIXI.Texture.from(Assets.FONT_TEXTURE);
@@ -33,6 +34,7 @@ export class Dialog extends ECSExample {
 		scene.addGlobalComponent(new DialogController({
 			text: 'Vanquish Thy foes, brave warrior. And prepare yourself for the greatest of challenges.',
 			dialogHeight: 40,
+			keyInput
 		}));
 
 	}

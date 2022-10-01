@@ -192,7 +192,7 @@ export class GameKeyboardController extends GameController {
 
 	onInit() {
 		super.onInit();
-		this.keyInput = this.scene.findGlobalComponentByName(ECS.KeyInputComponent.name);
+		this.keyInput = this.scene.getGlobalAttribute('key_input');
 	}
 
 	onUpdate(delta: number, absolute: number) {

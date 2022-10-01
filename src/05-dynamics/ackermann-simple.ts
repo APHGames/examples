@@ -162,16 +162,13 @@ class CarRenderer extends ECS.Component<CarRendererProps> {
 
 
 class CarController extends ECS.Component {
-	keyInput: ECS.KeyInputComponent;
 	car: CarEngine;
+	keyInput: ECS.KeyInputComponent;
 
-	constructor(car: CarEngine) {
+	constructor(car: CarEngine, keyInput: ECS.KeyInputComponent) {
 		super();
 		this.car = car;
-	}
-
-	onInit() {
-		this.keyInput = this.owner.findComponentByName(ECS.KeyInputComponent.name);
+		this.keyInput = keyInput;
 	}
 
 	onUpdate() {
@@ -201,13 +198,15 @@ export class AckermannSimple extends ECSExample {
 			trackWidth: 80
 		});
 
+		const keyInput = new ECS.KeyInputComponent();
+
 		new ECS.Builder(this.engine.scene)
 			.asGraphics()
 			.localPos(800 / 2, 600 / 2)
 			.withComponent(carEngine)
 			.withComponent(new CarRenderer({}, carEngine))
-			.withComponent(new ECS.KeyInputComponent())
-			.withComponent(new CarController(carEngine))
+			.withComponent(keyInput)
+			.withComponent(new CarController(carEngine, keyInput))
 			.withParent(this.engine.scene.stage)
 			.build();
 	}

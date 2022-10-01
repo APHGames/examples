@@ -34,7 +34,11 @@ export class Factory {
 
 		// recreate view model
 		this.recreateMap(model, scene);
-		scene.addGlobalComponentAndRun(new ECS.KeyInputComponent());
+		const keyInput = new ECS.KeyInputComponent();
+		scene.addGlobalComponentAndRun(keyInput);
+		// todo fix this in ECSLite library
+		scene.assignGlobalAttribute('key_input', keyInput);
+
 		scene.assignGlobalAttribute(ATTR_SCENE_MODEL, model);
 
 		this.addBot(scene, model, new ECS.Vector(15, 15), 0x00FF00, true);

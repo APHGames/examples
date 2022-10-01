@@ -62,7 +62,7 @@ export class GameRenderer extends ECS.Component<{ model: GameModel }> {
 	paused: boolean;
 
 	onInit() {
-		this.cli = this.scene.findGlobalComponentByName(CLISpriteRenderer.name);
+		this.cli = this.scene.getGlobalAttribute('cli');
 		this.cli.changeColors(defaultColor, CGAColors.BLACK);
 		this.statsOffsets = new Map();
 		this.paused = false;

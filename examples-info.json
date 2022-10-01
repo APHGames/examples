@@ -189,13 +189,13 @@
 		"group": "Dynamics",
 		"name": "MatterJS Bridge",
 		"file_name": "06_matter_bridge",
-		"object": "PixiHelloWorld"
+		"object": "MatterBridge"
 	},
 	{
 		"group": "Dynamics",
 		"name": "MatterJS Car",
 		"file_name": "06_matter_car",
-		"object": "MatterBridge"
+		"object": "MatterCar"
 	},
 	{
 		"group": "Dynamics",

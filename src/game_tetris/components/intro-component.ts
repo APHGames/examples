@@ -20,8 +20,8 @@ export class IntroComponent extends ECS.Component {
 	keyInput: ECS.KeyInputComponent;
 
 	onInit() {
-		this.cli = this.scene.findGlobalComponentByName(CLISpriteRenderer.name);
-		this.keyInput = this.scene.findGlobalComponentByName(ECS.KeyInputComponent.name);
+		this.cli = this.scene.getGlobalAttribute('cli');
+		this.keyInput = this.scene.getGlobalAttribute('key_input');
 	}
 
 	onAttach() {

@@ -5,6 +5,7 @@ import LevelParser from './level-parser';
 import { GameState } from '../model/state-structs';
 import { LevelFactory } from './level-factory';
 import { getBaseUrl } from '../../utils/APHExample';
+import PIXISound from 'pixi-sound';
 
 /**
  * Game loader, loads assets, parses levels, and executes the intro animation
@@ -21,6 +22,12 @@ export class GameLoader {
 			.add(Assets.SOUND_PICK, `${getBaseUrl()}/assets/game_vlak/sounds/pick.wav`)
 			.add(Assets.SOUND_MOVE, `${getBaseUrl()}/assets/game_vlak/sounds/move.wav`)
 			.load(() => this.onAssetsLoaded(engine));
+
+		// todo refactor this
+		PIXISound.add(Assets.SOUND_CRASH, `${getBaseUrl()}/assets/game_vlak/sounds/crash.wav`);
+		PIXISound.add(Assets.SOUND_LEVEL_COMPLETD, `${getBaseUrl()}/assets/game_vlak/sounds/level_completed.wav`);
+		PIXISound.add(Assets.SOUND_PICK, `${getBaseUrl()}/assets/game_vlak/sounds/pick.wav`);
+		PIXISound.add(Assets.SOUND_MOVE, `${getBaseUrl()}/assets/game_vlak/sounds/move.wav`);
 	}
 
 	private onAssetsLoaded(engine: ECS.Engine) {

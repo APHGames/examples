@@ -211,7 +211,7 @@ class SceneManager extends ECS.Component {
 	keyInput: ECS.KeyInputComponent;
 
 	onInit() {
-		this.keyInput = this.scene.findGlobalComponentByName(ECS.KeyInputComponent.name);
+		this.keyInput = this.scene.getGlobalAttribute('key_input');
 		// emit 3 objects
 		this.emitObject();
 		this.emitObject();
@@ -273,7 +273,10 @@ export class Graphics extends ECSExample {
 			isRunning: true
 		} as SceneState);
 
-		this.engine.scene.addGlobalComponent(new KeyInputComponent());
+		const keyInput = new KeyInputComponent();
+		this.engine.scene.addGlobalComponent(keyInput);
+		// TODO will need refactor in the ECSLite library
+		this.engine.scene.assignGlobalAttribute('key_input', keyInput);
 		this.engine.scene.addGlobalComponent(new SceneManager());
 	}
 }

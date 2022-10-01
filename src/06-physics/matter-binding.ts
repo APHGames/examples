@@ -29,9 +29,9 @@ class PlatformComponent extends ECS.Component<PlatformProps> {
 }
 
 class CubeController extends ECS.Component {
+
 	onUpdate(delta: number, absolute: number) {
-		let cmp = this.scene.stage
-			.findComponentByName<ECS.KeyInputComponent>(ECS.KeyInputComponent.name);
+		let cmp = this.scene.getGlobalAttribute<ECS.KeyInputComponent>('key_input');
 
 		const ownerMatter = this.owner as PixiMatter.MatterBody;
 
@@ -95,8 +95,10 @@ export class MatterBinding extends ECSExample {
 		const cube = binder.addBody(Matter.Bodies.rectangle(
 			cubeSize / 2, spacingY + cubeSize / 2, cubeSize, cubeSize,
 		));
+		const keyInput = new ECS.KeyInputComponent();
 		cube.addComponent(new CubeController());
 
-		this.engine.scene.stage.addComponent(new ECS.KeyInputComponent());
+		this.engine.scene.addGlobalComponent(keyInput);
+		this.engine.scene.assignGlobalAttribute('key_input', keyInput);
 	}
 }

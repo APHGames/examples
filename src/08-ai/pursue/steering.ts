@@ -144,7 +144,7 @@ export class KeyboardSteering extends SteeringComponent {
 	}
 
 	protected calcForce(delta: number): ECS.Vector {
-		const key = this.scene.findGlobalComponentByName<ECS.KeyInputComponent>(ECS.KeyInputComponent.name);
+		const key = this.scene.getGlobalAttribute<ECS.KeyInputComponent>('key_input');
 		let force = new ECS.Vector(0);
 
 		if (key.isKeyPressed(ECS.Keys.KEY_LEFT)) {

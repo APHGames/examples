@@ -26,8 +26,9 @@ export class HighScoreSaver extends ECS.Component<number> {
 	frameCounter = 0;
 
 	onInit() {
-		this.cli = this.scene.findGlobalComponentByName(CLISpriteRenderer.name);
-		this.keyInput = this.scene.findGlobalComponentByName(ECS.KeyInputComponent.name);
+		// todo refactor this
+		this.cli = this.scene.getGlobalAttribute('cli');
+		this.keyInput = this.scene.getGlobalAttribute('key_input');
 		this.loadHighScore();
 		this.drawScoreBoard();
 	}

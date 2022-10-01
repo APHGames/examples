@@ -6,6 +6,7 @@ import { DialogModel } from './dialog-model';
 type DialogControllerProps = {
 	text: string;
 	dialogHeight: number;
+	keyInput: ECS.KeyInputComponent;
 }
 
 type DialogControllerState = {
@@ -28,7 +29,6 @@ export enum Attributes {
 export class DialogController extends ECS.Component<DialogControllerProps> {
 	private state: DialogControllerState;
 	private model: DialogModel;
-	private keyInputCmp: ECS.KeyInputComponent;
 	private dialog: ECS.Container;
 
 	private font: Font;
@@ -62,7 +62,6 @@ export class DialogController extends ECS.Component<DialogControllerProps> {
 	    this.dialog.position.y = this.scene.height - (this.dialog.height * this.scale) - 5; // show it 5 pixels from the bottom
 	    this.dialog.scale.set(this.scale);
 	    this.scene.stage.addChild(this.dialog);
-	    this.keyInputCmp = this.scene.findGlobalComponentByName(ECS.KeyInputComponent.name);
 
 	    const visibleRows = Math.floor((this.props.dialogHeight - this.textMargin * 2) / this.font.blockHeight);
 	    const lineWidth = ((this.scene.width / this.scale - 2 * this.textMargin));
@@ -81,8 +80,8 @@ export class DialogController extends ECS.Component<DialogControllerProps> {
 	}
 
 	onUpdate() {
-	    if (this.state.waitingForInput && this.keyInputCmp.isKeyPressed(ECS.Keys.KEY_SPACE)) {
-	        this.keyInputCmp.handleKey(ECS.Keys.KEY_SPACE);
+	    if (this.state.waitingForInput && this.props.keyInput.isKeyPressed(ECS.Keys.KEY_SPACE)) {
+	        this.props.keyInput.handleKey(ECS.Keys.KEY_SPACE);
 	        if (this.model.canGotoNextLine()) {
 	            this.gotoNextLine();
 	        } else {

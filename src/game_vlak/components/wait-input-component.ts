@@ -9,7 +9,7 @@ export class WaitInputComponent extends ECS.Component {
 	keyCmp: ECS.KeyInputComponent;
 
 	onInit() {
-		this.keyCmp = this.scene.findGlobalComponentByName(ECS.KeyInputComponent.name);
+		this.keyCmp = this.scene.getGlobalAttribute('key_input');
 	}
 
 	onUpdate() {

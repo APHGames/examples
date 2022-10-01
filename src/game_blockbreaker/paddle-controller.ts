@@ -23,7 +23,7 @@ export class PaddleKeyboardController extends PaddleController {
 
 	onInit() {
 	    super.onInit();
-	    this.keyInputCmp = this.scene.findGlobalComponentByName<ECS.KeyInputComponent>(ECS.KeyInputComponent.name);
+	    this.keyInputCmp = this.scene.getGlobalAttribute<ECS.KeyInputComponent>('key_input');
 	}
 
 	onUpdate(delta: number, absolute: number) {
