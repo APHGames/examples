@@ -6,7 +6,6 @@ const examplesInfo = JSON.parse(fs.readFileSync('examples-info.json', "utf8"));
 const exampleTemplate = fs.readFileSync('scripts/example-template.html', "utf8");
 let indexTemplate = fs.readFileSync('scripts/index-template.html', "utf8");
 
-
 if(!fs.existsSync('view')) {
     fs.mkdirSync('view');
 }

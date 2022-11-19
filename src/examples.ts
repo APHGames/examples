@@ -51,9 +51,11 @@ import { Bots } from './08-ai/bots';
 import { Pursue } from './08-ai/pursue';
 import { PixiHitTest } from './others/pixi-hittest';
 import { Dialog } from './others/dialog/dialog';
+import { ProgressParallel, ProgressSequential } from './others/progress';
 import { BlockBreaker } from './game_blockbreaker/block-breaker';
 import { Vlak } from './game_vlak';
 import { Tetris } from './game_tetris';
+
 
 // create a global variable with respective examples
 (window as any).APH = {
@@ -112,6 +114,8 @@ import { Tetris } from './game_tetris';
 	Pursue,
 	PixiHitTest,
 	Dialog,
+	ProgressParallel,
+	ProgressSequential,
 	Matrices,
 	BlockBreaker,
 	Vlak,

@@ -330,6 +330,18 @@
 		"object": "Dialog"
 	},
 	{
+		"group": "Other examples",
+		"name": "Progress Bar - Sequential",
+		"file_name": "others_progress_seq",
+		"object": "ProgressSequential"
+	},
+	{
+		"group": "Other examples",
+		"name": "Progress Bar - Parallel",
+		"file_name": "others_progress_par",
+		"object": "ProgressParallel"
+	},
+	{
 		"group": "Minigames",
 		"name": "Block Breaker",
 		"file_name": "game_blockbreaker",
