@@ -15,6 +15,7 @@ export class AckermannAdvanced extends ECSExample {
 			.add('car', `${getBaseUrl()}/assets/05-dynamics/car.png`)
 			.load(() => this.loadScene());
 	}
+
 	loadScene() {
 		// load car texture
 		const baseTex = PIXI.BaseTexture.from('car');

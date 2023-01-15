@@ -1,6 +1,10 @@
 # Changelog
 All notable changes to this project/subject will be documented in this file.
 
+## [6.3.4] - 2023-01-15
+### Added
+Platformer example
+
 ## [6.3.3] - 2022-11-19
 ### Added
 Progress bar animation

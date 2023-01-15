@@ -174,76 +174,82 @@
 		"object": "SteeringCombined"
 	},
 	{
-		"group": "Dynamics",
+		"group": "Physics",
 		"name": "MatterJS Friction",
 		"file_name": "06_matter_friction",
 		"object": "MatterFriction"
 	},
 	{
-		"group": "Dynamics",
+		"group": "Physics",
 		"name": "MatterJS Air Friction",
 		"file_name": "06_matter_air_friction",
 		"object": "MatterAirFriction"
 	},
 	{
-		"group": "Dynamics",
+		"group": "Physics",
 		"name": "MatterJS Bridge",
 		"file_name": "06_matter_bridge",
 		"object": "MatterBridge"
 	},
 	{
-		"group": "Dynamics",
+		"group": "Physics",
 		"name": "MatterJS Car",
 		"file_name": "06_matter_car",
 		"object": "MatterCar"
 	},
 	{
-		"group": "Dynamics",
+		"group": "Physics",
 		"name": "MatterJS Chains",
 		"file_name": "06_matter_chains",
 		"object": "MatterChains"
 	},
 	{
-		"group": "Dynamics",
+		"group": "Physics",
 		"name": "MatterJS Cradle",
 		"file_name": "06_matter_cradle",
 		"object": "MatterCradle"
 	},
 	{
-		"group": "Dynamics",
+		"group": "Physics",
 		"name": "MatterJS Mixed Shapes",
 		"file_name": "06_matter_mixed",
 		"object": "MatterMixedShapes"
 	},
 	{
-		"group": "Dynamics",
+		"group": "Physics",
 		"name": "Cloth",
 		"file_name": "06_cloth",
 		"object": "Cloth"
 	},
 	{
-		"group": "Dynamics",
+		"group": "Physics",
 		"name": "Collisions of a ball",
 		"file_name": "06_collisions_ball",
 		"object": "CollisionsBall"
 	},
 	{
-		"group": "Dynamics",
+		"group": "Physics",
 		"name": "Collisions between Balls",
 		"file_name": "06_collisions_balls",
 		"object": "CollisionsBalls"
 	},
 	{
-		"group": "Dynamics",
+		"group": "Physics",
 		"name": "Collisions between Rectangles",
 		"file_name": "06_collisions_rectangles",
 		"object": "CollisionsRectangles"
 	},
 	{
-		"group": "Dynamics",
+		"group": "Physics",
 		"name": "Raycast Collisions",
 		"file_name": "06_collisions_raycasting",
 		"object": "CollisionsRaycasting"
+	},
+	{
+		"group": "Physics",
+		"name": "Platformer",
+		"file_name": "06_platformer",
+		"object": "Platformer"
 	},
 	{
 		"group": "Graphics",

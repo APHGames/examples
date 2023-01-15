@@ -37,6 +37,7 @@ import { ClothView as Cloth } from './06-physics/cloth';
 import { MatterBinding } from './06-physics/matter-binding';
 import { CollisionsRectangles, CollisionsBalls, CollisionsBall } from './06-physics/collisions';
 import { CollisionsRaycasting } from './06-physics/collisions-raycasting';
+import { Platformer } from './06-physics/platformer';
 import { Raycaster } from './07-graphics/raycaster';
 import { ShaderBasic } from './07-graphics/shader-basic';
 import { ShaderNoise } from './07-graphics/shader-noise';
@@ -101,6 +102,7 @@ import { Tetris } from './game_tetris';
 	CollisionsBalls,
 	CollisionsBall,
 	CollisionsRaycasting,
+	Platformer,
 	Raycaster,
 	ShaderBasic,
 	ShaderNoise,
