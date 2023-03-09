@@ -87,6 +87,11 @@ export class Tetris extends ECSExample {
 		this.initResizeHandler();
 	}
 
+	onDestroy() {
+		PIXI.settings.SCALE_MODE = PIXI.SCALE_MODES.LINEAR;
+		PIXI.settings.ROUND_PIXELS = false;
+	}
+
 	private initResizeHandler() {
 		this.resizeHandler();
 		window.addEventListener('resize', this.resizeHandler);

@@ -36,6 +36,10 @@ export class Dialog extends ECSExample {
 			dialogHeight: 40,
 			keyInput
 		}));
+	}
 
+	onDestroy() {
+		PIXI.settings.SCALE_MODE = PIXI.SCALE_MODES.LINEAR;
+		PIXI.settings.ROUND_PIXELS = false;
 	}
 }

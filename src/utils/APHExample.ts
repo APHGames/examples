@@ -136,6 +136,11 @@ export abstract class ECSExample implements APHExample {
 
 	destroy() {
 	    this.engine.destroy();
+		this.onDestroy();
+	}
+
+	onDestroy() {
+		// override
 	}
 
 	abstract load();

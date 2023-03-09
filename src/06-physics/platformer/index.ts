@@ -37,4 +37,8 @@ export class Platformer extends ECSExample {
 		const factory = new Factory();
 		factory.loadLevel(defaultLevel, scene);
 	}
+
+	onDestroy() {
+		PIXI.settings.SCALE_MODE = PIXI.SCALE_MODES.LINEAR;
+	}
 }

@@ -1,6 +1,10 @@
 # Changelog
 All notable changes to this project/subject will be documented in this file.
 
+## [6.3.5] - 2023-03-09
+### Added
+onDestroy() handle that allows ECS projects to roll back global pixi settings
+
 ## [6.3.4] - 2023-01-15
 ### Added
 Platformer example
