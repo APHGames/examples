@@ -1,11 +1,11 @@
-import Engine, { GameLoopType, EngineConfig } from './engine/engine';
+import Engine, { GameLoopType, type EngineConfig } from './engine/engine';
 import Component from './engine/component';
-import { Messages, AttributeChangeMessage, StateChangeMessage, FlagChangeMessage, TagChangeMessage } from './engine/constants';
+import { Messages, type AttributeChangeMessage, type StateChangeMessage, type FlagChangeMessage, type TagChangeMessage } from './engine/constants';
 import Flags from './utils/flags';
 import GameObjectProxy from './engine/game-object-proxy';
 import Message from './engine/message';
 
-import GameObject from './engine/game-object';
+import type GameObject from './engine/game-object';
 import BitmapText from './engine/game-objects/bitmap-text';
 import Container from './engine/game-objects/container';
 import Graphics from './engine/game-objects/graphics';
@@ -22,7 +22,7 @@ import ChainComponent from './components/chain-component';
 import DebugComponent from './components/debug-component';
 import { FuncComponent } from './components/func-component';
 import { KeyInputComponent, Keys } from './components/key-input-component';
-import { VirtualGamepadComponent, GamepadButtons, GamepadKeyMapper } from './components/virtual-gamepad-component';
+import { VirtualGamepadComponent, GamepadButtons, type GamepadKeyMapper } from './components/virtual-gamepad-component';
 import { PointerInputComponent, PointerMessages } from './components/pointer-input-component';
 import Vector from './utils/vector';
 import { QueryCondition } from './utils/query-condition';

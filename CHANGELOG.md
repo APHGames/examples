@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project/subject will be documented in this file.
 
+## [6.3.6] - 2023-09-25
+### Changed
+NodeJS version for github actions deploy
+Migrated to Parcel 2
+
 ## [6.3.5] - 2023-03-09
 ### Added
 onDestroy() handle that allows ECS projects to roll back global pixi settings

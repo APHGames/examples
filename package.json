@@ -1,14 +1,21 @@
 {
   "name": "aphgames-examples",
   "author": "Adam Vesecký",
-  "version": "6.3.5",
+  "version": "6.3.6",
   "license": "MIT",
   "scripts": {
-    "dev": "node scripts/prebuild-project && parcel view/index.html --out-dir build",
-    "build": "npm run generate-views && node scripts/prebuild-project && parcel build view/index.html --out-dir build --public-url PUBLICURL --no-cache --no-source-maps && node scripts/fix-links.js && node scripts/remove-hash.js",
+    "dev": "node scripts/prebuild-project && parcel view/index.html --dist-dir build --no-cache",
+    "build": "npm run generate-views && node scripts/prebuild-project && parcel build view/index.html --dist-dir build --no-cache --public-url PUBLICURL --no-source-maps --no-content-hash && node scripts/rename.js && node scripts/fix-links.js",
     "lint": "eslint ./src --ext .js,.jsx,.ts,.tsx",
     "generate-views": "node scripts/generate-views.js",
     "compile-test": "tsc --project tsconfig.json --noemit"
+  },
+  "parcel-namer-rewrite": {
+    "chain": "@parcel/namer-default",
+    "hashing": "never",
+    "rules": {
+      "src/examples.ts": "examples.js"   
+    }
   },
   "dependencies": {
     "eventemitter3": "^4.0.7",
@@ -30,7 +37,10 @@
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-prefer-arrow": "^1.2.3",
     "eslint-plugin-standard": "^5.0.0",
-    "parcel": "1.12.3",
-    "typescript": "^4.3.5"
+    "parcel": "^2.9.3",
+    "parcel-namer-rewrite": "^2.0.0-rc.3",
+    "punycode": "^1.4.1",
+    "querystring-es3": "^0.2.1",
+    "typescript": "^4.9.5"
   }
 }

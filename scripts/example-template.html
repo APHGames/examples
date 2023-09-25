@@ -22,8 +22,12 @@ body {
 
 <body>
 	<canvas id="gameCanvas" width="800" height="600"></canvas>
-	<script src="../src/examples.ts"></script>
-	<script type="text/javascript">new window.APH.#OBJECT().init('gameCanvas')</script>
+	<script type="module" src="../src/examples.ts"></script>
+	<script type="text/javascript">
+    window.addEventListener("load", (event) => {
+      new window.APH.#OBJECT().init('gameCanvas');
+    });
+  </script>
 </body>
 
 </html>
