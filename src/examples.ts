@@ -14,6 +14,7 @@ import { Animation as ECSAnimation } from './03-components/animation';
 import { Squares } from './03-components/squares';
 import { Graphics } from './03-components/graphics';
 import { DistributionNormal, DistributionUniform } from './04-space/distribution';
+import { PathExplorer } from './04-space/pathexploring/path-explorer';
 import { Pathfinding } from './04-space/pathfinding';
 import { PerlinNoiseView as PerlinNoise } from './04-space/perlin-noise';
 import { QuadTreeView as QuadTree } from './04-space/quadtree';
@@ -78,6 +79,7 @@ import { Tetris } from './game_tetris';
 	DistributionNormal,
 	DistributionUniform,
 	Pathfinding,
+	PathExplorer,
 	PerlinNoise,
 	QuadTree,
 	Missile,

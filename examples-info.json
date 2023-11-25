@@ -109,6 +109,12 @@
 	},
 	{
 		"group": "Space",
+		"name": "Path Exploring",
+		"file_name": "04_pathexploring",
+		"object": "PathExplorer"
+	},
+	{
+		"group": "Space",
 		"name": "Perlin Noise",
 		"file_name": "04_perlin",
 		"object": "PerlinNoise"

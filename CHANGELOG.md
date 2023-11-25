@@ -1,6 +1,10 @@
 # Changelog
 All notable changes to this project/subject will be documented in this file.
 
+## [6.3.7] - 2023-11-25
+### Added
+Path explorer example
+
 ## [6.3.6] - 2023-09-25
 ### Changed
 NodeJS version for github actions deploy
