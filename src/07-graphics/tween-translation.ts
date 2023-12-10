@@ -1,6 +1,6 @@
 import * as ECS from '../../libs/pixi-ecs';
 import { ECSExample } from '../utils/APHExample';
-import { TranslateAnimation, typeToFunction, InterpolationType } from './utils/animation';
+import { TranslateAnimation, typeToFunction, InterpolationType } from '../utils/animation';
 import { Interpolation } from '../../libs/aph-math';
 
 export type TweenTranslationConfig = ECS.EngineConfig & {

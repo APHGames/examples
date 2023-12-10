@@ -39,6 +39,8 @@ export interface EngineConfig extends SceneConfig {
 	gameLoopFixedTick?: number;
 	// speed of the game (1 by default)
 	speed?: number;
+	// id of the canvas (used only if there are more canvas objects)
+	canvasId?: string;
 }
 
 const defaultConfig: EngineConfig = {

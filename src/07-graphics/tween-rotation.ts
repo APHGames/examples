@@ -1,6 +1,6 @@
 import * as ECS from '../../libs/pixi-ecs';
 import { ECSExample } from '../utils/APHExample';
-import { RotationAnimation, typeToFunction, InterpolationType } from './utils/animation';
+import { RotationAnimation, typeToFunction, InterpolationType } from '../utils/animation';
 import { Interpolation } from '../../libs/aph-math';
 
 export type TweenRotationConfig = ECS.EngineConfig & {

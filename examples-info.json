@@ -330,6 +330,34 @@
 		"object": "Pursue"
 	},
 	{
+		"group": "Networking",
+		"name": "Networking Animation",
+		"file_name": "09_anim",
+		"object": "NetworkAnim",
+		"second_canvas": true
+	},
+	{
+		"group": "Networking",
+		"name": "Networking Basics",
+		"file_name": "09_basics",
+		"object": "NetworkBasic",
+		"second_canvas": true
+	},
+	{
+		"group": "Networking",
+		"name": "Networking Interactive",
+		"file_name": "09_interactive",
+		"object": "NetworkInteractive",
+		"second_canvas": true
+	},
+	{
+		"group": "Networking",
+		"name": "Networking Steering",
+		"file_name": "09_steering",
+		"object": "NetworkSteering",
+		"second_canvas": true
+	},
+	{
 		"group": "Other examples",
 		"name": "Pixel-perfect hit-test",
 		"file_name": "others_hittest",

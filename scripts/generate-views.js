@@ -24,7 +24,10 @@ for(let group of allGroups) {
 
     for(let example of groupExamples) {
         indexContent += `<a href='./${example.file_name}.html'>${example.name}</a>`;
-        const exampleContent = exampleTemplate.replace('#TITLE', example.name).replace('#OBJECT', example.object);
+        let exampleContent = exampleTemplate.replace('#TITLE', example.name).replace('#OBJECT', example.object);
+        if(example.second_canvas) {
+            exampleContent = exampleContent.replace('<!-- SECOND_CANVAS -->', '<canvas id="gameCanvas2" width="800" height="600"></canvas>');
+        }
         fs.writeFileSync(path.resolve('view', `${example.file_name}.html`), exampleContent);
         console.log(example.file_name);
     }

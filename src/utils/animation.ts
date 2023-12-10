@@ -1,5 +1,5 @@
-import * as ECS from '../../../libs/pixi-ecs';
-import { Interpolation } from '../../../libs/aph-math';
+import * as ECS from '../../libs/pixi-ecs';
+import { Interpolation } from '../../libs/aph-math';
 
 export type InterpolationType = 'linear' | 'easeinout' | 'quadraticEaseIn' | 'quadraticEaseOut' | 'quadraticEaseInOut' | 'sineIn' | 'sineOut' | 'expoIn';
 

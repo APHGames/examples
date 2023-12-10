@@ -1,6 +1,10 @@
 # Changelog
 All notable changes to this project/subject will be documented in this file.
 
+## [6.4.0] - 2023-12-16
+### Added
+Networking emulator
+
 ## [6.3.7] - 2023-11-25
 ### Added
 Path explorer example

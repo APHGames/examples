@@ -1,7 +1,7 @@
 {
   "name": "aphgames-examples",
   "author": "Adam Vesecký",
-  "version": "6.3.7",
+  "version": "6.4.0",
   "license": "MIT",
   "scripts": {
     "dev": "node scripts/prebuild-project && parcel view/index.html --dist-dir build --no-cache",
