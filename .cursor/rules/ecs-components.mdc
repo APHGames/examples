@@ -1,0 +1,89 @@
+---
+description: Guidelines for creating and working with ECS components
+globs: ["**/*component*.ts", "libs/pixi-ecs/components/**/*.ts", "src/**/components/**/*.ts"]
+alwaysApply: false
+---
+
+# ECS Component Guidelines
+
+## Component Structure
+
+All components must extend `ECS.Component`:
+
+```typescript
+import * as ECS from '../../../libs/pixi-ecs';
+
+export class MyComponent extends ECS.Component {
+  // Properties
+  private myProperty: number = 0;
+
+  constructor() {
+    super();
+    // Set fixed frequency if needed
+    // this.fixedFrequency = 60;
+  }
+
+  onInit() {
+    // Initialize once, subscribe to messages
+    this.subscribe('MY_MESSAGE');
+  }
+
+  onUpdate(delta: number, absolute: number) {
+    // Update every frame
+  }
+
+  onMessage(msg: ECS.Message) {
+    // Handle messages
+  }
+}
+```
+
+## Component Best Practices
+
+### DO:
+- Keep components focused (single responsibility)
+- Use messages for cross-component communication
+- Use `fixedFrequency` for game logic (not frame-dependent)
+- Subscribe to messages in `onInit()`
+- Clean up in `onRemove()` if needed
+
+### DON'T:
+- Don't store references to other components
+- Don't update other objects directly (use messages)
+- Don't make components too large (split into multiple)
+- Don't use components as data containers (use attributes)
+
+## Component Communication
+
+**Always use messages for communication:**
+
+```typescript
+// Sender
+this.sendMessage('PLAYER_DIED', { cause: 'enemy' });
+
+// Receiver
+onInit() {
+  this.subscribe('PLAYER_DIED');
+}
+
+onMessage(msg: ECS.Message) {
+  if (msg.action === 'PLAYER_DIED') {
+    // Handle death
+  }
+}
+```
+
+## Fixed Timestep
+
+For consistent game logic, use `fixedFrequency`:
+
+```typescript
+constructor() {
+  super();
+  this.fixedFrequency = 60; // Update at 60 Hz
+}
+
+onFixedUpdate(delta: number, absolute: number) {
+  // Consistent behavior regardless of frame rate
+}
+```

@@ -1,0 +1,105 @@
+---
+description: Architecture patterns for games in this project
+globs: ["src/game_*/**/*.ts"]
+alwaysApply: false
+---
+
+# Game Architecture Patterns
+
+## Directory Structure
+
+All games follow this structure:
+
+```
+src/game_[name]/
+├── index.ts              # Main entry (extends ECSExample)
+├── factory.ts            # Scene factory
+├── constants.ts          # Enums, messages, constants
+├── model/                # Data structures and game logic
+├── components/           # ECS components
+└── [assets]              # Game-specific assets
+```
+
+## Main Entry Point
+
+```typescript
+import { ECSExample } from '../utils/APHExample';
+import * as ECS from '../../libs/pixi-ecs';
+
+export class MyGame extends ECSExample {
+  constructor() {
+    super({
+      width: 800,
+      height: 600,
+      backgroundColor: 0x000000
+    });
+  }
+
+  load() {
+    // Load assets
+    PIXI.Loader.shared
+      .add('assets', 'path/to/assets')
+      .load(() => this.onLoaded());
+  }
+
+  onLoaded() {
+    // Create factory and start
+    const factory = new Factory(this.engine.scene);
+    factory.loadGame();
+  }
+}
+```
+
+## Factory Pattern
+
+Use factories for scene management:
+
+```typescript
+export class Factory {
+  private scene: ECS.Scene;
+
+  loadGame() {
+    this.scene.clearScene();
+    this.createEntities();
+    this.addGlobalComponents();
+  }
+
+  private createEntities() {
+    // Use builders to create entities
+  }
+}
+```
+
+## Observable State Pattern
+
+State objects send messages on changes:
+
+```typescript
+class ObservableState {
+  protected scene: ECS.Scene;
+
+  protected sendStateChange(action: string, data?: any) {
+    this.scene.sendMessage(action, null, data);
+  }
+}
+
+class GameState extends ObservableState {
+  private _score = 0;
+
+  set score(value: number) {
+    const old = this._score;
+    this._score = value;
+    if (old !== value) {
+      this.sendStateChange('STATE_CHANGE_SCORE', { score: value });
+    }
+  }
+}
+```
+
+## Message Naming
+
+Use consistent message naming:
+- `STATE_CHANGE_*` for state changes
+- `LEVEL_*` for level events
+- `PLAYER_*` for player events
+- ALL_CAPS with underscores

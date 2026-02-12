@@ -1,0 +1,51 @@
+---
+description: PixiJS settings for pixel art games
+globs: ["src/game_*/**/*.ts", "src/**/index.ts"]
+alwaysApply: false
+---
+
+# Pixel Art Rendering Settings
+
+## Required Settings
+
+For pixel art games, always configure PixiJS with these settings:
+
+```typescript
+import * as PIXI from 'pixi.js';
+
+// BEFORE creating the engine/app
+PIXI.settings.SCALE_MODE = PIXI.SCALE_MODES.NEAREST;
+PIXI.settings.ROUND_PIXELS = true;
+```
+
+## Why These Settings
+
+- `SCALE_MODE.NEAREST` - Prevents blurry sprites when scaling
+- `ROUND_PIXELS` - Prevents sub-pixel rendering artifacts
+
+## Example Usage
+
+```typescript
+export class MyPixelArtGame extends ECSExample {
+  constructor() {
+    // Set pixel art settings FIRST
+    PIXI.settings.SCALE_MODE = PIXI.SCALE_MODES.NEAREST;
+    PIXI.settings.ROUND_PIXELS = true;
+
+    // Then call super with config
+    super({
+      width: 320,
+      height: 200,
+      resolution: 3, // Scale up for crisp pixels
+      backgroundColor: 0x000000
+    });
+  }
+}
+```
+
+## Common Resolutions
+
+Retro-style games typically use:
+- 320×200 (scaled 3x = 960×600) - Classic DOS
+- 320×240 (scaled 2x/3x)
+- 256×224 (scaled 3x) - NES style

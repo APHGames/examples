@@ -1,0 +1,69 @@
+---
+description: Naming conventions for this project
+alwaysApply: true
+---
+
+# Naming Conventions
+
+## Files
+
+- **Class files**: kebab-case matching class name
+  - `game-controller.ts` for `GameController`
+  - `player-state.ts` for `PlayerState`
+- **Index files**: `index.ts` for entry points
+- **Constants**: `constants.ts`
+- **Utilities**: `helpers.ts`, `selectors.ts`
+
+## Classes & Interfaces
+
+- **PascalCase** for classes and interfaces
+- **Suffix conventions**:
+  - Components: `[Name]Component` or `[Name]Controller`
+  - States: `[Name]State`
+  - Data: `[Name]Data`
+  - Factories: `Factory` or `[Name]Factory`
+
+## Messages
+
+- **ALL_CAPS** with underscores
+- **Prefix conventions**:
+  - `STATE_CHANGE_*` for state changes
+  - `LEVEL_*` for level events
+  - `PLAYER_*` for player actions
+  - `GAME_*` for game events
+
+```typescript
+enum Messages {
+  STATE_CHANGE_SCORE = 'STATE_CHANGE_SCORE',
+  LEVEL_COMPLETED = 'LEVEL_COMPLETED',
+  PLAYER_DIED = 'PLAYER_DIED',
+  GAME_OVER = 'GAME_OVER'
+}
+```
+
+## Tags, Attributes, Flags
+
+- **Tags**: lowercase, descriptive
+  - `'player'`, `'enemy'`, `'bullet'`, `'pickable'`
+
+- **Attributes**: camelCase
+  - `'velocity'`, `'maxHealth'`, `'currentSpeed'`
+
+- **Flags**: Use enum/constants
+  - `PlayerFlags.ALIVE`, `EnemyFlags.AGGRESSIVE`
+
+- **States**: Use enum
+  - `PlayerStates.IDLE`, `PlayerStates.RUNNING`
+
+## Variables
+
+- **camelCase** for variables and functions
+- **UPPER_SNAKE_CASE** for constants
+
+```typescript
+const GAME_SPEED = 1;
+const ANIM_FREQUENCY = 10;
+
+let currentScore = 0;
+let playerPosition = new Vector(0, 0);
+```

@@ -1,0 +1,41 @@
+---
+description: Always read PRD.md before starting work on this project
+alwaysApply: true
+---
+
+# Project Documentation
+
+Before making any changes or extending this project, **always read the PRD.md file first**.
+
+## Why PRD.md is Critical
+
+The `PRD.md` file contains:
+- Complete architecture overview of the ECS library
+- Detailed documentation of all three games (Tetris, Vlak, Block Breaker)
+- Build system and project structure
+- Development guidelines and coding standards
+- Extension points for adding new features
+
+## When to Read PRD.md
+
+**ALWAYS read PRD.md when:**
+- Starting any new task in this project
+- Adding new games or examples
+- Modifying the ECS library
+- Extending existing games
+- Debugging issues
+- Understanding how components work
+- Learning about the message system
+- Understanding the factory pattern used in games
+
+## Quick Reference
+
+After reading PRD.md, you'll understand:
+- How the ECS (Entity-Component-System) pattern works
+- The lifecycle of components and game objects
+- The message-driven architecture
+- How to use Builder pattern for creating entities
+- How each game implements its specific mechanics
+- The common patterns used across all games
+
+**Read PRD.md first, then proceed with your task.**

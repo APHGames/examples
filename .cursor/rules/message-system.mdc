@@ -1,0 +1,103 @@
+---
+description: Guidelines for using the ECS message system
+globs: ["**/*.ts"]
+alwaysApply: false
+---
+
+# ECS Message System
+
+## Message-Driven Architecture
+
+Use messages for all cross-component communication.
+
+## Defining Messages
+
+Define messages in `constants.ts`:
+
+```typescript
+export enum Messages {
+  PLAYER_DIED = 'PLAYER_DIED',
+  ITEM_COLLECTED = 'ITEM_COLLECTED',
+  LEVEL_COMPLETED = 'LEVEL_COMPLETED'
+}
+```
+
+## Sending Messages
+
+```typescript
+// Simple message
+this.sendMessage(Messages.PLAYER_DIED);
+
+// Message with data
+this.sendMessage(Messages.ITEM_COLLECTED, { 
+  itemType: 'coin',
+  value: 10 
+});
+
+// Message with tag filter (only to objects with tag)
+this.sendMessage(Messages.TAKE_DAMAGE, { amount: 10 }, 'enemy');
+```
+
+## Receiving Messages
+
+```typescript
+class MyComponent extends ECS.Component {
+  onInit() {
+    // Subscribe to specific messages
+    this.subscribe(Messages.PLAYER_DIED);
+    this.subscribe(Messages.ITEM_COLLECTED);
+    
+    // Or subscribe to all messages (use sparingly)
+    // this.subscribe(ECS.Messages.ANY);
+  }
+
+  onMessage(msg: ECS.Message) {
+    switch (msg.action) {
+      case Messages.PLAYER_DIED:
+        // Handle player death
+        break;
+      case Messages.ITEM_COLLECTED:
+        const { itemType, value } = msg.data;
+        // Handle item collection
+        break;
+    }
+  }
+}
+```
+
+## Message Payload
+
+Access message properties:
+
+```typescript
+onMessage(msg: ECS.Message) {
+  msg.action;      // Message type
+  msg.data;        // Payload data
+  msg.component;   // Sender component
+  msg.gameObject;  // Associated game object
+  msg.responses;   // Collected responses
+  msg.expired;     // Stop propagation flag
+}
+```
+
+## Best Practices
+
+### DO:
+- Use messages for all cross-component communication
+- Define message types in constants
+- Include relevant data in message payload
+- Document expected payload structure
+
+### DON'T:
+- Don't subscribe to `Messages.ANY` unless absolutely necessary
+- Don't send messages in tight loops (performance)
+- Don't use messages for internal component logic
+- Don't store message references (they can be reused)
+
+## Scene-Level Messages
+
+Send messages from scene or non-component code:
+
+```typescript
+scene.sendMessage(Messages.GAME_STARTED, gameData);
+```

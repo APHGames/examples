@@ -1,0 +1,81 @@
+---
+description: Guidelines for using the ECS Builder pattern
+globs: ["**/factory.ts", "**/builders.ts", "**/factory/**/*.ts", "**/builders/**/*.ts"]
+alwaysApply: false
+---
+
+# ECS Builder Pattern
+
+## Creating Entities
+
+Always use the Builder pattern for creating entities:
+
+```typescript
+const player = new ECS.Builder(scene)
+  .withName('player')
+  .asSprite(texture)
+  .localPos(100, 200)
+  .scale(2, 2)
+  .anchor(0.5, 0.5)
+  .withTag('player')
+  .withFlag(PlayerFlags.ALIVE)
+  .withState(PlayerStates.IDLE)
+  .withAttribute('health', 100)
+  .withComponent(new PlayerController())
+  .build();
+```
+
+## Builder Method Categories
+
+### Object Type (choose one)
+- `asContainer()` - Empty container
+- `asSprite(texture)` - Sprite
+- `asText(text, style)` - Text
+- `asGraphics()` - Graphics
+- etc.
+
+### Position & Transform
+- `localPos(x, y)` - Position relative to parent
+- `globalPos(x, y)` - World position
+- `scale(x, y?)` - Scale
+- `anchor(x, y)` - Anchor point
+- `rotation(angle)` - Rotation
+
+### Metadata
+- `withName(name)` - Name for searching
+- `withTag(tag)` - Tag for grouping
+- `withFlag(flag)` - Bit flag
+- `withState(state)` - State ID
+
+### Behavior
+- `withComponent(component)` - Add component
+- `withAttribute(key, value)` - Add attribute
+
+### Hierarchy
+- `withParent(parent)` - Set parent
+- `withChild(builder)` - Add child
+
+## Factory Functions
+
+Extract entity creation into reusable functions:
+
+```typescript
+export function createPlayer(scene: ECS.Scene, x: number, y: number) {
+  return new ECS.Builder(scene)
+    .withName('player')
+    .asSprite(PIXI.Texture.from('player'))
+    .localPos(x, y)
+    .withTag('player')
+    .withComponent(new PlayerController())
+    .build();
+}
+```
+
+## Global Components (Systems)
+
+Add systems as global components:
+
+```typescript
+scene.addGlobalComponent(new CollisionSystem());
+scene.addGlobalComponent(new KeyInputComponent());
+```
