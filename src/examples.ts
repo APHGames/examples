@@ -61,6 +61,7 @@ import { ProgressParallel, ProgressSequential } from './others/progress';
 import { BlockBreaker } from './game_blockbreaker/block-breaker';
 import { Vlak } from './game_vlak';
 import { Tetris } from './game_tetris';
+import { ShooterGame } from './game_shooter/index';
 
 
 // create a global variable with respective examples
@@ -132,4 +133,5 @@ import { Tetris } from './game_tetris';
 	BlockBreaker,
 	Vlak,
 	Tetris,
+	ShooterGame,
 };

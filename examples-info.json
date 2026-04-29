@@ -398,5 +398,11 @@
 		"name": "Vlak",
 		"file_name": "game_tetris",
 		"object": "Vlak"
+	},
+	{
+		"group": "Minigames",
+		"name": "Neon Shooter",
+		"file_name": "game_shooter",
+		"object": "ShooterGame"
 	}
 ]
