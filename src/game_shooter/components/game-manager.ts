@@ -133,6 +133,102 @@ function drawProjectile(g: PIXI.Graphics): void {
 }
 
 // ============================================================
+// Particle system — purely visual, no model state
+// ============================================================
+
+interface Particle {
+	g: PIXI.Graphics;
+	vx: number;
+	vy: number;
+	life: number;
+	maxLife: number;
+}
+
+class ParticleSystem {
+	private particles: Particle[] = [];
+	private layer: PIXI.Container;
+	private rng: { nextRange: (a: number, b: number) => number };
+
+	constructor(layer: PIXI.Container) {
+		this.layer = layer;
+		// Lightweight inline RNG so we don't depend on SeededRandom
+		let seed = 0xdeadbeef;
+		this.rng = {
+			nextRange: (a: number, b: number) => {
+				seed = ((seed * 1664525 + 1013904223) >>> 0);
+				return a + (seed / 0x100000000) * (b - a);
+			},
+		};
+	}
+
+	spawnExplosion(x: number, y: number, color: number, count: number): void {
+		for (let i = 0; i < count; i++) {
+			const angle = this.rng.nextRange(0, Math.PI * 2);
+			const speed = this.rng.nextRange(60, 260);
+			const radius = this.rng.nextRange(2, 5);
+			const lifetime = this.rng.nextRange(0.3, 0.7);
+
+			const g = new PIXI.Graphics();
+			g.beginFill(color, 1);
+			g.drawCircle(0, 0, radius);
+			g.endFill();
+			g.x = x;
+			g.y = y;
+			this.layer.addChild(g);
+
+			this.particles.push({
+				g,
+				vx: Math.cos(angle) * speed,
+				vy: Math.sin(angle) * speed,
+				life: lifetime,
+				maxLife: lifetime,
+			});
+		}
+	}
+
+	update(dt: number): void {
+		const surviving: Particle[] = [];
+		for (const p of this.particles) {
+			p.life -= dt;
+			if (p.life <= 0) {
+				p.g.parent?.removeChild(p.g);
+				p.g.destroy();
+				continue;
+			}
+			p.g.x += p.vx * dt;
+			p.g.y += p.vy * dt;
+			p.g.alpha = p.life / p.maxLife;
+			// Shrink slightly as it fades
+			const s = p.life / p.maxLife;
+			p.g.scale.set(s);
+			surviving.push(p);
+		}
+		this.particles = surviving;
+	}
+
+	destroy(): void {
+		for (const p of this.particles) {
+			p.g.parent?.removeChild(p.g);
+			p.g.destroy();
+		}
+		this.particles = [];
+	}
+}
+
+// Per-enemy-type explosion color lookup
+function explosionColor(type: EnemyType): number {
+	switch (type) {
+	case EnemyType.DRIFTER: return 0x00ffff;
+	case EnemyType.PURSUER: return 0xff2244;
+	case EnemyType.SPINNER: return 0xffee00;
+	case EnemyType.SEGMENTED: return 0xcc44ff;
+	case EnemyType.SPLITTER: return 0x00ff66;
+	case EnemyType.GRAVITY_WELL: return 0xff8800;
+	default: return 0xffffff;
+	}
+}
+
+// ============================================================
 // GameManager ECS component
 // ============================================================
 
@@ -151,6 +247,7 @@ export class GameManager extends ECS.Component {
 	private arenaLayer: PIXI.Container;
 	private entityLayer: PIXI.Container;
 	private hudLayer: PIXI.Container;
+	private particles: ParticleSystem;
 
 	private mouseAimAngle = 0;
 	private mouseHandler: (e: MouseEvent) => void;
@@ -177,6 +274,9 @@ export class GameManager extends ECS.Component {
 		// HUD
 		this.hudController = new HudController(this.hudLayer, this.model);
 
+		// Particle system (draws into entity layer)
+		this.particles = new ParticleSystem(this.entityLayer as unknown as PIXI.Container);
+
 		// Mouse aim
 		this.mouseHandler = (e: MouseEvent) => {
 			const canvas = this.scene.app.view as HTMLCanvasElement;
@@ -198,6 +298,7 @@ export class GameManager extends ECS.Component {
 
 	onRemove() {
 		(this.scene.app.view as HTMLCanvasElement).removeEventListener('mousemove', this.mouseHandler);
+		this.particles.destroy();
 	}
 
 	private drawArena(): void {
@@ -227,30 +328,33 @@ export class GameManager extends ECS.Component {
 		if (keys.isKeyPressed(ECS.Keys.KEY_A)) moveX -= 1;
 		if (keys.isKeyPressed(ECS.Keys.KEY_D)) moveX += 1;
 
-		// Arrow keys for aim (twin-stick, independent of WASD movement)
-		let aimAngle = this.mouseAimAngle;
-		let aimX = 0;
-		let aimY = 0;
-		if (keys.isKeyPressed(ECS.Keys.KEY_UP)) aimY -= 1;
-		if (keys.isKeyPressed(ECS.Keys.KEY_DOWN)) aimY += 1;
-		if (keys.isKeyPressed(ECS.Keys.KEY_LEFT)) aimX -= 1;
-		if (keys.isKeyPressed(ECS.Keys.KEY_RIGHT)) aimX += 1;
-		if (aimX !== 0 || aimY !== 0) {
-			aimAngle = Math.atan2(aimY, aimX);
+		// Aim follows movement direction; retain last angle when stationary
+		let aimAngle = this.model.player.aimAngle;
+		if (moveX !== 0 || moveY !== 0) {
+			aimAngle = Math.atan2(moveY, moveX);
 		}
 
-		const fire = keys.isKeyPressed(ECS.Keys.KEY_SPACE);
+		// Arrow keys trigger auto-fire; Space is kept as secondary trigger
+		const fire = keys.isKeyPressed(ECS.Keys.KEY_UP)
+			|| keys.isKeyPressed(ECS.Keys.KEY_DOWN)
+			|| keys.isKeyPressed(ECS.Keys.KEY_LEFT)
+			|| keys.isKeyPressed(ECS.Keys.KEY_RIGHT)
+			|| keys.isKeyPressed(ECS.Keys.KEY_SPACE);
+
 		const bomb = keys.isKeyPressed(ECS.Keys.KEY_B);
 
 		return { moveX, moveY, aimAngle, fire, bomb };
 	}
 
 	onUpdate(delta: number): void {
+		const dt = delta / 1000;
+
+		// Particles keep animating even after game over
+		this.particles.update(dt);
+
 		if (this.model.state !== GameState.PLAYING) return;
 
-		const dt = delta / 1000;
 		const input = this.buildInputState();
-
 		const { events } = this.simulator.update(this.model, input, dt);
 		this.processEvents(events);
 		this.syncVisuals();
@@ -263,6 +367,12 @@ export class GameManager extends ECS.Component {
 				this.sendMessage(Messages.PLAYER_HIT);
 				this.sendMessage(Messages.LIVES_CHANGED);
 				this.sendMessage(Messages.MULTIPLIER_CHANGED);
+				// Flash explosion at player respawn center
+				this.particles.spawnExplosion(
+					this.model.player.position.x,
+					this.model.player.position.y,
+					0xff6688, 30,
+				);
 				break;
 			case SimEventType.MULTIPLIER_CHANGED:
 				this.sendMessage(Messages.MULTIPLIER_CHANGED);
@@ -275,10 +385,26 @@ export class GameManager extends ECS.Component {
 				break;
 			case SimEventType.BOMB_USED:
 				this.sendMessage(Messages.BOMBS_CHANGED);
+				// Large white flash at player position
+				this.particles.spawnExplosion(
+					this.model.player.position.x,
+					this.model.player.position.y,
+					0xffffff, 60,
+				);
 				break;
 			case SimEventType.ENEMY_KILLED:
 				this.sendMessage(Messages.SCORE_CHANGED);
 				this.removeEnemyVisual(evt.enemyId);
+				if (evt.position) {
+					this.particles.spawnExplosion(evt.position.x, evt.position.y, explosionColor(evt.enemyType), 18);
+				}
+				break;
+			case SimEventType.SEGMENT_DESTROYED:
+				// Partial score already applied in simulator; just show explosion
+				this.sendMessage(Messages.SCORE_CHANGED);
+				if (evt.position) {
+					this.particles.spawnExplosion(evt.position.x, evt.position.y, 0xcc44ff, 8);
+				}
 				break;
 			case SimEventType.GAME_OVER:
 				this.sendMessage(Messages.GAME_STATE_CHANGED);

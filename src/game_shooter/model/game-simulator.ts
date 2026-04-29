@@ -24,6 +24,7 @@ import {
 	ENEMY_SPLITTER_FRAGMENT_COUNT, ENEMY_SPLITTER_FRAGMENT_RADIUS, ENEMY_SPLITTER_FRAGMENT_SPEED, ENEMY_SPLITTER_FRAGMENT_SCORE,
 	ENEMY_GRAVITY_WELL_RADIUS, ENEMY_GRAVITY_WELL_PULL_RADIUS, ENEMY_GRAVITY_WELL_PULL_STRENGTH,
 	ENEMY_GRAVITY_WELL_SCORE, ENEMY_GRAVITY_WELL_HP,
+	MULTISHOT_SCORE_THRESHOLD, MULTISHOT_5_SPREAD, MULTISHOT_10_SPREAD,
 } from '../constants';
 
 import {
@@ -41,11 +42,31 @@ export interface SimEvent {
 	enemyType?: EnemyType;
 	scoreGained?: number;
 	newMultiplier?: number;
+	/** World-space position of the event (kill/segment destroy site). Used for particle effects. */
+	position?: Vec2;
 }
 
 export interface SimResult {
 	model: GameModel;
 	events: SimEvent[];
+}
+
+// ============================================================
+// Weapon mode helpers
+// ============================================================
+
+interface WeaponMode {
+	count: number;
+	spread: number;
+	/** When true each shot gets a small random jitter on its angle. */
+	randomize: boolean;
+}
+
+function getWeaponMode(score: number): WeaponMode {
+	const tier = Math.floor(score / MULTISHOT_SCORE_THRESHOLD);
+	if (tier === 0) return { count: 1, spread: 0, randomize: false };
+	if (tier % 2 === 1) return { count: 5,  spread: MULTISHOT_5_SPREAD,  randomize: true };
+	return                    { count: 10, spread: MULTISHOT_10_SPREAD, randomize: false };
 }
 
 // ============================================================
@@ -273,7 +294,7 @@ export class GameSimulator {
 		model.player.aimAngle = input.aimAngle;
 		model.player.fireCooldown = Math.max(0, model.player.fireCooldown - dt);
 		if (input.fire && model.player.fireCooldown <= 0) {
-			this.spawnProjectile(model);
+			this.spawnProjectiles(model);
 		}
 
 		// ── 3. Invulnerability timer ───────────────────────────────────
@@ -359,26 +380,42 @@ export class GameSimulator {
 		}
 	}
 
-	// ── Step 2 helper: spawn projectile ───────────────────────────────
+	// ── Step 2 helper: spawn projectiles (weapon-mode aware) ──────────
 
-	private spawnProjectile(model: GameModel): void {
+	private spawnProjectiles(model: GameModel): void {
 		const { position, aimAngle } = model.player;
-		const vel: Vec2 = {
-			x: Math.cos(aimAngle) * PROJECTILE_SPEED,
-			y: Math.sin(aimAngle) * PROJECTILE_SPEED,
-		};
-		// Offset spawn slightly ahead of the player so it doesn't immediately collide
+		const mode = getWeaponMode(model.score);
 		const spawnOffset = PLAYER_RADIUS + PROJECTILE_RADIUS + 2;
-		const proj: ProjectileData = {
-			id: model.nextProjectileId++,
-			position: {
-				x: position.x + Math.cos(aimAngle) * spawnOffset,
-				y: position.y + Math.sin(aimAngle) * spawnOffset,
-			},
-			velocity: vel,
-			lifetime: PROJECTILE_LIFETIME,
-		};
-		model.projectiles.push(proj);
+
+		for (let i = 0; i < mode.count; i++) {
+			let angle: number;
+			if (mode.count === 1) {
+				angle = aimAngle;
+			} else {
+				// Distribute evenly across the spread arc
+				const t = i / (mode.count - 1) - 0.5; // -0.5 .. +0.5
+				angle = aimAngle + t * mode.spread;
+				if (mode.randomize) {
+					// Slight per-shot random jitter for the 5-shot tier
+					angle += model.rng.nextRange(-0.05, 0.05);
+				}
+			}
+
+			const proj: ProjectileData = {
+				id: model.nextProjectileId++,
+				position: {
+					x: position.x + Math.cos(angle) * spawnOffset,
+					y: position.y + Math.sin(angle) * spawnOffset,
+				},
+				velocity: {
+					x: Math.cos(angle) * PROJECTILE_SPEED,
+					y: Math.sin(angle) * PROJECTILE_SPEED,
+				},
+				lifetime: PROJECTILE_LIFETIME,
+			};
+			model.projectiles.push(proj);
+		}
+
 		model.player.fireCooldown = FIRE_RATE;
 	}
 
@@ -507,40 +544,90 @@ export class GameSimulator {
 		const enemiesKilled = new Set<number>();
 		const projUsed = new Set<number>();
 
+		// Score awarded per SEGMENTED segment/head piece
+		const segmentScore = Math.floor(ENEMY_SEGMENTED_SCORE / (ENEMY_SEGMENTED_SEGMENTS + 1));
+
 		for (const proj of model.projectiles) {
 			for (const enemy of model.enemies) {
 				if (enemiesKilled.has(enemy.id)) continue;
 				if (projUsed.has(proj.id)) continue;
 
-				// Segmented: also check collision with body segments
-				let hit = circlesOverlap(proj.position, PROJECTILE_RADIUS, enemy.position, enemy.radius);
-				if (!hit && enemy.type === EnemyType.SEGMENTED) {
-					for (const seg of enemy.segments) {
-						if (circlesOverlap(proj.position, PROJECTILE_RADIUS, seg, enemy.radius)) {
-							hit = true;
+				if (enemy.type === EnemyType.SEGMENTED) {
+					// ── Per-part collision for segmented enemies ──────────
+					const headHit = circlesOverlap(proj.position, PROJECTILE_RADIUS, enemy.position, enemy.radius);
+					if (headHit) {
+						projUsed.add(proj.id);
+						const headPos = vec2Clone(enemy.position);
+						if (enemy.segments.length > 0) {
+							// Promote first body segment to head
+							enemy.position = enemy.segments.shift();
+						} else {
+							// No segments left — the whole creature is dead
+							enemiesKilled.add(enemy.id);
+							events.push({
+								type: SimEventType.ENEMY_KILLED,
+								enemyId: enemy.id,
+								enemyType: EnemyType.SEGMENTED,
+								scoreGained: segmentScore,
+								position: headPos,
+							});
+						}
+						// Always emit a segment-destroyed event for the explosion
+						if (!enemiesKilled.has(enemy.id)) {
+							events.push({
+								type: SimEventType.SEGMENT_DESTROYED,
+								enemyId: enemy.id,
+								enemyType: EnemyType.SEGMENTED,
+								scoreGained: segmentScore,
+								position: headPos,
+							});
+						}
+						continue;
+					}
+
+					// Check body segments
+					let bodyHitIdx = -1;
+					for (let s = 0; s < enemy.segments.length; s++) {
+						if (circlesOverlap(proj.position, PROJECTILE_RADIUS, enemy.segments[s], enemy.radius)) {
+							bodyHitIdx = s;
 							break;
 						}
 					}
-				}
-
-				if (hit) {
-					projUsed.add(proj.id);
-					enemy.hp--;
-					if (enemy.hp <= 0) {
-						enemiesKilled.add(enemy.id);
+					if (bodyHitIdx !== -1) {
+						projUsed.add(proj.id);
+						const segPos = vec2Clone(enemy.segments[bodyHitIdx]);
+						enemy.segments.splice(bodyHitIdx, 1);
 						events.push({
-							type: SimEventType.ENEMY_KILLED,
+							type: SimEventType.SEGMENT_DESTROYED,
 							enemyId: enemy.id,
-							enemyType: enemy.type,
-							scoreGained: enemy.splitterGeneration === 1 ? ENEMY_SPLITTER_FRAGMENT_SCORE : ENEMY_SCORE[enemy.type],
+							enemyType: EnemyType.SEGMENTED,
+							scoreGained: segmentScore,
+							position: segPos,
 						});
-						// Splitter fragments
-						if (enemy.type === EnemyType.SPLITTER && enemy.splitterGeneration === 0) {
-							for (let f = 0; f < ENEMY_SPLITTER_FRAGMENT_COUNT; f++) {
-								const angle = (f / ENEMY_SPLITTER_FRAGMENT_COUNT) * Math.PI * 2;
-								const frag = buildSplitterFragment(model, enemy.position, angle);
-								model.enemies.push(frag);
-								events.push({ type: SimEventType.ENEMY_SPAWNED, enemyId: frag.id, enemyType: EnemyType.DRIFTER });
+					}
+				} else {
+					// ── Standard single-unit collision ────────────────────
+					const hit = circlesOverlap(proj.position, PROJECTILE_RADIUS, enemy.position, enemy.radius);
+					if (hit) {
+						projUsed.add(proj.id);
+						enemy.hp--;
+						if (enemy.hp <= 0) {
+							enemiesKilled.add(enemy.id);
+							events.push({
+								type: SimEventType.ENEMY_KILLED,
+								enemyId: enemy.id,
+								enemyType: enemy.type,
+								scoreGained: enemy.splitterGeneration === 1 ? ENEMY_SPLITTER_FRAGMENT_SCORE : ENEMY_SCORE[enemy.type],
+								position: vec2Clone(enemy.position),
+							});
+							// Splitter fragments
+							if (enemy.type === EnemyType.SPLITTER && enemy.splitterGeneration === 0) {
+								for (let f = 0; f < ENEMY_SPLITTER_FRAGMENT_COUNT; f++) {
+									const angle = (f / ENEMY_SPLITTER_FRAGMENT_COUNT) * Math.PI * 2;
+									const frag = buildSplitterFragment(model, enemy.position, angle);
+									model.enemies.push(frag);
+									events.push({ type: SimEventType.ENEMY_SPAWNED, enemyId: frag.id, enemyType: EnemyType.DRIFTER });
+								}
 							}
 						}
 					}

@@ -24,6 +24,15 @@ export const PROJECTILE_LIFETIME = 1.8; // seconds
 export const PROJECTILE_RADIUS = 4;
 
 // ============================================================
+// Multi-shot weapon tiers (score-gated, alternating every 10k)
+// ============================================================
+export const MULTISHOT_SCORE_THRESHOLD = 10000;
+// 30° total fan for the 5-shot tier (slight dispersion)
+export const MULTISHOT_5_SPREAD = Math.PI / 6;
+// 60° total fan for the 10-shot tier (uniform, no random jitter)
+export const MULTISHOT_10_SPREAD = Math.PI / 3;
+
+// ============================================================
 // Enemy configuration
 // ============================================================
 export const ENEMY_MIN_SPAWN_DISTANCE = 120; // minimum distance from player when spawning
@@ -70,19 +79,19 @@ export const ENEMY_GRAVITY_WELL_HP = 3;
 // ============================================================
 // Spawning / Difficulty
 // ============================================================
-export const SPAWN_INTERVAL_INITIAL = 3.0; // seconds
+export const SPAWN_INTERVAL_INITIAL = 2.0; // seconds
 export const SPAWN_INTERVAL_MIN = 0.5;
 export const SPAWN_INTERVAL_DECAY = 0.25; // seconds less per minute elapsed
-export const SPAWN_MAX_ENEMIES_INITIAL = 6;
+export const SPAWN_MAX_ENEMIES_INITIAL = 8;
 export const SPAWN_MAX_ENEMIES_CAP = 35;
 export const SPAWN_MAX_ENEMIES_GROWTH = 3; // extra per minute elapsed
 
 // Elapsed-time (seconds) at which each enemy type becomes available
-export const ENEMY_UNLOCK_PURSUER = 30;
-export const ENEMY_UNLOCK_SPINNER = 60;
-export const ENEMY_UNLOCK_SEGMENTED = 90;
-export const ENEMY_UNLOCK_SPLITTER = 120;
-export const ENEMY_UNLOCK_GRAVITY_WELL = 150;
+export const ENEMY_UNLOCK_PURSUER = 12;
+export const ENEMY_UNLOCK_SPINNER = 22;
+export const ENEMY_UNLOCK_SEGMENTED = 35;
+export const ENEMY_UNLOCK_SPLITTER = 50;
+export const ENEMY_UNLOCK_GRAVITY_WELL = 70;
 
 // ============================================================
 // Scoring / Multiplier
@@ -126,6 +135,8 @@ export enum SimEventType {
 	MULTIPLIER_CHANGED = 'MULTIPLIER_CHANGED',
 	GAME_OVER = 'GAME_OVER',
 	ENEMY_SPAWNED = 'ENEMY_SPAWNED',
+	/** One segment (head or body piece) of a SEGMENTED enemy was destroyed */
+	SEGMENT_DESTROYED = 'SEGMENT_DESTROYED',
 }
 
 export enum Messages {
