@@ -32,7 +32,7 @@ export interface TestResult {
 type TestFn = () => TestResult;
 
 const DT = 1 / 60; // 60 fps time step in seconds
-const NOOP_INPUT: InputState = { moveX: 0, moveY: 0, aimAngle: 0, fire: false, bomb: false };
+const NOOP_INPUT: InputState = { moveX: 0, moveY: 0, aimAngle: 0, shootAngle: 0, fire: false, bomb: false };
 
 function assert(condition: boolean, message: string): void {
 	if (!condition) throw new Error(message);
@@ -92,7 +92,7 @@ const test_survival: TestFn = () => runTest('Survival: score increases when enem
 		radius: ENEMY_DRIFTER_RADIUS,
 	});
 
-	const shootInput: InputState = { moveX: 0, moveY: 0, aimAngle, fire: true, bomb: false };
+	const shootInput: InputState = { moveX: 0, moveY: 0, aimAngle, shootAngle: aimAngle, fire: true, bomb: false };
 	const initialLives = model.lives;
 
 	// Shoot for enough frames for the projectile to traverse 60px at 480px/s ≈ 0.125s ≈ 8 frames
@@ -247,7 +247,7 @@ const test_replay: TestFn = () => runTest('Replay: identical seed + inputs produ
 	const SEED = 42;
 	const FRAMES = 300; // ~5 seconds at 60fps
 
-	const shootInput: InputState = { moveX: 0.5, moveY: 0, aimAngle: 0.3, fire: true, bomb: false };
+	const shootInput: InputState = { moveX: 0.5, moveY: 0, aimAngle: 0.3, shootAngle: 0.3, fire: true, bomb: false };
 
 	function runSim(): ReturnType<typeof createInitialModel> {
 		const sim = new GameSimulator();

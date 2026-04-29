@@ -18,7 +18,7 @@ export const INVULNERABLE_DURATION = 2.5; // seconds after taking a hit
 // ============================================================
 // Shooting
 // ============================================================
-export const FIRE_RATE = 0.14; // seconds between shots
+export const FIRE_RATE = 0.07; // seconds between shots
 export const PROJECTILE_SPEED = 480;
 export const PROJECTILE_LIFETIME = 1.8; // seconds
 export const PROJECTILE_RADIUS = 4;
@@ -71,27 +71,63 @@ export const ENEMY_SPLITTER_FRAGMENT_SPEED = 110;
 export const ENEMY_SPLITTER_FRAGMENT_SCORE = 50;
 
 export const ENEMY_GRAVITY_WELL_RADIUS = 18;
-export const ENEMY_GRAVITY_WELL_PULL_RADIUS = 160;
-export const ENEMY_GRAVITY_WELL_PULL_STRENGTH = 18000;
+export const ENEMY_GRAVITY_WELL_PULL_RADIUS = 240;
+export const ENEMY_GRAVITY_WELL_PULL_STRENGTH = 18000;   // projectile attraction (unchanged)
+// Soft spiral gravity for enemies: force = BASE + NEAR/dist, capped at CAP; tangent = SPIRAL_RATIO * radial
+export const ENEMY_GRAVITY_WELL_ATTRACT_BASE = 45;       // constant global pull component
+export const ENEMY_GRAVITY_WELL_ATTRACT_NEAR = 5500;     // inverse-distance near boost
+export const ENEMY_GRAVITY_WELL_ATTRACT_CAP = 175;       // max force per frame (no spikes)
+export const ENEMY_GRAVITY_WELL_ATTRACT_SPIRAL = 0.32;   // tangential fraction (CCW orbit)
+export const ENEMY_GRAVITY_WELL_SPEED_CAP = 190;         // max speed enemies can reach from attraction
+export const ENEMY_GRAVITY_WELL_ABSORB_RADIUS = 22;      // enemies inside this radius are swallowed
+export const ENEMY_GRAVITY_WELL_GRID_PULL = 180000;      // grid-dot attraction strength
 export const ENEMY_GRAVITY_WELL_SCORE = 500;
-export const ENEMY_GRAVITY_WELL_HP = 3;
+export const ENEMY_GRAVITY_WELL_HP = 20;
+
+export const ENEMY_BLACK_HOLE_RADIUS = 30;
+export const ENEMY_BLACK_HOLE_ABSORB_RADIUS = 65;
+export const ENEMY_BLACK_HOLE_CONSUME_TO_EXPLODE = 8;
+export const ENEMY_BLACK_HOLE_SHARD_COUNT = 24;
+export const ENEMY_BLACK_HOLE_SHARD_SPEED = 160;
+export const ENEMY_BLACK_HOLE_SHARD_RADIUS = 6;
+export const ENEMY_BLACK_HOLE_SHARD_SCORE = 30;
+export const ENEMY_BLACK_HOLE_SHARD_HP = 3;
+export const ENEMY_BLACK_HOLE_HP = 200;          // hit points (no longer immune to projectiles)
+// Soft spiral gravity: force = BASE + NEAR/dist, capped; tangent = SPIRAL_RATIO * radial
+export const ENEMY_BLACK_HOLE_ATTRACT_BASE = 70;         // constant global pull
+export const ENEMY_BLACK_HOLE_ATTRACT_NEAR = 14000;      // inverse-distance near boost
+export const ENEMY_BLACK_HOLE_ATTRACT_CAP = 280;         // max radial force (no spikes)
+export const ENEMY_BLACK_HOLE_ATTRACT_SPIRAL = 0.38;     // tangential fraction (CCW orbit)
+export const ENEMY_BLACK_HOLE_SPEED_CAP = 250;           // max attracted speed
+export const ENEMY_BLACK_HOLE_SPAWN_INTERVAL = 55;
+
+// ============================================================
+// Gravitational-wave dot grid
+// ============================================================
+export const GRID_SPACING = 40;
+export const WAVE_INFLUENCE_RADIUS = 220;
+export const WAVE_AMP = 10;
+export const BLACK_HOLE_GRID_PULL = 900000;
+export const GRAVITY_WELL_GRID_PULL_CAP = 50;   // max dot displacement from gravity wells
+export const BLACK_HOLE_GRID_PULL_CAP = 110;     // max dot displacement from black holes
 
 // ============================================================
 // Spawning / Difficulty
 // ============================================================
-export const SPAWN_INTERVAL_INITIAL = 2.0; // seconds
-export const SPAWN_INTERVAL_MIN = 0.5;
-export const SPAWN_INTERVAL_DECAY = 0.25; // seconds less per minute elapsed
-export const SPAWN_MAX_ENEMIES_INITIAL = 8;
-export const SPAWN_MAX_ENEMIES_CAP = 35;
-export const SPAWN_MAX_ENEMIES_GROWTH = 3; // extra per minute elapsed
+export const SPAWN_INTERVAL_INITIAL = 1.2; // seconds
+export const SPAWN_INTERVAL_MIN = 0.18;
+export const SPAWN_INTERVAL_DECAY = 0.5; // seconds less per minute elapsed
+export const SPAWN_MAX_ENEMIES_INITIAL = 14;
+export const SPAWN_MAX_ENEMIES_CAP = 90;
+export const SPAWN_MAX_ENEMIES_GROWTH = 12; // extra per minute elapsed
 
 // Elapsed-time (seconds) at which each enemy type becomes available
-export const ENEMY_UNLOCK_PURSUER = 12;
-export const ENEMY_UNLOCK_SPINNER = 22;
-export const ENEMY_UNLOCK_SEGMENTED = 35;
-export const ENEMY_UNLOCK_SPLITTER = 50;
-export const ENEMY_UNLOCK_GRAVITY_WELL = 70;
+export const ENEMY_UNLOCK_PURSUER = 8;
+export const ENEMY_UNLOCK_SPINNER = 16;
+export const ENEMY_UNLOCK_SEGMENTED = 28;
+export const ENEMY_UNLOCK_SPLITTER = 40;
+export const ENEMY_UNLOCK_GRAVITY_WELL = 55;
+export const ENEMY_UNLOCK_BLACK_HOLE = 70;
 
 // ============================================================
 // Scoring / Multiplier
@@ -124,6 +160,8 @@ export enum EnemyType {
 	SEGMENTED = 'SEGMENTED',
 	SPLITTER = 'SPLITTER',
 	GRAVITY_WELL = 'GRAVITY_WELL',
+	BLACK_HOLE = 'BLACK_HOLE',
+	BLACKHOLE_SHARD = 'BLACKHOLE_SHARD',
 }
 
 export enum SimEventType {

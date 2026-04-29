@@ -3,6 +3,7 @@ import {
 	EnemyType, GameState,
 	PLAYER_INITIAL_LIVES, PLAYER_INITIAL_BOMBS,
 	EXTRA_LIFE_SCORE_THRESHOLDS, EXTRA_BOMB_SCORE_THRESHOLDS,
+	ENEMY_BLACK_HOLE_SPAWN_INTERVAL,
 } from '../constants';
 import { SeededRandom } from './seeded-random';
 
@@ -130,6 +131,9 @@ export interface GameModel {
 	/** Score thresholds already converted to an extra bomb */
 	awardedBombThresholds: Set<number>;
 
+	/** Seconds until the next BLACK_HOLE spawns */
+	blackHoleTimer: number;
+
 	rng: SeededRandom;
 }
 
@@ -141,8 +145,10 @@ export interface InputState {
 	moveX: number;
 	/** Vertical movement axis in [-1, 1] */
 	moveY: number;
-	/** Aim direction in radians */
+	/** Visual facing direction in radians (driven by WASD movement) */
 	aimAngle: number;
+	/** Independent shoot direction in radians (driven by arrow keys or mouse) */
+	shootAngle: number;
 	fire: boolean;
 	bomb: boolean;
 }
@@ -178,6 +184,7 @@ export function createInitialModel(
 
 		elapsed: 0,
 		spawnTimer: 0,
+		blackHoleTimer: ENEMY_BLACK_HOLE_SPAWN_INTERVAL,
 
 		nextEnemyId: 1,
 		nextProjectileId: 1,

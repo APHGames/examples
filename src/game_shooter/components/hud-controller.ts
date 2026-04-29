@@ -71,8 +71,8 @@ export class HudController {
 	update(model: GameModel): void {
 		this.scoreText.text = String(model.score);
 		this.multiplierText.text = `×${model.multiplier}`;
-		this.livesText.text = '♥'.repeat(Math.max(0, model.lives));
-		this.bombsText.text = '★'.repeat(Math.max(0, model.bombs));
+		this.livesText.text = model.lives > 5 ? `♥ ×${model.lives}` : '♥'.repeat(Math.max(0, model.lives));
+		this.bombsText.text = model.bombs > 5 ? `★ ×${model.bombs}` : '★'.repeat(Math.max(0, model.bombs));
 		this.multiplierText.style.fill = model.multiplier >= 4 ? '#ff4400' : model.multiplier >= 2 ? '#ffdd00' : '#ffffff';
 	}
 }

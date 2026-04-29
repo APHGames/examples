@@ -14,7 +14,7 @@ import {
 	SPAWN_INTERVAL_INITIAL, SPAWN_INTERVAL_MIN, SPAWN_INTERVAL_DECAY,
 	SPAWN_MAX_ENEMIES_INITIAL, SPAWN_MAX_ENEMIES_CAP, SPAWN_MAX_ENEMIES_GROWTH,
 	ENEMY_UNLOCK_PURSUER, ENEMY_UNLOCK_SPINNER, ENEMY_UNLOCK_SEGMENTED,
-	ENEMY_UNLOCK_SPLITTER, ENEMY_UNLOCK_GRAVITY_WELL,
+	ENEMY_UNLOCK_SPLITTER, ENEMY_UNLOCK_GRAVITY_WELL, ENEMY_UNLOCK_BLACK_HOLE,
 	ENEMY_DRIFTER_RADIUS, ENEMY_DRIFTER_SPEED, ENEMY_DRIFTER_SCORE, ENEMY_DRIFTER_HP,
 	ENEMY_PURSUER_RADIUS, ENEMY_PURSUER_BASE_SPEED, ENEMY_PURSUER_MAX_SPEED, ENEMY_PURSUER_SCORE, ENEMY_PURSUER_HP,
 	ENEMY_SPINNER_RADIUS, ENEMY_SPINNER_ORBIT_SPEED, ENEMY_SPINNER_DRIFT_SPEED, ENEMY_SPINNER_SCORE, ENEMY_SPINNER_HP,
@@ -23,7 +23,15 @@ import {
 	ENEMY_SPLITTER_RADIUS, ENEMY_SPLITTER_SPEED, ENEMY_SPLITTER_SCORE, ENEMY_SPLITTER_HP,
 	ENEMY_SPLITTER_FRAGMENT_COUNT, ENEMY_SPLITTER_FRAGMENT_RADIUS, ENEMY_SPLITTER_FRAGMENT_SPEED, ENEMY_SPLITTER_FRAGMENT_SCORE,
 	ENEMY_GRAVITY_WELL_RADIUS, ENEMY_GRAVITY_WELL_PULL_RADIUS, ENEMY_GRAVITY_WELL_PULL_STRENGTH,
+	ENEMY_GRAVITY_WELL_ATTRACT_BASE, ENEMY_GRAVITY_WELL_ATTRACT_NEAR, ENEMY_GRAVITY_WELL_ATTRACT_CAP,
+	ENEMY_GRAVITY_WELL_ATTRACT_SPIRAL, ENEMY_GRAVITY_WELL_SPEED_CAP, ENEMY_GRAVITY_WELL_ABSORB_RADIUS,
 	ENEMY_GRAVITY_WELL_SCORE, ENEMY_GRAVITY_WELL_HP,
+	ENEMY_BLACK_HOLE_RADIUS, ENEMY_BLACK_HOLE_ABSORB_RADIUS, ENEMY_BLACK_HOLE_CONSUME_TO_EXPLODE,
+	ENEMY_BLACK_HOLE_SHARD_COUNT, ENEMY_BLACK_HOLE_SHARD_SPEED, ENEMY_BLACK_HOLE_SHARD_RADIUS,
+	ENEMY_BLACK_HOLE_SHARD_SCORE, ENEMY_BLACK_HOLE_SHARD_HP, ENEMY_BLACK_HOLE_HP,
+	ENEMY_BLACK_HOLE_ATTRACT_BASE, ENEMY_BLACK_HOLE_ATTRACT_NEAR, ENEMY_BLACK_HOLE_ATTRACT_CAP,
+	ENEMY_BLACK_HOLE_ATTRACT_SPIRAL, ENEMY_BLACK_HOLE_SPEED_CAP,
+	ENEMY_BLACK_HOLE_SPAWN_INTERVAL,
 	MULTISHOT_SCORE_THRESHOLD, MULTISHOT_5_SPREAD, MULTISHOT_10_SPREAD,
 } from '../constants';
 
@@ -79,6 +87,8 @@ const ENEMY_SCORE: Record<EnemyType, number> = {
 	[EnemyType.SEGMENTED]: ENEMY_SEGMENTED_SCORE,
 	[EnemyType.SPLITTER]: ENEMY_SPLITTER_SCORE,
 	[EnemyType.GRAVITY_WELL]: ENEMY_GRAVITY_WELL_SCORE,
+	[EnemyType.BLACK_HOLE]: 0, // explodes into shards; scored individually
+	[EnemyType.BLACKHOLE_SHARD]: ENEMY_BLACK_HOLE_SHARD_SCORE,
 };
 
 // ============================================================
@@ -216,6 +226,44 @@ function buildEnemy(model: GameModel, type: EnemyType): EnemyData {
 			phase: 0, segments: [], splitterGeneration: 0,
 		};
 	}
+	case EnemyType.BLACK_HOLE: {
+		// Always spawns near a corner, far from the player
+		const corners: Vec2[] = [
+			{ x: 60, y: 60 },
+			{ x: ARENA_WIDTH - 60, y: 60 },
+			{ x: 60, y: ARENA_HEIGHT - 60 },
+			{ x: ARENA_WIDTH - 60, y: ARENA_HEIGHT - 60 },
+		];
+		const playerPos = model.player.position;
+		// Pick the corner farthest from the player
+		let best = corners[0];
+		let bestDist = 0;
+		for (const c of corners) {
+			const d = vec2Distance(c, playerPos);
+			if (d > bestDist) { bestDist = d; best = c; }
+		}
+		// Add small random jitter so repeated spawns don't stack
+		const jitter = { x: model.rng.nextRange(-20, 20), y: model.rng.nextRange(-20, 20) };
+		return {
+			id, type,
+			position: { x: best.x + jitter.x, y: best.y + jitter.y },
+			velocity: vec2(0, 0),
+			hp: ENEMY_BLACK_HOLE_HP,
+			radius: ENEMY_BLACK_HOLE_RADIUS,
+			// phase = number of enemies consumed so far
+			phase: 0, segments: [], splitterGeneration: 0,
+		};
+	}
+	case EnemyType.BLACKHOLE_SHARD: {
+		return {
+			id, type,
+			position: vec2(0, 0),
+			velocity: vec2(0, 0),
+			hp: ENEMY_BLACK_HOLE_SHARD_HP,
+			radius: ENEMY_BLACK_HOLE_SHARD_RADIUS,
+			phase: 0, segments: [], splitterGeneration: 0,
+		};
+	}
 	}
 }
 
@@ -241,7 +289,12 @@ function getAvailableEnemyTypes(elapsed: number): EnemyType[] {
 	if (elapsed >= ENEMY_UNLOCK_SEGMENTED) types.push(EnemyType.SEGMENTED);
 	if (elapsed >= ENEMY_UNLOCK_SPLITTER) types.push(EnemyType.SPLITTER);
 	if (elapsed >= ENEMY_UNLOCK_GRAVITY_WELL) types.push(EnemyType.GRAVITY_WELL);
+	// BLACK_HOLE and BLACKHOLE_SHARD are spawned via separate timer
 	return types;
+}
+
+function blackHoleIsUnlocked(elapsed: number): boolean {
+	return elapsed >= ENEMY_UNLOCK_BLACK_HOLE;
 }
 
 function getSpawnInterval(elapsed: number): number {
@@ -294,7 +347,7 @@ export class GameSimulator {
 		model.player.aimAngle = input.aimAngle;
 		model.player.fireCooldown = Math.max(0, model.player.fireCooldown - dt);
 		if (input.fire && model.player.fireCooldown <= 0) {
-			this.spawnProjectiles(model);
+			this.spawnProjectiles(model, input.shootAngle);
 		}
 
 		// ── 3. Invulnerability timer ───────────────────────────────────
@@ -319,6 +372,12 @@ export class GameSimulator {
 		// ── 7. Projectile-enemy collisions ─────────────────────────────
 		this.resolveProjectileEnemyCollisions(model, events);
 
+		// ── 7b. Black hole enemy consumption ───────────────────────────
+		this.resolveBlackHoleConsumption(model, events);
+
+		// ── 7c. Gravity well enemy absorption ──────────────────────────
+		this.resolveGravityWellAbsorption(model, events);
+
 		// ── 8. Player-enemy collisions ─────────────────────────────────
 		this.resolvePlayerEnemyCollisions(model, events);
 
@@ -328,6 +387,7 @@ export class GameSimulator {
 		// ── 10. Rewards & spawning ─────────────────────────────────────
 		this.checkRewards(model, events);
 		this.updateSpawning(model, events, dt);
+		this.updateBlackHoleSpawning(model, events, dt);
 
 		return { model, events };
 	}
@@ -339,28 +399,15 @@ export class GameSimulator {
 		const inputLen = Math.sqrt(input.moveX * input.moveX + input.moveY * input.moveY);
 
 		if (inputLen > 0) {
-			// Normalise the direction so diagonal doesn't exceed max speed
+			// Instant velocity — normalise so diagonals match cardinal speed
 			const nx = input.moveX / inputLen;
 			const ny = input.moveY / inputLen;
-			player.velocity.x += nx * PLAYER_ACCEL * dt;
-			player.velocity.y += ny * PLAYER_ACCEL * dt;
+			player.velocity.x = nx * PLAYER_MAX_SPEED;
+			player.velocity.y = ny * PLAYER_MAX_SPEED;
 		} else {
-			// Decelerate toward zero
-			const speed = vec2Length(player.velocity);
-			if (speed > 0) {
-				const decel = Math.min(speed, PLAYER_DECEL * dt);
-				const nx = player.velocity.x / speed;
-				const ny = player.velocity.y / speed;
-				player.velocity.x -= nx * decel;
-				player.velocity.y -= ny * decel;
-			}
-		}
-
-		// Clamp to max speed
-		const speed = vec2Length(player.velocity);
-		if (speed > PLAYER_MAX_SPEED) {
-			player.velocity.x = (player.velocity.x / speed) * PLAYER_MAX_SPEED;
-			player.velocity.y = (player.velocity.y / speed) * PLAYER_MAX_SPEED;
+			// Instant stop — no coasting
+			player.velocity.x = 0;
+			player.velocity.y = 0;
 		}
 
 		// Integrate position
@@ -371,7 +418,7 @@ export class GameSimulator {
 		player.position.x = clamp(player.position.x, PLAYER_RADIUS, ARENA_WIDTH - PLAYER_RADIUS);
 		player.position.y = clamp(player.position.y, PLAYER_RADIUS, ARENA_HEIGHT - PLAYER_RADIUS);
 
-		// Stop at walls (zero out velocity component that would push through wall)
+		// Zero velocity component that would push further into a wall
 		if (player.position.x <= PLAYER_RADIUS || player.position.x >= ARENA_WIDTH - PLAYER_RADIUS) {
 			player.velocity.x = 0;
 		}
@@ -382,19 +429,19 @@ export class GameSimulator {
 
 	// ── Step 2 helper: spawn projectiles (weapon-mode aware) ──────────
 
-	private spawnProjectiles(model: GameModel): void {
-		const { position, aimAngle } = model.player;
+	private spawnProjectiles(model: GameModel, shootAngle: number): void {
+		const { position } = model.player;
 		const mode = getWeaponMode(model.score);
 		const spawnOffset = PLAYER_RADIUS + PROJECTILE_RADIUS + 2;
 
 		for (let i = 0; i < mode.count; i++) {
 			let angle: number;
 			if (mode.count === 1) {
-				angle = aimAngle;
+				angle = shootAngle;
 			} else {
 				// Distribute evenly across the spread arc
 				const t = i / (mode.count - 1) - 0.5; // -0.5 .. +0.5
-				angle = aimAngle + t * mode.spread;
+				angle = shootAngle + t * mode.spread;
 				if (mode.randomize) {
 					// Slight per-shot random jitter for the 5-shot tier
 					angle += model.rng.nextRange(-0.05, 0.05);
@@ -464,8 +511,10 @@ export class GameSimulator {
 			case EnemyType.PURSUER: this.updatePursuer(enemy, model.player.position, model.elapsed, dt); break;
 			case EnemyType.SPINNER: this.updateSpinner(enemy, dt); break;
 			case EnemyType.SEGMENTED: this.updateSegmented(enemy, model.player.position, dt); break;
-			case EnemyType.SPLITTER: this.updateDrifter(enemy, dt); break; // same wall-bouncing movement
-			case EnemyType.GRAVITY_WELL: break; // stationary
+			case EnemyType.SPLITTER: this.updateDrifter(enemy, dt); break;
+			case EnemyType.GRAVITY_WELL: this.applyGravityWellToEnemies(enemy, model, dt); break;
+			case EnemyType.BLACK_HOLE: this.updateBlackHole(enemy, model, dt); break;
+			case EnemyType.BLACKHOLE_SHARD: this.updateBlackHoleShard(enemy, dt); break;
 			}
 		}
 	}
@@ -538,6 +587,109 @@ export class GameSimulator {
 		void prevHead; // suppress unused warning
 	}
 
+	private applyGravityWellToEnemies(gw: EnemyData, model: GameModel, dt: number): void {
+		for (const enemy of model.enemies) {
+			if (enemy.type === EnemyType.GRAVITY_WELL) continue;
+			const dx = gw.position.x - enemy.position.x;
+			const dy = gw.position.y - enemy.position.y;
+			const distSq = dx * dx + dy * dy;
+			if (distSq < 1) continue;
+			const dist = Math.sqrt(distSq);
+			if (dist > ENEMY_GRAVITY_WELL_PULL_RADIUS) continue;
+
+			// Soft spiral gravity: base pull + near boost, capped
+			const radial = Math.min(ENEMY_GRAVITY_WELL_ATTRACT_BASE + ENEMY_GRAVITY_WELL_ATTRACT_NEAR / dist, ENEMY_GRAVITY_WELL_ATTRACT_CAP);
+			// Radial unit vector (toward well)
+			const rx = dx / dist;
+			const ry = dy / dist;
+			// Tangential unit vector (CCW perpendicular — creates inward spiral)
+			const tx = -ry;
+			const ty =  rx;
+			const tangential = radial * ENEMY_GRAVITY_WELL_ATTRACT_SPIRAL;
+
+			enemy.velocity.x += (rx * radial + tx * tangential) * dt;
+			enemy.velocity.y += (ry * radial + ty * tangential) * dt;
+
+			// Hard speed cap — no runaway ricochets
+			const speed = Math.sqrt(enemy.velocity.x * enemy.velocity.x + enemy.velocity.y * enemy.velocity.y);
+			if (speed > ENEMY_GRAVITY_WELL_SPEED_CAP) {
+				const s = ENEMY_GRAVITY_WELL_SPEED_CAP / speed;
+				enemy.velocity.x *= s;
+				enemy.velocity.y *= s;
+			}
+		}
+	}
+
+	private updateBlackHole(bh: EnemyData, model: GameModel, dt: number): void {
+		// Attract ALL enemies from anywhere on the map — no radius limit
+		for (const enemy of model.enemies) {
+			if (enemy.type === EnemyType.BLACK_HOLE) continue;
+			const dx = bh.position.x - enemy.position.x;
+			const dy = bh.position.y - enemy.position.y;
+			const distSq = dx * dx + dy * dy;
+			if (distSq < 1) continue;
+			const dist = Math.sqrt(distSq);
+
+			// Soft spiral gravity: strong base pull + dramatic near boost, capped
+			const radial = Math.min(ENEMY_BLACK_HOLE_ATTRACT_BASE + ENEMY_BLACK_HOLE_ATTRACT_NEAR / dist, ENEMY_BLACK_HOLE_ATTRACT_CAP);
+			// Radial unit vector (toward black hole)
+			const rx = dx / dist;
+			const ry = dy / dist;
+			// Tangential unit vector (CCW — enemies spiral in, not fall straight)
+			const tx = -ry;
+			const ty =  rx;
+			const tangential = radial * ENEMY_BLACK_HOLE_ATTRACT_SPIRAL;
+
+			enemy.velocity.x += (rx * radial + tx * tangential) * dt;
+			enemy.velocity.y += (ry * radial + ty * tangential) * dt;
+
+			// Hard speed cap — no wild ricochets
+			const speed = Math.sqrt(enemy.velocity.x * enemy.velocity.x + enemy.velocity.y * enemy.velocity.y);
+			if (speed > ENEMY_BLACK_HOLE_SPEED_CAP) {
+				const s = ENEMY_BLACK_HOLE_SPEED_CAP / speed;
+				enemy.velocity.x *= s;
+				enemy.velocity.y *= s;
+			}
+		}
+	}
+
+	private updateBlackHoleShard(shard: EnemyData, dt: number): void {
+		// Shards move outward and decelerate gently
+		shard.position.x += shard.velocity.x * dt;
+		shard.position.y += shard.velocity.y * dt;
+		shard.velocity.x *= Math.pow(0.92, dt * 60);
+		shard.velocity.y *= Math.pow(0.92, dt * 60);
+		// Clamp to arena (bounce)
+		shard.velocity = reflectOnWalls(shard.position, shard.velocity, shard.radius);
+		shard.position.x = clamp(shard.position.x, shard.radius, ARENA_WIDTH - shard.radius);
+		shard.position.y = clamp(shard.position.y, shard.radius, ARENA_HEIGHT - shard.radius);
+	}
+
+	// ── Shared helper: explode a black hole into a shard ring ─────────
+
+	private spawnBlackHoleShards(model: GameModel, bh: EnemyData, events: SimEvent[]): void {
+		for (let s = 0; s < ENEMY_BLACK_HOLE_SHARD_COUNT; s++) {
+			const angle = (s / ENEMY_BLACK_HOLE_SHARD_COUNT) * Math.PI * 2;
+			const shard: EnemyData = {
+				id: model.nextEnemyId++,
+				type: EnemyType.BLACKHOLE_SHARD,
+				position: {
+					x: bh.position.x + Math.cos(angle) * (ENEMY_BLACK_HOLE_RADIUS + 5),
+					y: bh.position.y + Math.sin(angle) * (ENEMY_BLACK_HOLE_RADIUS + 5),
+				},
+				velocity: {
+					x: Math.cos(angle) * ENEMY_BLACK_HOLE_SHARD_SPEED,
+					y: Math.sin(angle) * ENEMY_BLACK_HOLE_SHARD_SPEED,
+				},
+				hp: ENEMY_BLACK_HOLE_SHARD_HP,
+				radius: ENEMY_BLACK_HOLE_SHARD_RADIUS,
+				phase: 0, segments: [], splitterGeneration: 0,
+			};
+			model.enemies.push(shard);
+			events.push({ type: SimEventType.ENEMY_SPAWNED, enemyId: shard.id, enemyType: EnemyType.BLACKHOLE_SHARD });
+		}
+	}
+
 	// ── Step 7: Projectile-enemy collisions ───────────────────────────
 
 	private resolveProjectileEnemyCollisions(model: GameModel, events: SimEvent[]): void {
@@ -552,7 +704,9 @@ export class GameSimulator {
 				if (enemiesKilled.has(enemy.id)) continue;
 				if (projUsed.has(proj.id)) continue;
 
-				if (enemy.type === EnemyType.SEGMENTED) {
+				// BLACK_HOLE shards are fine to hit; BLACK_HOLE itself is now damageable
+
+			if (enemy.type === EnemyType.SEGMENTED) {
 					// ── Per-part collision for segmented enemies ──────────
 					const headHit = circlesOverlap(proj.position, PROJECTILE_RADIUS, enemy.position, enemy.radius);
 					if (headHit) {
@@ -629,6 +783,10 @@ export class GameSimulator {
 									events.push({ type: SimEventType.ENEMY_SPAWNED, enemyId: frag.id, enemyType: EnemyType.DRIFTER });
 								}
 							}
+							// Black hole shot down → same dramatic shard explosion as consume
+							if (enemy.type === EnemyType.BLACK_HOLE) {
+								this.spawnBlackHoleShards(model, enemy, events);
+							}
 						}
 					}
 				}
@@ -637,6 +795,74 @@ export class GameSimulator {
 
 		model.projectiles = model.projectiles.filter(p => !projUsed.has(p.id));
 		model.enemies = model.enemies.filter(e => !enemiesKilled.has(e.id));
+	}
+
+	// ── Step 7b: Black hole enemy consumption ─────────────────────────
+
+	private resolveBlackHoleConsumption(model: GameModel, events: SimEvent[]): void {
+		const blackHoles = model.enemies.filter(e => e.type === EnemyType.BLACK_HOLE);
+		if (blackHoles.length === 0) return;
+
+		const consumed = new Set<number>();
+
+		for (const bh of blackHoles) {
+			for (const enemy of model.enemies) {
+				if (enemy.type === EnemyType.BLACK_HOLE) continue;
+				if (consumed.has(enemy.id)) continue;
+
+				if (vec2Distance(bh.position, enemy.position) < ENEMY_BLACK_HOLE_ABSORB_RADIUS + enemy.radius) {
+					consumed.add(enemy.id);
+					bh.phase++;
+
+					// If consumed enough enemies, explode into shards
+					if (bh.phase >= ENEMY_BLACK_HOLE_CONSUME_TO_EXPLODE) {
+						bh.phase = 0; // reset for next cycle (or it will be cleaned up below)
+						// Emit the black hole "kill" so ECS removes the old visual
+						events.push({
+							type: SimEventType.ENEMY_KILLED,
+							enemyId: bh.id,
+							enemyType: EnemyType.BLACK_HOLE,
+							scoreGained: 0,
+							position: vec2Clone(bh.position),
+						});
+						// Spawn a ring of shards
+						this.spawnBlackHoleShards(model, bh, events);
+						// Remove the black hole itself
+						consumed.add(bh.id);
+						break;
+					}
+				}
+			}
+		}
+
+		model.enemies = model.enemies.filter(e => !consumed.has(e.id));
+	}
+
+	// ── Step 7c: Gravity well enemy absorption ────────────────────────
+
+	private resolveGravityWellAbsorption(model: GameModel, events: SimEvent[]): void {
+		const wells = model.enemies.filter(e => e.type === EnemyType.GRAVITY_WELL);
+		if (wells.length === 0) return;
+
+		const absorbed = new Set<number>();
+		for (const gw of wells) {
+			for (const enemy of model.enemies) {
+				if (enemy.type === EnemyType.GRAVITY_WELL) continue;
+				if (absorbed.has(enemy.id)) continue;
+				if (vec2Distance(gw.position, enemy.position) < ENEMY_GRAVITY_WELL_ABSORB_RADIUS + enemy.radius) {
+					absorbed.add(enemy.id);
+					// Silent absorption — small score, visual handled by ENEMY_KILLED
+					events.push({
+						type: SimEventType.ENEMY_KILLED,
+						enemyId: enemy.id,
+						enemyType: enemy.type,
+						scoreGained: 0,
+						position: vec2Clone(enemy.position),
+					});
+				}
+			}
+		}
+		model.enemies = model.enemies.filter(e => !absorbed.has(e.id));
 	}
 
 	// ── Step 8: Player-enemy collisions ───────────────────────────────
@@ -736,6 +962,24 @@ export class GameSimulator {
 		const enemy = buildEnemy(model, type);
 		model.enemies.push(enemy);
 		events.push({ type: SimEventType.ENEMY_SPAWNED, enemyId: enemy.id, enemyType: enemy.type });
+	}
+
+	// ── Step 10c: Black hole spawning ─────────────────────────────────
+
+	private updateBlackHoleSpawning(model: GameModel, events: SimEvent[], dt: number): void {
+		if (!blackHoleIsUnlocked(model.elapsed)) return;
+
+		// Only one black hole at a time
+		const existing = model.enemies.filter(e => e.type === EnemyType.BLACK_HOLE);
+		if (existing.length > 0) return;
+
+		model.blackHoleTimer -= dt;
+		if (model.blackHoleTimer > 0) return;
+
+		model.blackHoleTimer = ENEMY_BLACK_HOLE_SPAWN_INTERVAL;
+		const bh = buildEnemy(model, EnemyType.BLACK_HOLE);
+		model.enemies.push(bh);
+		events.push({ type: SimEventType.ENEMY_SPAWNED, enemyId: bh.id, enemyType: EnemyType.BLACK_HOLE });
 	}
 
 	// ── Public query helpers (used by tests & ECS layer) ──────────────
