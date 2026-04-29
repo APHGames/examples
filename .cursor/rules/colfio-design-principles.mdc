@@ -1,0 +1,320 @@
+---
+description: SOLID and component-oriented design principles for COLFIO/pixi-ecs games. Enforces correct separation of model, state, components, builders, selectors, and actions.
+globs: ["src/game_*/**/*.ts", "src/**/*.ts", "libs/pixi-ecs/**/*.ts"]
+alwaysApply: false
+---
+
+# COLFIO Design Principles
+
+This rule encodes the architectural principles extracted from the Tetris and Vlak reference implementations. All new game code must follow these principles.
+
+Reference documentation: `docs/11-game-architecture.md`, `docs/12-tetris-case-study.md`, `docs/13-vlak-case-study.md`
+
+---
+
+## 1. Single Responsibility Per Component
+
+Each component does exactly **one thing**. Split any component that handles more than one concern.
+
+```typescript
+// WRONG — one component doing three jobs
+class GameComponent extends ECS.Component {
+    onUpdate() {
+        this.handleInput();  // input
+        this.updatePhysics(); // physics
+        this.drawScore();    // rendering
+    }
+}
+
+// CORRECT — three separate components
+class PlayerInputController extends ECS.Component { /* input only */ }
+class PhysicsUpdater extends ECS.Component { /* physics only */ }
+class ScoreRenderer extends ECS.Component { /* rendering only */ }
+```
+
+---
+
+## 2. Model/State Separation from ECS
+
+Model and state classes are **plain TypeScript** — they must never extend `ECS.Component` or hold a reference to any component.
+
+```typescript
+// WRONG — model coupled to ECS
+class GameModel extends ECS.Component { ... }
+
+// CORRECT — model is pure TypeScript
+class GameModel {
+    score = 0;
+    lives = 3;
+    level = 1;
+}
+
+// CORRECT — state may hold a scene reference to send messages (ObservableState pattern)
+class GameState {
+    constructor(private scene: ECS.Scene) {}
+    addScore(pts: number) {
+        this.score += pts;
+        this.scene.sendMessage(new ECS.Message(Messages.SCORE_CHANGED, null, null, this.score));
+    }
+}
+```
+
+---
+
+## 3. Message-Driven Communication Between Components
+
+Components **never hold direct references to each other**. All inter-component communication goes through the message bus.
+
+```typescript
+// WRONG — direct coupling
+class PlayerController extends ECS.Component {
+    renderer: GameRenderer; // never do this
+    onUpdate() { this.renderer.updateScore(100); }
+}
+
+// CORRECT — decoupled via messages
+class PlayerController extends ECS.Component {
+    onUpdate() {
+        if (this.scored) {
+            this.sendMessage(Messages.SCORE_CHANGED, newScore);
+        }
+    }
+}
+class GameRenderer extends ECS.Component {
+    onInit() { this.subscribe(Messages.SCORE_CHANGED); }
+    onMessage(msg: ECS.Message) { this.drawScore(msg.data); }
+}
+```
+
+---
+
+## 4. Factory for Scene Transitions
+
+All scene setup and transitions go through the `Factory` class. Never build entities or clear the scene inline (e.g. inside a component update without deferral).
+
+```typescript
+// WRONG — scene creation scattered in a component
+class SomeComponent extends ECS.Component {
+    onMessage(msg) {
+        scene.clearScene(); // ERROR: can't clear during update loop
+        new ECS.Builder(scene).asSprite(...).build(); // entity created inline
+    }
+}
+
+// CORRECT — deferred delegation to Factory
+class SomeComponent extends ECS.Component {
+    onMessage(msg) {
+        if (msg.action === Messages.GAME_OVER) {
+            this.scene.callWithDelay(0, () => new Factory().loadIntro(this.scene));
+        }
+    }
+}
+```
+
+---
+
+## 5. Builder Pattern for Entity Construction
+
+All game object construction uses `ECS.Builder` fluent API. Never construct an entity and manually configure it with separate statements scattered outside a builder function.
+
+```typescript
+// WRONG — manual fragmented construction
+const sprite = new ECS.Sprite('player', texture);
+sprite.position.x = 100;
+sprite.position.y = 200;
+sprite.addComponent(new PlayerController(model));
+sprite.addTag('player');
+scene.stage.addChild(sprite);
+
+// CORRECT — declarative builder in builders.ts
+static playerBuilder = (scene: ECS.Scene, model: GameModel) =>
+    new ECS.Builder(scene)
+        .withName('player')
+        .asSprite(PIXI.Texture.from(Assets.SPRITESHEET))
+        .anchor(0.5)
+        .localPos(model.spawnX, model.spawnY)
+        .withTag(Tags.PLAYER)
+        .withComponent(new PlayerController(model))
+        .withParent(scene.stage);
+```
+
+---
+
+## 6. Selectors for Global State Access
+
+Always use a `Selectors` class to access global attributes. Never call `getGlobalAttribute` with raw string literals scattered across multiple files.
+
+```typescript
+// WRONG — raw string repeated everywhere
+const state = this.scene.getGlobalAttribute<GameState>('GAME_STATE');
+const keys  = this.scene.getGlobalAttribute<ECS.KeyInputComponent>('key_input');
+
+// CORRECT — centralized typed access
+// selectors.ts
+export class Selectors {
+    static gameState = (scene: ECS.Scene) =>
+        scene.getGlobalAttribute<GameState>(Attributes.GAME_STATE);
+    static keyInput = (scene: ECS.Scene) =>
+        scene.getGlobalAttribute<ECS.KeyInputComponent>(Attributes.KEY_INPUT);
+}
+
+// Usage anywhere
+const state = Selectors.gameState(this.scene);
+```
+
+---
+
+## 7. Actions for Multi-Step Sequences
+
+Any async or multi-step game flow (waiting, transitioning, animating then acting) must return a `ChainComponent` from an `Actions` class. Never use `setTimeout` or `setInterval`.
+
+```typescript
+// WRONG
+setTimeout(() => this.doSomething(), 2000);
+setInterval(() => this.doRepeat(), 500);
+
+// WRONG — inline chains scattered in components
+this.scene.addGlobalComponentAndRun(new ECS.ChainComponent()
+    .waitTime(2000)
+    .call(() => new Factory().loadGame(this.scene)));
+
+// CORRECT — defined in actions.ts
+export class Actions {
+    static gameOver = (scene: ECS.Scene) =>
+        new ECS.ChainComponent()
+            .call((cmp) => cmp.sendMessage(Messages.GAME_OVER))
+            .waitTime(2000)
+            .waitFor(() => new FadeOutAnimation())
+            .call(() => scene.callWithDelay(0, () => new Factory().loadIntro(scene)));
+}
+
+// Usage in a component
+this.scene.addGlobalComponentAndRun(Actions.gameOver(this.scene));
+```
+
+---
+
+## 8. Enums for All String Keys
+
+Messages, tags, attributes, and asset keys must be `enum` values. Never use raw string literals.
+
+```typescript
+// WRONG
+this.subscribe('game_over');
+this.sendMessage('score_changed', newScore);
+scene.assignGlobalAttribute('gameState', state);
+scene.findObjectsByTag('player');
+
+// CORRECT
+export enum Messages { GAME_OVER = 'GAME_OVER', SCORE_CHANGED = 'SCORE_CHANGED' }
+export enum Tags { PLAYER = 'player', ENEMY = 'enemy' }
+export enum Attributes { GAME_STATE = 'GAME_STATE', KEY_INPUT = 'KEY_INPUT' }
+
+this.subscribe(Messages.GAME_OVER);
+this.sendMessage(Messages.SCORE_CHANGED, newScore);
+scene.assignGlobalAttribute(Attributes.GAME_STATE, state);
+scene.findObjectsByTag(Tags.PLAYER);
+```
+
+---
+
+## 9. Typed Component Props
+
+Always type the generic parameter of `Component<T>`. Never use `Component<any>` or `Component<void>` when the component needs to operate on a model.
+
+```typescript
+// WRONG — untyped, fragile
+class EnemyAI extends ECS.Component<any> {
+    onUpdate() { (this.props as any).health--; }
+}
+
+// CORRECT — fully typed
+class EnemyAI extends ECS.Component<EnemyState> {
+    onUpdate() { this.props.takeDamage(10); }
+}
+```
+
+---
+
+## 10. No PIXI Manipulation Outside Renderer Components
+
+Direct PIXI property changes (`position`, `texture`, `alpha`, `visible`, `tint`) belong only inside **renderer** or **sync** components. Controllers and model classes must not touch PIXI display properties.
+
+```typescript
+// WRONG — controller modifying display
+class PlayerController extends ECS.Component<PlayerState> {
+    onUpdate() {
+        this.props.move();
+        this.owner.position.x = this.props.x; // display manipulation in controller
+        this.owner.alpha = this.props.isDead ? 0 : 1;
+    }
+}
+
+// CORRECT — separated sync component
+class PlayerController extends ECS.Component<PlayerState> {
+    onUpdate() { this.props.move(); } // only mutates state
+}
+class PlayerSyncComponent extends ECS.Component<PlayerState> {
+    onUpdate() {
+        this.owner.position.x = this.props.x; // display sync only
+        this.owner.alpha = this.props.isDead ? 0 : 1;
+    }
+}
+```
+
+---
+
+## 11. `finish()` for Self-Termination
+
+Never call `removeComponent` on yourself. Use `this.finish()` to self-terminate a component.
+
+```typescript
+// WRONG
+this.owner.removeComponent(this);
+
+// CORRECT
+this.finish();
+```
+
+---
+
+## 12. `callWithDelay` for Safe Deferred Execution
+
+Never use `setTimeout`. Never call `clearScene()` directly inside an update loop.
+
+```typescript
+// WRONG
+setTimeout(() => this.scene.clearScene(), 1000);
+
+// WRONG — throws Error during update loop
+this.scene.clearScene();
+
+// CORRECT
+this.scene.callWithDelay(1000, () => {
+    this.scene.clearScene();
+    new Factory().loadGame(this.scene);
+});
+
+// CORRECT — ChainComponent deferred approach
+scene.addGlobalComponentAndRun(new ECS.ChainComponent()
+    .waitTime(1000)
+    .call(() => scene.callWithDelay(0, () => new Factory().loadGame(scene)))
+);
+```
+
+---
+
+## Folder Responsibilities Summary
+
+| File | Must contain | Must NOT contain |
+|------|-------------|-----------------|
+| `index.ts` | Engine config, asset loading | Game logic, entity creation |
+| `constants.ts` | Enums (Messages, Tags, Assets, Attributes, Flags) | Logic, imports from ECS |
+| `factory.ts` | `clearScene()`, global component setup, delegation to Builders | PIXI creation code, business logic |
+| `builders.ts` | `ECS.Builder` factory functions | `clearScene()`, state logic |
+| `selectors.ts` | `getGlobalAttribute` wrappers | Mutations, logic |
+| `actions.ts` | `ChainComponent` factory functions | Direct PIXI manipulation |
+| `helpers.ts` | Pure utility functions | ECS imports, state mutations |
+| `model/game-structs.ts` | `type`, `interface`, `enum` definitions | Classes with methods, ECS imports |
+| `model/game-state.ts` | Mutable state with `sendMessage` | Component extends, rendering |
+| `components/*.ts` | Single-responsibility behavior | Multiple concerns, direct component refs |
