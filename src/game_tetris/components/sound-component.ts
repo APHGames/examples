@@ -1,6 +1,6 @@
-import * as ECS from '../../../libs/pixi-ecs';
+import * as ECS from 'colfio';
 import { Messages, Assets } from '../constants';
-import PIXISound from 'pixi-sound';
+import { sound as PIXISound } from '@pixi/sound';
 
 /**
  * Event-based sound component

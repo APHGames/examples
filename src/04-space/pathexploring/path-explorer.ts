@@ -1,4 +1,4 @@
-import * as ECS from '../../../libs/pixi-ecs';
+import * as ECS from 'colfio';
 import * as PIXI from 'pixi.js';
 import { Runner } from './runner';
 import { GFXRenderer } from './gfx-renderer';

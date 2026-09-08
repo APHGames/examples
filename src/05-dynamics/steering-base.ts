@@ -1,4 +1,4 @@
-import * as ECS from '../../libs/pixi-ecs';
+import * as ECS from 'colfio';
 import { ECSExample, getBaseUrl } from '../utils/APHExample';
 import { Steering } from '../../libs/aph-math';
 import * as PIXI from 'pixi.js';

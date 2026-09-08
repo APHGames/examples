@@ -1,9 +1,10 @@
 import * as PIXI from 'pixi.js';
-import PIXISound from 'pixi-sound';
-import * as ECS from '../../libs/pixi-ecs';
+import { sound as PIXISound } from '@pixi/sound';
+import * as ECS from 'colfio';
 import { Assets } from './constants';
 import { Factory } from './factory';
 import { ECSExample, getBaseUrl } from '../utils/APHExample';
+import { loadAssets, loadTextAsset, getLoadedTexture } from '../utils/assets';
 
 /**
  * Wrapper for markdown gallery
@@ -19,25 +20,15 @@ export class Tetris extends ECSExample {
 		});
 	}
 
-	load() {
-
-		PIXI.settings.ROUND_PIXELS = true;
-		PIXI.settings.SCALE_MODE = PIXI.SCALE_MODES.NEAREST;
+	async load() {
 		this.initResizeHandler();
 		this.displayLoadingText();
 
-		this.engine.app.loader
-			.reset()
-			.add(Assets.FONT_DOS, `${getBaseUrl()}/assets/game_tetris/dos.fnt`)
-			.add(Assets.FONT_DOS_TEXTURE, `${getBaseUrl()}/assets/game_tetris/dos.png`)
-			.add(Assets.SOUND_GAMEOVER, `${getBaseUrl()}/assets/game_tetris/snd_gameover.mp3`)
-			.add(Assets.SOUND_LEVELUP, `${getBaseUrl()}/assets/game_tetris/snd_levelup.mp3`)
-			.add(Assets.SOUND_MOVEDOWN, `${getBaseUrl()}/assets/game_tetris/snd_movedown.mp3`)
-			.add(Assets.SOUND_PLACE, `${getBaseUrl()}/assets/game_tetris/snd_place.mp3`)
-			.add(Assets.SOUND_ROTATE, `${getBaseUrl()}/assets/game_tetris/snd_rotate.mp3`)
-			.add(Assets.SOUND_ROWCLEAR, `${getBaseUrl()}/assets/game_tetris/snd_rowclear.mp3`)
-			.add(Assets.MUSIC, `${getBaseUrl()}/assets/game_tetris/music.mp3`)
-			.load(() => this.loadGame());
+		await loadAssets([
+			{ alias: Assets.FONT_DOS_TEXTURE, src: `${getBaseUrl()}/assets/game_tetris/dos.png` },
+		]);
+		await loadTextAsset(Assets.FONT_DOS, `${getBaseUrl()}/assets/game_tetris/dos.fnt`);
+		getLoadedTexture(Assets.FONT_DOS_TEXTURE).source.scaleMode = 'nearest';
 
 		// todo refactor this
 		PIXISound.add(Assets.SOUND_GAMEOVER, `${getBaseUrl()}/assets/game_tetris/snd_gameover.mp3`);
@@ -48,6 +39,7 @@ export class Tetris extends ECSExample {
 		PIXISound.add(Assets.SOUND_ROWCLEAR, `${getBaseUrl()}/assets/game_tetris/snd_rowclear.mp3`);
 		PIXISound.add(Assets.MUSIC, `${getBaseUrl()}/assets/game_tetris/music.mp3`);
 
+		this.loadGame();
 	}
 
 	/**
@@ -60,7 +52,7 @@ export class Tetris extends ECSExample {
 		loadingText.style = new PIXI.TextStyle({
 			fill: '0xFFFFFF',
 			fontWeight: 'bold',
-			fontSize: '30pt',
+			fontSize: 30,
 			align: 'center'
 		});
 		loadingText.anchor.set(0.5);
@@ -82,14 +74,13 @@ export class Tetris extends ECSExample {
 		factory.loadIntro(this.engine.scene);
 	}
 
-	initResizable(canvas: string | HTMLCanvasElement) {
-		super.init(canvas);
+	async initResizable(canvas: string | HTMLCanvasElement) {
+		await super.init(canvas);
 		this.initResizeHandler();
 	}
 
 	onDestroy() {
-		PIXI.settings.SCALE_MODE = PIXI.SCALE_MODES.LINEAR;
-		PIXI.settings.ROUND_PIXELS = false;
+		getLoadedTexture(Assets.FONT_DOS_TEXTURE).source.scaleMode = 'linear';
 	}
 
 	private initResizeHandler() {
@@ -102,8 +93,8 @@ export class Tetris extends ECSExample {
 			Math.floor(window.innerWidth / 640), Math.floor(window.innerHeight / 400));
 		if (acceptableScale > 0) {
 			this.engine.app.renderer.resolution = acceptableScale;
-			this.engine.app.view.width = 640 * acceptableScale;
-			this.engine.app.view.height = 400 * acceptableScale;
+			this.engine.app.canvas.width = 640 * acceptableScale;
+			this.engine.app.canvas.height = 400 * acceptableScale;
 		}
 	}
 }

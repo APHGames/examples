@@ -26,7 +26,9 @@ body {
 	<script type="module" src="../src/examples.ts"></script>
 	<script type="text/javascript">
     window.addEventListener("load", (event) => {
-      new window.APH.#OBJECT().init('gameCanvas');
+      Promise.resolve(new window.APH.#OBJECT().init('gameCanvas')).catch((err) => {
+        console.error(err);
+      });
     });
   </script>
 </body>

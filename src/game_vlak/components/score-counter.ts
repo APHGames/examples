@@ -1,4 +1,4 @@
-import * as ECS from '../../../libs/pixi-ecs';
+import * as ECS from 'colfio';
 import { Messages, SCORE_INCREMENT } from '../constants';
 import { Selectors } from '../selectors';
 

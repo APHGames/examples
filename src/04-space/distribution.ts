@@ -1,4 +1,4 @@
-import * as ECS from '../../libs/pixi-ecs';
+import * as ECS from 'colfio';
 import { ECSExample, getBaseUrl } from '../utils/APHExample';
 import { Random } from '../../libs/aph-math';
 
@@ -19,9 +19,7 @@ abstract class DistributionBase extends ECSExample {
 
 	    let target = new ECS.Graphics();
 	    this.engine.app.stage.addChild(target);
-	    target.beginFill(0xa6aeb8);
-	    target.drawCircle(width / 2, height / 2, radius);
-	    target.endFill();
+	    target.circle(width / 2, height / 2, radius).fill({ color: 0xa6aeb8 });
 
 	    this.engine.app.stage.addChild(this.render);
 
@@ -30,11 +28,9 @@ abstract class DistributionBase extends ECSExample {
 	    this.render.addComponent(new ECS.FuncComponent('').doOnUpdate((cmp, delta, absolute) => {
 	        let sampleX = Math.floor(this.generateNumber(-radius, radius));
 	        let sampleY = Math.floor(this.generateNumber(-radius, radius));
-	        this.render.beginFill(0x000000);
 	        if (new ECS.Vector(sampleX, sampleY).magnitude() <= radius) {
-	            this.render.drawCircle(width / 2 + sampleX, height / 2 + sampleY, 6);
+	            this.render.circle(width / 2 + sampleX, height / 2 + sampleY, 6).fill({ color: 0x000000 });
 	        }
-	        this.render.endFill();
 
 	        if (counter++ >= ITERATIONS) {
 	            cmp.finish();

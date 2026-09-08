@@ -1,6 +1,6 @@
-import * as ECS from '../pixi-ecs';
+import * as ECS from 'colfio';
 import * as Matter from 'matter-js';
-import * as PIXI from 'pixi.js';
+import { string2hex } from '../../src/utils/assets';
 
 /**
  * Options for MatterConstraint object
@@ -34,7 +34,7 @@ export class MatterConstraint extends ECS.Graphics {
 
 	// render constraint
 	protected renderPrimitive() {
-	    let strokeStyle = PIXI.utils.string2hex(this.options.strokeStyle);
+	    let strokeStyle = string2hex(this.options.strokeStyle);
 
 
 	    // clear the primitive
@@ -46,9 +46,6 @@ export class MatterConstraint extends ECS.Graphics {
 	        pointB = this.constraint.pointB;
 
 	    // render the constraint on every update, since they can change dynamically
-	    this.beginFill(0, 0);
-	    this.lineStyle(this.options.lineWidth, strokeStyle, 1);
-
 	    if (bodyA) {
 	        this.moveTo(bodyA.position.x + pointA.x, bodyA.position.y + pointA.y);
 	    } else {
@@ -61,6 +58,6 @@ export class MatterConstraint extends ECS.Graphics {
 	        this.lineTo(pointB.x, pointB.y);
 	    }
 
-	    this.endFill();
+	    this.stroke({ width: this.options.lineWidth, color: strokeStyle });
 	}
 }

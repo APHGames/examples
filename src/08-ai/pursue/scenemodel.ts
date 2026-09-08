@@ -1,6 +1,6 @@
 import { BotModel } from './botmodel';
 import { GridMap } from '../../../libs/aph-math/pathfinding/gridmap';
-import * as ECS from '../../../libs/pixi-ecs';
+import * as ECS from 'colfio';
 import { MAP_CELL_SIZE } from './constants';
 
 export class SceneModel {

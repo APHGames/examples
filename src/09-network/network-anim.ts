@@ -1,4 +1,4 @@
-import * as ECS from '../../libs/pixi-ecs';
+import * as ECS from 'colfio';
 import { TranslateAnimation } from '../utils/animation';
 import * as Net from '../../libs/network-emulator';
 import { NetworkBehavior } from './network-basic';
@@ -12,6 +12,7 @@ enum NetworkType {
 }
 
 export type NetworkAnimConfig = ECS.EngineConfig & {
+	canvasId?: string;
 	netType: NetworkType;
 	lag?: number;
 	packetLoss?: number;
@@ -54,9 +55,7 @@ class NetworkAnimBase extends ECSExample {
 			graphics.addComponent(cmp);
 		}
 
-		graphics.beginFill(0xFF0000);
-		graphics.drawRect(0, 0, 200, 200);
-		graphics.endFill();
+		graphics.rect(0, 0, 200, 200).fill({ color: 0xFF0000 });
 
 		new ECS.Builder(this.engine.scene)
 			.withParent(this.engine.scene.stage)
@@ -95,9 +94,9 @@ export class NetworkAnim extends ECSExample {
 		});
 	}
 
-	init(canvas: HTMLCanvasElement | string) {
-		this.client.init(canvas);
-		this.server.init(canvas); // will use canvasId from config
+	async init(canvas: HTMLCanvasElement | string) {
+		await this.client.init(canvas);
+		await this.server.init(canvas);
 	}
 
 	destroy() {

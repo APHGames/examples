@@ -1,4 +1,4 @@
-import * as ECS from '../../libs/pixi-ecs';
+import * as ECS from 'colfio';
 import { TranslateAnimation, InterpolationType } from '../utils/animation';
 import * as Net from '../../libs/network-emulator';
 import { ECSExample, SECONDARY_CANVAS_ID } from '../utils/APHExample';
@@ -65,9 +65,7 @@ abstract class SyncComponent extends ECS.Component {
 
 	addNewObject(color: number, posX: number, posY: number) {
 		let obj = new ECS.Graphics();
-		obj.beginFill(color);
-		obj.drawRect(0, 0, 100, 100);
-		obj.endFill();
+		obj.rect(0, 0, 100, 100).fill({ color });
 		obj.position.x = posX;
 		obj.position.y = posY;
 		obj.pivot.set(50, 50);
@@ -141,6 +139,7 @@ class ServerSyncComponent extends SyncComponent {
 }
 
 export type NetworkInteractiveConfig = ECS.EngineConfig & {
+	canvasId?: string;
 	netType: NetworkType;
 }
 
@@ -206,9 +205,9 @@ export class NetworkInteractive extends ECSExample {
 		});
 	}
 
-	init(canvas: HTMLCanvasElement | string) {
-		this.client.init(canvas);
-		this.server.init(canvas); // will use canvasId from config
+	async init(canvas: HTMLCanvasElement | string) {
+		await this.client.init(canvas);
+		await this.server.init(canvas);
 	}
 
 	destroy() {

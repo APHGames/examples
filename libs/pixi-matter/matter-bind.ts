@@ -1,5 +1,4 @@
-import * as ECS from '../pixi-ecs';
-import * as Math from '../aph-math';
+import * as ECS from 'colfio';
 import * as Matter from 'matter-js';
 import { MatterBody } from './matter-body';
 import {MatterConstraint} from './matter-constraint';
@@ -33,29 +32,38 @@ export class MatterBind {
 	        ...config
 	    };
 
-	    // create runner
-	    this.runner = Matter.Runner.create(null);
+	    // create runner (kept for API compatibility; stepping uses Engine.update in the game loop)
+	    this.runner = Matter.Runner.create();
 
-	    // add a new PIXI object when given event is invoked
-	    Matter.Events.on(this.mWorld, 'afterAdd', (event: any) => {
-	        this.addNewObject(event, scene);
+	    // Matter fires { object, name, source }. World.add(array) emits the whole array once.
+	    Matter.Events.on(this.mWorld, 'afterAdd', (event: { object: Matter.Body | Matter.Constraint | Matter.Composite | Array<Matter.Body | Matter.Constraint | Matter.Composite> }) => {
+	        const added = event.object;
+	        if (Array.isArray(added)) {
+	            for (const item of added) {
+	                this.addNewObject(item, scene);
+	            }
+	        } else {
+	            this.addNewObject(added, scene);
+	        }
 	    });
 
 	    // add mouse control
 	    if(this.config.mouseControl) {
-	        let mouse = Matter.Mouse.create(scene.app.view),
+	        let mouse = Matter.Mouse.create(scene.app.canvas),
 	            mouseConstraint = Matter.MouseConstraint.create(this.mEngine, {
 	                mouse: mouse
 	            });
-	        mouse.scale.x = mouse.scale.y = scene.app.view.width / scene.app.view.getBoundingClientRect().width;
+	        mouse.scale.x = mouse.scale.y = scene.app.canvas.width / scene.app.canvas.getBoundingClientRect().width;
 	        Matter.World.add(this.mWorld, mouseConstraint);
 	    }
-	    // update runner during the ECSA game loop
-	    scene.addGlobalComponent(new ECS.FuncComponent('').doOnUpdate((_, delta) => Matter.Runner.tick(this.runner, this.mEngine, delta)));
+	    // Step physics with Engine.update — Runner.tick expects an absolute timestamp, not frame delta
+	    scene.addGlobalComponent(new ECS.FuncComponent('MatterRunner').doOnUpdate((_, delta) => {
+	        Matter.Engine.update(this.mEngine, Math.min(delta, 1000 / 30));
+	    }));
 	}
 
 	/**
-	 * Adds a new body to the matter world and returns sync PIXI-ECS object
+	 * Adds a new body to the matter world and returns sync COLFIO object
 	 * @param body body to add
 	 */
 	addBody(body: Matter.Body) {
@@ -64,7 +72,7 @@ export class MatterBind {
 	}
 
 	/**
-	 * Adds a new contraint to the matter world and returns sync PIXI-ECS object
+	 * Adds a new contraint to the matter world and returns sync COLFIO object
 	 * @param constraint constraint to add
 	 */
 	addConstraint(constraint: Matter.Constraint) {
@@ -73,14 +81,14 @@ export class MatterBind {
 	}
 
 	/**
-	 * Finds a PIXI-ECS sync object for given MatterJS object
+	 * Finds a COLFIO sync object for given MatterJS object
 	 */
 	findSyncObjectForBody(body: Matter.Body) {
 	    return this.scene.findObjectByName(`matter_body_${body.id}`);
 	}
 
 	/**
-	 * Finds a PIXI-ECS sync object for given MatterJS constraint
+	 * Finds a COLFIO sync object for given MatterJS constraint
 	 */
 	findSyncObjectForConstraint(constraint: Matter.Constraint) {
 	    return this.scene.findObjectByName(`matter_constraint_${constraint.id}`);

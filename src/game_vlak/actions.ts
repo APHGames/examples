@@ -1,4 +1,4 @@
-import * as ECS from '../../libs/pixi-ecs';
+import * as ECS from 'colfio';
 import { WallfadeAnimator } from './animators/wallfade-animator';
 import { Messages, Tags, SPRITE_SIZE } from './constants';
 import { DoorAnimator } from './animators/door-animator';

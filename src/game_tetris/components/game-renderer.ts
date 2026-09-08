@@ -1,4 +1,4 @@
-import * as ECS from '../../../libs/pixi-ecs';
+import * as ECS from 'colfio';
 import { GameModel } from '../model/game-model';
 import { Symbols, CGAColors } from '../cli-renderer/cli-renderer-base';
 import { SHAPES, CELL_PLAYER, CELL_PLACED } from '../model/tetrominos';

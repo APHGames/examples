@@ -1,5 +1,5 @@
 /* eslint-disable no-use-before-define */
-import * as ECS from '../../../libs/pixi-ecs';
+import * as ECS from 'colfio';
 import * as PIXI from 'pixi.js';
 import { MAP_CELL_SIZE, ATTR_BOTMODEL, ATTR_SCENE_MODEL, MAP } from './constants';
 import { BotModel } from './botmodel';
@@ -21,18 +21,14 @@ export class ConeRenderer extends ECS.Component {
 
 		let render = this.owner.asGraphics();
 		render.clear();
-		if(botModel.targetBotInSight()) {
-			render.beginFill(0xFF6822, 0.2);
-		} else {
-			render.beginFill(this.coneColor, 0.2);
-		}
+		const color = botModel.targetBotInSight() ? 0xFF6822 : this.coneColor;
 
 		for (let block of botModel.visibleBlocks) {
 			const blockVector = sceneModel.map.vectorMapper(block);
 			const worldPos = sceneModel.mapToWorld(blockVector.x, blockVector.y);
-			render.drawRect(worldPos.x, worldPos.y, MAP_CELL_SIZE, MAP_CELL_SIZE);
+			render.rect(worldPos.x, worldPos.y, MAP_CELL_SIZE, MAP_CELL_SIZE);
 		}
 
-		render.endFill();
+		render.fill({ color, alpha: 0.2 });
 	}
 }

@@ -1,9 +1,8 @@
-import * as PIXI from 'pixi.js';
-import PIXISound from 'pixi-sound';
-import * as ECS from '../../libs/pixi-ecs';
-import { SCENE_WIDTH, SCENE_HEIGHT, SCENE_RESOLUTION } from './constants';
+import * as ECS from 'colfio';
+import { SCENE_WIDTH, SCENE_HEIGHT, SCENE_RESOLUTION, Assets } from './constants';
 import { GameLoader } from './loaders/game-loader';
 import { ECSExample } from '../utils/APHExample';
+import { getLoadedTexture } from '../utils/assets';
 
 /**
  * Wrapper for markdown gallery
@@ -19,21 +18,17 @@ export class Vlak extends ECSExample {
 		});
 	}
 
-	load() {
-		// pixel-art: no interpolation, round pixels
-		PIXI.settings.ROUND_PIXELS = true;
-		PIXI.settings.SCALE_MODE = PIXI.SCALE_MODES.NEAREST;
-		new GameLoader().loadGame(this.engine);
+	async load() {
+		await new GameLoader().loadGame(this.engine);
 	}
 
-	initResizable(canvas: string | HTMLCanvasElement) {
-		super.init(canvas);
+	async initResizable(canvas: string | HTMLCanvasElement) {
+		await super.init(canvas);
 		this.initResizeHandler();
 	}
 
 	onDestroy() {
-		PIXI.settings.SCALE_MODE = PIXI.SCALE_MODES.LINEAR;
-		PIXI.settings.ROUND_PIXELS = false;
+		getLoadedTexture(Assets.SPRITESHEET).source.scaleMode = 'linear';
 	}
 
 	private initResizeHandler() {
@@ -46,8 +41,8 @@ export class Vlak extends ECSExample {
 		const acceptableScale = Math.min(Math.floor(window.innerWidth / SCENE_WIDTH), Math.floor(window.innerHeight / SCENE_HEIGHT));
 		if (acceptableScale > 0) {
 			this.engine.app.renderer.resolution = acceptableScale;
-			this.engine.app.view.width = SCENE_WIDTH * acceptableScale;
-			this.engine.app.view.height = SCENE_HEIGHT * acceptableScale;
+			this.engine.app.canvas.width = SCENE_WIDTH * acceptableScale;
+			this.engine.app.canvas.height = SCENE_HEIGHT * acceptableScale;
 		}
 	}
 }

@@ -1,4 +1,4 @@
-import * as ECS from '../../../libs/pixi-ecs';
+import * as ECS from 'colfio';
 import { CarEngine } from './carengine';
 import { Wheel } from './wheel';
 import { calcAbsPos } from './utils';

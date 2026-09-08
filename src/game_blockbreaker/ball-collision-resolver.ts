@@ -1,4 +1,4 @@
-import * as ECS from '../../libs/pixi-ecs';
+import * as ECS from 'colfio';
 import { BallCollisionMessage, CollisionType } from './ball-collision-trigger';
 import { Attrs, Tags, Messages } from './constants';
 

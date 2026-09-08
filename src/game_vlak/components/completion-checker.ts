@@ -1,4 +1,4 @@
-import * as ECS from '../../../libs/pixi-ecs';
+import * as ECS from 'colfio';
 import { Messages } from '../constants';
 import * as PIXI from 'pixi.js';
 import { ObjectTypes, MapPosition } from '../model/game-structs';

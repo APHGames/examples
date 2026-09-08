@@ -1,4 +1,4 @@
-import * as ECS from '../../libs/pixi-ecs';
+import * as ECS from 'colfio';
 import * as PixiMatter from '../../libs/pixi-matter';
 import * as Matter from 'matter-js';
 import { ECSExample, getBaseUrl } from '../utils/APHExample';

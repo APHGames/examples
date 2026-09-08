@@ -1,5 +1,5 @@
-import * as ECS from '../../../libs/pixi-ecs';
-import { KeyInputComponent, Keys } from '../../../libs/pixi-ecs/components/key-input-component';
+import * as ECS from 'colfio';
+import { KeyInputComponent, Keys } from 'colfio';
 import { SPRITE_SIZE, Attributes, Tags, DEFAULT_FONT, FONT_SIZE_PX, TEXT_COLOR_B, TEXT_COLOR_D } from '../constants';
 import * as PIXI from 'pixi.js';
 import { Actions } from '../actions';
@@ -105,9 +105,7 @@ export class PasswordComponent extends ECS.Component {
 		this.scene.stage.addChild(this.inputText);
 		this.pointer = new ECS.Graphics();
 		this.pointer.zIndex = 24;
-		this.pointer.beginFill(TEXT_COLOR_D);
-		this.pointer.drawRect(0, 0, FONT_SIZE_PX, FONT_SIZE_PX);
-		this.pointer.endFill();
+		this.pointer.rect(0, 0, FONT_SIZE_PX, FONT_SIZE_PX).fill({ color: TEXT_COLOR_D });
 
 		this.scene.stage.addChild(this.pointer);
 		this.updateInputText();

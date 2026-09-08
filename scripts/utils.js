@@ -2,30 +2,21 @@ var fs = require("fs");
 var path = require("path");
 
 module.exports = {
-	deleteFolderRecursive: function (path, keepDir) {
-		if (fs.existsSync(path)) {
-			fs.readdirSync(path).forEach(function (file, index) {
-				var curPath = path + "/" + file;
-				if (fs.lstatSync(curPath).isDirectory()) {
-					// recurse
-					module.exports.deleteFolderRecursive(curPath);
-				} else {
-					// delete file
-					fs.unlinkSync(curPath);
-				}
-			});
-			fs.rmdirSync(path);
+	deleteFolderRecursive: function (dirPath, keepDir) {
+		if (fs.existsSync(dirPath)) {
+			// fs.rmSync handles Windows ENOTEMPTY / locked-temp cases better than manual rmdir
+			fs.rmSync(dirPath, { recursive: true, force: true, maxRetries: 5, retryDelay: 100 });
+		}
 
-			if (keepDir) {
-				fs.mkdirSync(path);
-			}
+		if (keepDir) {
+			fs.mkdirSync(dirPath, { recursive: true });
 		}
 	},
 
 	deleteFile: function (...paths) {
-		paths.forEach(path => {
-			if (fs.existsSync(path) && !fs.lstatSync(path).isDirectory()) {
-				fs.unlinkSync(path);
+		paths.forEach(filePath => {
+			if (fs.existsSync(filePath) && !fs.lstatSync(filePath).isDirectory()) {
+				fs.unlinkSync(filePath);
 			}
 		});
 	},
@@ -82,8 +73,8 @@ module.exports = {
 		let output = [];
 
 		if(Array.isArray(startPath)) {
-			startPath.forEach(path => {
-				output = output.concat(module.exports.searchFiles(path, filter, pathMask));
+			startPath.forEach(pathItem => {
+				output = output.concat(module.exports.searchFiles(pathItem, filter, pathMask));
 			})			
 			return output;
 		}
@@ -107,17 +98,17 @@ module.exports = {
 		return output;
 	},
 
-	fileToStr: function (path) {
-		const file = fs.readFileSync(path, "utf8");
+	fileToStr: function (filePath) {
+		const file = fs.readFileSync(filePath, "utf8");
 		return file;
 	},
 
-	strToFile: function (path, content) {
-		module.exports.createDirAlongThePath(path);
-		if (fs.existsSync(path)) {
-			fs.unlinkSync(path);
+	strToFile: function (filePath, content) {
+		module.exports.createDirAlongThePath(filePath);
+		if (fs.existsSync(filePath)) {
+			fs.unlinkSync(filePath);
 		}
-		fs.writeFileSync(path, content);
+		fs.writeFileSync(filePath, content);
 	},
 
 	createDirAlongThePath: function (filePath) {

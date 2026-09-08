@@ -1,16 +1,16 @@
-import * as ECS from '../../../libs/pixi-ecs';
+import * as ECS from 'colfio';
 import { SPRITE_SIZE, Attributes } from '../constants';
 import { Assets } from '../constants';
 import { CompletionChecker } from '../components/completion-checker';
 import { SoundComponent } from '../components/sound-component';
 import { PasswordComponent } from '../components/password-component';
-import * as PIXI from 'pixi.js';
 import { MapObject } from '../model/game-structs';
 import { WaitInputComponent } from '../components/wait-input-component';
 import { Actions } from '../actions';
 import { Builders } from '../builders';
 import { Selectors } from '../selectors';
 import { getItemTag } from '../helpers';
+import { getLoadedTexture, textureFromFrame } from '../../utils/assets';
 
 /**
  * Factory for levels, uses builders.ts and actions, doesn't execute any business logic
@@ -98,10 +98,13 @@ export class LevelFactory {
 	}
 
 	static createTexture = (offsetX: number, offsetY: number) => {
-		let texture = PIXI.Texture.from(Assets.SPRITESHEET);
-		texture = texture.clone();
-		texture.frame = new PIXI.Rectangle(offsetX * SPRITE_SIZE, offsetY * SPRITE_SIZE, SPRITE_SIZE, SPRITE_SIZE);
-		return texture;
+		return textureFromFrame(
+			getLoadedTexture(Assets.SPRITESHEET),
+			offsetX * SPRITE_SIZE,
+			offsetY * SPRITE_SIZE,
+			SPRITE_SIZE,
+			SPRITE_SIZE,
+		);
 	}
 
 	static clearScene = (scene: ECS.Scene) => {

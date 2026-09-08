@@ -1,6 +1,7 @@
-import * as ECS from '../../../libs/pixi-ecs';
+import * as ECS from 'colfio';
 import * as PIXI from 'pixi.js';
 import { Symbols, CLIProps, CLIRendererBase } from './cli-renderer-base';
+import { setTextureFrame, textureFromFrame } from '../../utils/assets';
 
 export interface CLISpriteProps extends CLIProps {
 	fontDefinition: XMLDocument; // content of the .fnt file
@@ -76,19 +77,17 @@ export class CLISpriteRenderer extends CLIRendererBase<CLISpriteProps> {
 		for (let i = 0; i < this.props.rows; i++) {
 			for (let j = 0; j < this.props.columns; j++) {
 				const index = i * this.props.columns + j;
-				this.text[index] = new ECS.Sprite('', this.props.fontTexture.clone());
+				this.text[index] = new ECS.Sprite('', this.props.fontTexture);
 				this.text[index].position.set(j * this.maxWidth, i * this.maxHeight);
 				this.text[index].tint = this.textColor;
 
 				// highlight only draws █ behind the main text
-				this.highlights[index] = new ECS.Sprite('', this.props.fontTexture.clone());
-				this.highlights[index].position.set(j * this.maxWidth, i * this.maxHeight);
-				this.highlights[index].tint = this.textColor;
 				const charCode = Symbols.DECOR_FILL.charCodeAt(0);
 				const charDef = this.charDefs.get(charCode);
-				// the frame of highlights won't change
-				this.highlights[index].texture.frame =
-					new PIXI.Rectangle(charDef.x, charDef.y, charDef.width, this.maxHeight);
+				this.highlights[index] = new ECS.Sprite('', textureFromFrame(
+					this.props.fontTexture, charDef.x, charDef.y, charDef.width, this.maxHeight));
+				this.highlights[index].position.set(j * this.maxWidth, i * this.maxHeight);
+				this.highlights[index].tint = this.textColor;
 
 				// highlights must be put first
 				this.owner.addChild(this.highlights[index]);
@@ -157,7 +156,7 @@ export class CLISpriteRenderer extends CLIRendererBase<CLISpriteProps> {
 			const row = Math.floor(i / this.props.columns);
 
 			this.text[i].tint = this.textColor;
-			this.text[i].texture.frame = new PIXI.Rectangle(charDef.x, charDef.y, charDef.width, charDef.height);
+			setTextureFrame(this.text[i], this.props.fontTexture, charDef.x, charDef.y, charDef.width, charDef.height);
 			// adjust the position a bit by the yOffset - each character has its own offset
 			this.text[i].position.set(col * 8 + charDef.xOffset, row * 16 + charDef.yOffset);
 

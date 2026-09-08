@@ -1,7 +1,8 @@
-import * as ECS from '../../../libs/pixi-ecs';
+import * as ECS from 'colfio';
 import { SPRITE_SIZE, ANIM_FREQUENCY, Messages } from '../constants';
 import * as PIXI from 'pixi.js';
 import { TrainState } from '../model/state-structs';
+import { setTextureFrame } from '../../utils/assets';
 
 const TOTAL_SPRITES = 3;
 
@@ -12,10 +13,19 @@ const TOTAL_SPRITES = 3;
 export class TrainSyncComponent extends ECS.Component<TrainState> {
 
 	currentFrame = 0;
+	baseTexture: PIXI.Texture;
+	frameY = 0;
+	frameW = 0;
+	frameH = 0;
 
 	onInit() {
 		this.subscribe(Messages.STATE_CHANGE_TRAIN_CRASHED);
 		this.fixedFrequency = ANIM_FREQUENCY;
+		const tex = this.owner.asSprite().texture;
+		this.baseTexture = tex;
+		this.frameY = tex.frame.y;
+		this.frameW = tex.frame.width;
+		this.frameH = tex.frame.height;
 		this.syncState();
 	}
 
@@ -38,7 +48,6 @@ export class TrainSyncComponent extends ECS.Component<TrainState> {
 	}
 
 	private syncState() {
-		const currentFrame = this.owner.asSprite().texture.frame;
 		let startingFrame = 0;
 
 		switch(this.props.position.direction) {
@@ -56,7 +65,13 @@ export class TrainSyncComponent extends ECS.Component<TrainState> {
 				break;
 		}
 
-		this.owner.asSprite().texture.frame = new PIXI.Rectangle((startingFrame + (this.currentFrame) * 4) * SPRITE_SIZE,
-			currentFrame.y, currentFrame.width, currentFrame.height);
+		setTextureFrame(
+			this.owner.asSprite(),
+			this.baseTexture,
+			(startingFrame + (this.currentFrame) * 4) * SPRITE_SIZE,
+			this.frameY,
+			this.frameW,
+			this.frameH,
+		);
 	}
 }

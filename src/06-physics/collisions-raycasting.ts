@@ -1,4 +1,4 @@
-import * as ECS from '../../libs/pixi-ecs';
+import * as ECS from 'colfio';
 import * as PIXI from 'pixi.js';
 import { ECSExample } from '../utils/APHExample';
 
@@ -95,13 +95,8 @@ export class CollisionsRaycasting extends ECSExample {
 					.doOnUpdate((cmp, delta, absolute) => {
 						const gfx = cmp.owner.asGraphics();
 						gfx.clear();
-						if (this.collides) {
-							gfx.beginFill(0xFF0000);
-						} else {
-							gfx.beginFill(0xCDCDCD);
-						}
-						gfx.drawRect(-sizeRect / 2, -sizeRect / 2, sizeRect, sizeRect);
-						gfx.endFill();
+						const color = this.collides ? 0xFF0000 : 0xCDCDCD;
+						gfx.rect(-sizeRect / 2, -sizeRect / 2, sizeRect, sizeRect).fill({ color });
 					})).build();
 
 			rectangles.push(rect);
@@ -115,9 +110,7 @@ export class CollisionsRaycasting extends ECSExample {
 				.doOnInit((cmp) => {
 					const gfx = cmp.owner.asGraphics();
 					gfx.clear();
-					gfx.beginFill(0xEFEFEF);
-					gfx.drawCircle(sizeBall, sizeBall, sizeBall);
-					gfx.endFill();
+					gfx.circle(sizeBall, sizeBall, sizeBall).fill({ color: 0xEFEFEF });
 				}).doOnUpdate((cmp, delta, absolute) => {
 					const rectBounds = rectangles.map(r => r.getBounds());
 					const top = new PIXI.Rectangle(0, -10, cmp.scene.width, 10);

@@ -1,5 +1,5 @@
 import * as Matter from 'matter-js';
-import * as ECS from '../../libs/pixi-ecs';
+import * as ECS from 'colfio';
 import * as PixiMatter from '../../libs/pixi-matter';
 import { ECSExample } from '../utils/APHExample';
 

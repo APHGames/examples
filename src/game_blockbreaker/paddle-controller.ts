@@ -1,4 +1,4 @@
-import * as ECS from '../../libs/pixi-ecs';
+import * as ECS from 'colfio';
 import { Messages, SCENE_WIDTH } from './constants';
 
 class PaddleController extends ECS.Component {

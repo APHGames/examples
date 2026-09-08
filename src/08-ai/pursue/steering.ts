@@ -1,4 +1,4 @@
-import * as ECS from '../../../libs/pixi-ecs';
+import * as ECS from 'colfio';
 import { MAP_TYPE_OCTILE, GridMap, Steering, Path, PathContext } from '../../../libs/aph-math';
 import { ECSExample, getBaseUrl } from '../../utils/APHExample';
 import * as PIXI from 'pixi.js';

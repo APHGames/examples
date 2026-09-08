@@ -1,20 +1,29 @@
 {
 	"compilerOptions": {
-		"target": "es2017",
+		"target": "ES2020",
 		"skipLibCheck": true,
 		"lib": [
-			"es6",
-			"dom"
+			"ES2020",
+			"DOM"
 		],
-		"moduleResolution": "node",
+		"moduleResolution": "bundler",
 		"allowSyntheticDefaultImports": true,
-		"module": "esnext",
+		"esModuleInterop": true,
+		"module": "ESNext",
 		"outDir": "./build",
-		"downlevelIteration": true
+		"downlevelIteration": true,
+		"strict": false,
+		"baseUrl": ".",
+		"paths": {
+			"colfio": ["../src/index.ts"],
+			"pixi.js": ["./node_modules/pixi.js"]
+		}
 	},
 	"include": [
 		"./src/**/*.ts",
-		"./libs/**/*.ts"
+		"./libs/aph-math/**/*.ts",
+		"./libs/network-emulator/**/*.ts",
+		"./libs/pixi-matter/**/*.ts"
 	],
 	"exclude": [
 		"./node_modules",

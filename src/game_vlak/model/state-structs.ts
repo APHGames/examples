@@ -1,6 +1,6 @@
 import { MapObject, ObjectTypes, MapPosition, GameData, LevelData, Direction } from './game-structs';
 import { LEVEL_COLUMNS, LEVEL_ROWS, Messages } from '../constants';
-import * as ECS from '../../../libs/pixi-ecs';
+import * as ECS from 'colfio';
 import { getIndex, dirToCoordIncrement } from '../helpers';
 
 /**

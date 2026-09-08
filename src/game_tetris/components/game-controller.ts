@@ -1,4 +1,4 @@
-import * as ECS from '../../../libs/pixi-ecs';
+import * as ECS from 'colfio';
 import { GameModel } from '../model/game-model';
 import { Direction } from '../model/tetrominos';
 import { Messages, GAME_CONFIG } from '../constants';

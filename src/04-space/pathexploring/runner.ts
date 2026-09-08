@@ -5,7 +5,7 @@ import { MapGenerator, MapGeneratorEvent } from './algorithms/map-generator';
 import { MapExplorer, ExploreEvent } from './algorithms/map-explorer';
 import { RenderData, GFXRenderer } from './gfx-renderer';
 
-import * as ECS from '../../../libs/pixi-ecs';
+import * as ECS from 'colfio';
 
 /**
  * Names for all states

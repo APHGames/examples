@@ -1,4 +1,4 @@
-import * as ECS from '../pixi-ecs';
+import * as ECS from 'colfio';
 import * as Matter from 'matter-js';
 
 export interface MatterBodyOptions {
@@ -29,7 +29,7 @@ export class MatterBody extends ECS.Graphics {
 	    this.body = body;
 	    this.world = world;
 	    this.options = {
-	        fillStyle: (options && options.fillStyle) ? options.fillStyle : 0x1a1a0aff,
+	        fillStyle: (options && options.fillStyle) ? options.fillStyle : 0x1a1a0a,
 	        strokeStyle: (options && options.strokeStyle) ? options.strokeStyle : 0xe9e66f,
 	        strokeStyleWireframe: (options && options.strokeStyleWireframe) ? options.strokeStyleWireframe : 0xacacac,
 	        strokeStyleAngle: (!options || !options.showAngleIndicator) ? undefined : ((options && options.strokeStyleAngle) ? options.strokeStyleAngle : 0xd54d47),
@@ -66,12 +66,6 @@ export class MatterBody extends ECS.Graphics {
 	    // handle compound parts
 	    for (let k = this.body.parts.length > 1 ? 1 : 0; k < this.body.parts.length; k++) {
 	        part = this.body.parts[k];
-	        if (!this.options.showWireframes) {
-	            this.beginFill(fillStyle, 1);
-	            this.lineStyle(this.options.lineWidth, strokeStyle, 1);
-	        } else {
-	            this.lineStyle(this.options.lineWidth, strokeStyleWireframe, 1);
-	        }
 	        this.moveTo(part.vertices[0].x - this.body.position.x, part.vertices[0].y - this.body.position.y);
 
 	        for (let j = 1; j < part.vertices.length; j++) {
@@ -79,18 +73,20 @@ export class MatterBody extends ECS.Graphics {
 	        }
 
 	        this.lineTo(part.vertices[0].x - this.body.position.x, part.vertices[0].y - this.body.position.y);
+	        this.closePath();
 
-	        this.endFill();
+	        if (!this.options.showWireframes) {
+	            this.fill({ color: fillStyle }).stroke({ width: this.options.lineWidth, color: strokeStyle });
+	        } else {
+	            this.stroke({ width: this.options.lineWidth, color: strokeStyleWireframe });
+	        }
 
 	        // angle indicator
 	        if (this.options.showAngleIndicator || this.options.showAxes) {
-	            this.beginFill(0, 0);
-	            this.lineStyle(1, strokeStyleAngle, 1);
 	            this.moveTo(part.position.x - this.body.position.x, part.position.y - this.body.position.y);
 	            this.lineTo(((part.vertices[0].x + part.vertices[part.vertices.length - 1].x) / 2 - this.body.position.x),
 	                ((part.vertices[0].y + part.vertices[part.vertices.length - 1].y) / 2 - this.body.position.y));
-
-	            this.endFill();
+	            this.stroke({ width: 1, color: strokeStyleAngle });
 	        }
 	    }
 	}

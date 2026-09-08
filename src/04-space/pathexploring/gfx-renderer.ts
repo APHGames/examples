@@ -1,4 +1,4 @@
-import * as ECS from '../../../libs/pixi-ecs';
+import * as ECS from 'colfio';
 import { MapGrid } from './structs/map-grid';
 import { Coord, makeCoord } from './structs/coord';
 
@@ -37,28 +37,35 @@ export class GFXRenderer extends ECS.Component {
 			for (let i = 0; i < data.map.width; i++) {
 				const coord = makeCoord(i, j);
 				const tile = data.map.getTile(coord);
+				let fillColor = 0x000000;
+				let fillAlpha = 1;
 				switch (tile?.type) {
 					case 'UNKNOWN':
-						ctx.beginFill(0x000000);
+						fillColor = 0x000000;
+						fillAlpha = 1;
 						break;
 					case 'ROAD':
-						ctx.beginFill(0x229922, 0x66 / 0xFF);
+						fillColor = 0x229922;
+						fillAlpha = 0x66 / 0xFF;
 						break;
 					case 'WALL':
-						ctx.beginFill(0x555555, 0x66 / 0xFF);
+						fillColor = 0x555555;
+						fillAlpha = 0x66 / 0xFF;
 						break;
 					case 'CITY':
-						ctx.beginFill(0xfafc48, 0x88 / 0xFF);
+						fillColor = 0xfafc48;
+						fillAlpha = 0x88 / 0xFF;
 						break;
 					default:
 						// if undefined, it's treated like unknown
-						ctx.beginFill(0x000000, 0x66 / 0xFF);
+						fillColor = 0x000000;
+						fillAlpha = 0x66 / 0xFF;
 						break;
 				}
 
 				// render cell
-				ctx.drawRect(i * blockSize, j * blockSize, blockSize - 1, blockSize - 1);
-				ctx.endFill();
+				ctx.rect(i * blockSize, j * blockSize, blockSize - 1, blockSize - 1)
+					.fill({ color: fillColor, alpha: fillAlpha });
 				// render coordinates (only for small maps)
 				if (displayDetails && createCordTexts) {
 					const txt = new ECS.Text();
@@ -93,18 +100,16 @@ export class GFXRenderer extends ECS.Component {
 
 		// current node is a circle
 		if(data.currentNode) {
-			ctx.beginFill(0xFFFFFF);
-			ctx.drawCircle(data.currentNode.x * blockSize + blockSize / 2, data.currentNode.y * blockSize + blockSize / 2, blockSize / 6);
-			ctx.endFill();
+			ctx.circle(data.currentNode.x * blockSize + blockSize / 2, data.currentNode.y * blockSize + blockSize / 2, blockSize / 6)
+				.fill({ color: 0xFFFFFF });
 		}
 
 		// context nodes are somewhat interesting nodes that should be highlighted
 		if(data.contextNodes) {
-			ctx.beginFill(0xEFEFEF);
 			for(let highlight of data.contextNodes) {
-				ctx.drawRect(highlight.x * blockSize, highlight.y * blockSize, blockSize - 1, blockSize - 1);
+				ctx.rect(highlight.x * blockSize, highlight.y * blockSize, blockSize - 1, blockSize - 1)
+					.fill({ color: 0xEFEFEF });
 			}
-			ctx.endFill();
 		}
 
 		if (displayDetails && data.backtrace) {
@@ -145,11 +150,10 @@ export class GFXRenderer extends ECS.Component {
 		}
 
 		if (data.milestones) {
-			ctx.beginFill(0xADADAD);
 			for (let milestone of data.milestones) {
-				ctx.drawRect(milestone.x * blockSize, milestone.y * blockSize, blockSize * 0.15, blockSize * 0.15);
+				ctx.rect(milestone.x * blockSize, milestone.y * blockSize, blockSize * 0.15, blockSize * 0.15)
+					.fill({ color: 0xADADAD });
 			}
-			ctx.endFill();
 		}
 	}
 }

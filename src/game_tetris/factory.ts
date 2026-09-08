@@ -1,5 +1,5 @@
 import * as PIXI from 'pixi.js';
-import * as ECS from '../../libs/pixi-ecs';
+import * as ECS from 'colfio';
 import { CLISpriteRenderer } from './cli-renderer/cli-sprite-renderer';
 import { GameKeyboardController } from './components/game-controller';
 import { GameRenderer } from './components/game-renderer';
@@ -10,6 +10,7 @@ import { LevelSelector } from './components/level-selector';
 import { HighScoreSaver } from './components/highscore-saver';
 import { CGAColors } from './cli-renderer/cli-renderer-base';
 import { SoundComponent } from './components/sound-component';
+import { getLoadedTexture, getLoadedAsset } from '../utils/assets';
 
 export class Factory {
 	loadIntro(scene: ECS.Scene) {
@@ -40,8 +41,8 @@ export class Factory {
 	}
 
 	private buildGlobalDefaults(scene: ECS.Scene) {
-		const fontTexture = PIXI.Texture.from(Assets.FONT_DOS_TEXTURE);
-		const xmlContent = scene.app.loader.resources[Assets.FONT_DOS].data;
+		const fontTexture = getLoadedTexture(Assets.FONT_DOS_TEXTURE);
+		const xmlContent = getLoadedAsset<string>(Assets.FONT_DOS);
 		const xmlParsed = new DOMParser().parseFromString(xmlContent, 'text/xml');
 
 		const text = new CLISpriteRenderer({

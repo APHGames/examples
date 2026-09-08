@@ -1,4 +1,4 @@
-import * as ECS from '../../../libs/pixi-ecs';
+import * as ECS from 'colfio';
 import { ShapeData, Rotation, CELL_EMPTY, Direction, CELL_PLACED, CELL_PLAYER } from './tetrominos';
 import { ShapeGenerator } from './shape-generator';
 import { ScoreCounter } from './score-counter';

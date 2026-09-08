@@ -1,5 +1,5 @@
 /* eslint-disable no-use-before-define */
-import * as ECS from '../../../libs/pixi-ecs';
+import * as ECS from 'colfio';
 import * as PIXI from 'pixi.js';
 import { ATTR_VELOCITY, ATTR_SCENE_MODEL, ATTR_BOTMODEL } from './constants';
 import { BotModel } from './botmodel';

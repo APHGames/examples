@@ -1,4 +1,4 @@
-import * as ECS from '../pixi-ecs';
+import * as ECS from 'colfio';
 import { NetOutputMessage, NetInputMessage, NetMsgTypes, NetData } from './net-message';
 import { NetworkManager } from './network-manager';
 import { NetworkMessages } from './net-client';

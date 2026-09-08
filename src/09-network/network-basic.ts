@@ -1,7 +1,8 @@
-import * as ECS from '../../libs/pixi-ecs';
+import * as ECS from 'colfio';
 import { TranslateAnimation, InterpolationType } from '../utils/animation';
 import * as Net from '../../libs/network-emulator';
 import { ECSExample, SECONDARY_CANVAS_ID, getBaseUrl } from '../utils/APHExample';
+import { getLoadedTexture, loadAssets } from '../utils/assets';
 import * as PIXI from 'pixi.js';
 
 enum NetworkType {
@@ -166,6 +167,7 @@ export class NetworkBehavior extends ECS.Component {
 }
 
 export type NetworkBasicConfig = ECS.EngineConfig & {
+	canvasId?: string;
 	netType: NetworkType;
 }
 
@@ -178,45 +180,41 @@ export class NetworkBasicBase extends ECSExample {
 		this.netType = config.netType;
 	}
 
-	load() {
+	async load() {
 		Net.UDPEmulator.reset();
-		let loader = this.engine.app.loader;
-		loader
-			.reset()
-			.add('sprite', `${getBaseUrl()}/assets/01-helloworld/crash.png`)
-			.load(() => {
-				let host = new Net.NetworkHost();
-				this.engine.scene.addGlobalComponentAndRun(host);
-				let client = new Net.NetworkClient();
-				this.engine.scene.addGlobalComponentAndRun(client);
-				const keyInput = new ECS.KeyInputComponent();
-				this.engine.scene.addGlobalComponentAndRun(keyInput);
+		await loadAssets([{ alias: 'sprite', src: `${getBaseUrl()}/assets/01-helloworld/crash.png` }]);
 
-				let networkBehavior = new NetworkBehavior(this.netType, keyInput, client, host);
-				let obj = new ECS.Builder(this.engine.scene)
-					.asSprite(new PIXI.Texture(PIXI.BaseTexture.from('sprite')))
-					.withComponent(networkBehavior)
-					.relativePos(0.5)
-					.anchor(0.5)
-					.withParent(this.engine.scene.stage)
-					.build();
+		let host = new Net.NetworkHost();
+		this.engine.scene.addGlobalComponentAndRun(host);
+		let client = new Net.NetworkClient();
+		this.engine.scene.addGlobalComponentAndRun(client);
+		const keyInput = new ECS.KeyInputComponent();
+		this.engine.scene.addGlobalComponentAndRun(keyInput);
 
-				new ECS.Builder(this.engine.scene)
-					.withParent(this.engine.scene.stage)
-					.asText('text', new PIXI.TextStyle({ fontSize: 35, fill: '#0F0' }))
-					.withComponent(new ECS.FuncComponent('').doOnUpdate((cmp) => {
-						if (this.netType === NetworkType.SERVER) {
-							cmp.owner.asText().text = 'Update Frequency: ' + networkBehavior.updateFrequency;
-						} else {
-							cmp.owner.asText().text = client.networkState + '';
-						}
-					}))
-					.build();
+		let networkBehavior = new NetworkBehavior(this.netType, keyInput, client, host);
+		let obj = new ECS.Builder(this.engine.scene)
+			.asSprite(getLoadedTexture('sprite'))
+			.withComponent(networkBehavior)
+			.relativePos(0.5)
+			.anchor(0.5)
+			.withParent(this.engine.scene.stage)
+			.build();
 
+		new ECS.Builder(this.engine.scene)
+			.withParent(this.engine.scene.stage)
+			.asText('text', new PIXI.TextStyle({ fontSize: 35, fill: '#0F0' }))
+			.withComponent(new ECS.FuncComponent('').doOnUpdate((cmp) => {
 				if (this.netType === NetworkType.SERVER) {
-					obj.addComponent(new ECS.FuncComponent('Rotation').doOnUpdate((cmp, delta) => cmp.owner.transform.rotation += 0.001 * delta));
+					cmp.owner.asText().text = 'Update Frequency: ' + networkBehavior.updateFrequency;
+				} else {
+					cmp.owner.asText().text = client.networkState + '';
 				}
-			});
+			}))
+			.build();
+
+		if (this.netType === NetworkType.SERVER) {
+			obj.addComponent(new ECS.FuncComponent('Rotation').doOnUpdate((cmp, delta) => cmp.owner.rotation += 0.001 * delta));
+		}
 	}
 }
 
@@ -241,9 +239,9 @@ export class NetworkBasic extends ECSExample {
 		});
 	}
 
-	init(canvas: HTMLCanvasElement | string) {
-		this.client.init(canvas);
-		this.server.init(canvas); // will use canvasId from config
+	async init(canvas: HTMLCanvasElement | string) {
+		await this.client.init(canvas);
+		await this.server.init(canvas); // will use canvasId from config
 	}
 
 	destroy() {

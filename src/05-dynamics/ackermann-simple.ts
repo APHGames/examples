@@ -1,4 +1,4 @@
-import * as ECS from '../../libs/pixi-ecs';
+import * as ECS from 'colfio';
 import { ECSExample } from '../utils/APHExample';
 
 type CarEngineProps = {
@@ -116,47 +116,41 @@ class CarRenderer extends ECS.Component<CarRendererProps> {
 		const gfx = this.owner.asGraphics();
 
 		gfx.clear();
-		gfx.lineStyle({
-			width: 8,
-			color: trackColor
-		});
 
 		// Middle axis
 		gfx.moveTo(0, 0);
 		gfx.lineTo(0, wheelBase);
-
-		gfx.lineStyle({
-			width: 3,
-			color: trackColor
-		});
+		gfx.stroke({ width: 8, color: trackColor });
 
 		// Back axis
 		gfx.moveTo(-trackWidth / 2, 0);
 		gfx.lineTo(trackWidth / 2, 0);
+		gfx.stroke({ width: 3, color: trackColor });
 
 		// Front axis
 		gfx.moveTo(-trackWidth / 2, wheelBase);
 		gfx.lineTo(trackWidth / 2, wheelBase);
+		gfx.stroke({ width: 3, color: trackColor });
 
 		// Backwheels
-		gfx.lineStyle();
-		gfx.beginFill(wheelColor);
-		gfx.drawRect(-trackWidth / 2 - backWheelWidth / 2, -backWheelHeight / 2, backWheelWidth, backWheelHeight);
-		gfx.drawRect(trackWidth / 2 - backWheelWidth / 2, -backWheelHeight / 2, backWheelWidth, backWheelHeight);
+		gfx.rect(-trackWidth / 2 - backWheelWidth / 2, -backWheelHeight / 2, backWheelWidth, backWheelHeight)
+			.fill({ color: wheelColor });
+		gfx.rect(trackWidth / 2 - backWheelWidth / 2, -backWheelHeight / 2, backWheelWidth, backWheelHeight)
+			.fill({ color: wheelColor });
 
 
 		// Front wheels
 		this.frontLeft.position.set(-trackWidth / 2, wheelBase);
 		this.frontLeft.rotation = this.carEngine.phiI;
-		this.frontLeft.beginFill(wheelColor);
-		this.frontLeft.drawRect(-frontWheelWidth / 2, -frontWheelHeight / 2, frontWheelWidth, frontWheelHeight);
-		this.frontLeft.endFill();
+		this.frontLeft.clear();
+		this.frontLeft.rect(-frontWheelWidth / 2, -frontWheelHeight / 2, frontWheelWidth, frontWheelHeight)
+			.fill({ color: wheelColor });
 
 		this.frontRight.position.set(trackWidth / 2, wheelBase);
 		this.frontRight.rotation = this.carEngine.phiO;
-		this.frontRight.beginFill(wheelColor);
-		this.frontRight.drawRect(-frontWheelWidth / 2, -frontWheelHeight / 2, frontWheelWidth, frontWheelHeight);
-		this.frontRight.endFill();
+		this.frontRight.clear();
+		this.frontRight.rect(-frontWheelWidth / 2, -frontWheelHeight / 2, frontWheelWidth, frontWheelHeight)
+			.fill({ color: wheelColor });
 	}
 }
 

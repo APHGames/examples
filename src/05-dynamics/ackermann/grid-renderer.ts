@@ -1,4 +1,4 @@
-import * as ECS from '../../../libs/pixi-ecs';
+import * as ECS from 'colfio';
 
 export class GridRenderer extends ECS.Component {
 
@@ -13,11 +13,9 @@ export class GridRenderer extends ECS.Component {
 		const maxY = -stagePos.y + this.scene.height;
 
 		// draw background (Grid)
-		ctx.beginFill(0x222222);
 		const cellSize = 50;
-		ctx.drawRect(minX - cellSize, minY - cellSize, this.scene.width + 2 * cellSize, this.scene.height + 2 * cellSize);
-		ctx.endFill();
-		ctx.lineStyle(1, 0x888888);
+		ctx.rect(minX - cellSize, minY - cellSize, this.scene.width + 2 * cellSize, this.scene.height + 2 * cellSize)
+			.fill({ color: 0x222222 });
 
 		// horizontal lines
 		for (let y = minY - minY % cellSize; y < maxY; y += cellSize) {
@@ -30,5 +28,6 @@ export class GridRenderer extends ECS.Component {
 			ctx.moveTo(x, minY);
 			ctx.lineTo(x, maxY);
 		}
+		ctx.stroke({ width: 1, color: 0x888888 });
 	}
 }

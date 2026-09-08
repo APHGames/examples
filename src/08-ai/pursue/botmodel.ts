@@ -1,4 +1,4 @@
-import * as ECS from '../../../libs/pixi-ecs';
+import * as ECS from 'colfio';
 import { GridMap } from '../../../libs/aph-math';
 import { MAP_CELL_SIZE } from './constants';
 

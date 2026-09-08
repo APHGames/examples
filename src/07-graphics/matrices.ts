@@ -1,4 +1,4 @@
-import * as ECS from '../../libs/pixi-ecs';
+import * as ECS from 'colfio';
 import { ECSExample } from '../utils/APHExample';
 
 
@@ -123,13 +123,11 @@ export class Matrices extends ECSExample {
 
 
 	drawTriangle(gfx: ECS.Graphics, triangle: Triangle3) {
-		gfx.lineStyle(1, 0xcdcdcd);
 		gfx.moveTo(triangle[0].x, triangle[0].y);
 		gfx.lineTo(triangle[1].x, triangle[1].y);
 		gfx.lineTo(triangle[2].x, triangle[2].y);
 		gfx.lineTo(triangle[0].x, triangle[0].y);
-		gfx.moveTo(0, 0);
-		gfx.lineStyle(0);
+		gfx.stroke({ width: 1, color: 0xcdcdcd });
 	}
 
 	load() {

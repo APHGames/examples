@@ -1,8 +1,9 @@
-import * as ECS from '../../libs/pixi-ecs';
+import * as ECS from 'colfio';
 import { ECSExample, getBaseUrl } from '../utils/APHExample';
 import * as PIXI from 'pixi.js';
 import { PathFinderContext, AStarSearch, Dijkstra, BreadthFirstSearch,
 	GridMap, PathFinder, MAP_TYPE_TILE, MAP_TYPE_OCTILE } from './../../libs/aph-math';
+import { loadAssets, getLoadedTexture, textureFromFrame } from '../utils/assets';
 
 
 // static map
@@ -121,11 +122,9 @@ export class Pathfinding extends ECSExample {
 	    return vec.y * this.mapWidth + vec.x;
 	}
 
-	load() {
-	    this.engine.app.loader
-	        .reset()    // necessary for hot reload
-	        .add('pathfinding', `${getBaseUrl()}/assets/04-space/pathfinding.png`)
-	        .load(() => this.onAssetsLoaded());
+	async load() {
+		await loadAssets([{ alias: 'pathfinding', src: `${getBaseUrl()}/assets/04-space/pathfinding.png` }]);
+		this.onAssetsLoaded();
 	}
 
 	onAssetsLoaded() {
@@ -163,17 +162,17 @@ export class Pathfinding extends ECSExample {
 	    this.recreateMap();
 
 	    // upon click, try to find a path to that particular block
-	    let canvas = this.engine.app.view;
+	    let canvas = this.engine.app.canvas;
 	    canvas.addEventListener('mousedown', this.onMouseClick);
 	}
 
 	onMouseClick = (evt) => {
-	    let rect = this.engine.app.view.getBoundingClientRect();
+	    let rect = this.engine.app.canvas.getBoundingClientRect();
 	    let clientX = evt.clientX;
 	    let clientY = evt.clientY;
 	    let res = this.engine.scene.app.renderer.resolution;
-	    let posX = Math.round((clientX - rect.left) / (rect.right - rect.left) * this.engine.scene.app.view.width / res);
-	    let posY = Math.round((clientY - rect.top) / (rect.bottom - rect.top) * this.engine.scene.app.view.height / res);
+	    let posX = Math.round((clientX - rect.left) / (rect.right - rect.left) * this.engine.scene.app.canvas.width / res);
+	    let posY = Math.round((clientY - rect.top) / (rect.bottom - rect.top) * this.engine.scene.app.canvas.height / res);
 	    let mapBox = this.worldToMap(posX, posY);
 	    if (mapBox.x !== this.lastCalcX || mapBox.y !== this.lastCalcY) {
 	        this.recalc(mapBox.x, mapBox.y);
@@ -184,77 +183,74 @@ export class Pathfinding extends ECSExample {
 	 * Recreates view-model
 	 */
 	recreateMap() {
-	    let texture = new PIXI.Texture(PIXI.BaseTexture.from('pathfinding'));
-	    this.engine.scene.clearScene();
+		const texture = getLoadedTexture('pathfinding');
+		this.engine.scene.clearScene();
 
-	    // create sprites
-	    for (let i = 0; i < this.mapWidth; i++) {
-	        for (let j = 0; j < this.mapHeight; j++) {
-	            let textureCl = texture.clone();
-	            let sprite = new ECS.Sprite('', textureCl);
-	            let pos = this.mapToWorld(i, j);
-	            sprite.position.set(pos.x, pos.y);
-	            textureCl.frame = this.getSpriteFrame(new ECS.Vector(i, j));
-	            this.engine.scene.stage.addChild(sprite);
-	        }
-	    }
+		// create sprites
+		for (let i = 0; i < this.mapWidth; i++) {
+			for (let j = 0; j < this.mapHeight; j++) {
+				const frame = this.getSpriteFrame(new ECS.Vector(i, j));
+				const textureCl = textureFromFrame(texture, frame.x, frame.y, frame.width, frame.height);
+				const sprite = new ECS.Sprite('', textureCl);
+				const pos = this.mapToWorld(i, j);
+				sprite.position.set(pos.x, pos.y);
+				this.engine.scene.stage.addChild(sprite);
+			}
+		}
 
-	    // render starting point
-	    let textureCl = texture.clone();
-	    let sprite = new ECS.Sprite('', textureCl);
-	    let pos = this.mapToWorld(this.startPosition.x, this.startPosition.y);
-	    sprite.position.set(pos.x, pos.y);
-	    textureCl.frame = this.startRect;
-	    this.engine.scene.stage.addChild(sprite);
+		// render starting point
+		const textureCl = textureFromFrame(texture, this.startRect.x, this.startRect.y, this.startRect.width, this.startRect.height);
+		const sprite = new ECS.Sprite('', textureCl);
+		const pos = this.mapToWorld(this.startPosition.x, this.startPosition.y);
+		sprite.position.set(pos.x, pos.y);
+		this.engine.scene.stage.addChild(sprite);
 	}
 
 	recalc(x: number, y: number) {
 	    this.lastCalcX = x;
 	    this.lastCalcY = y;
 
-	    let texture = new PIXI.Texture(PIXI.BaseTexture.from('pathfinding'));
+		const texture = getLoadedTexture('pathfinding');
 
-	    // remove all sprites
-	    for (let arrow of this.arrows) {
-	        arrow.destroy();
-	    }
-	    this.arrows.clear();
+		// remove all sprites
+		for (let arrow of this.arrows) {
+			arrow.destroy();
+		}
+		this.arrows.clear();
 
-	    for (let block of this.visitedBlocks) {
-	        block.destroy();
-	    }
-	    this.visitedBlocks.clear();
+		for (let block of this.visitedBlocks) {
+			block.destroy();
+		}
+		this.visitedBlocks.clear();
 
-	    // recalculatePath
-	    let context = new PathFinderContext();
-	    let found = this.searchPath(context, new ECS.Vector(x, y));
+		// recalculatePath
+		let context = new PathFinderContext();
+		let found = this.searchPath(context, new ECS.Vector(x, y));
 
-	    // create sprites for visited blocks (red square)
-	    for (let visited of context.visited) {
-	        let textureCl = texture.clone();
-	        let sprite = new ECS.Sprite('', textureCl);
-	        let mapCoord = this.mapCoordByIndex(visited);
-	        let pos = this.mapToWorld(mapCoord.x, mapCoord.y);
-	        sprite.position.set(pos.x, pos.y);
-	        textureCl.frame = this.visitedRect;
-	        this.engine.scene.stage.addChild(sprite);
-	        this.visitedBlocks.add(sprite);
-	    }
+		// create sprites for visited blocks (red square)
+		for (let visited of context.visited) {
+			const textureCl = textureFromFrame(texture, this.visitedRect.x, this.visitedRect.y, this.visitedRect.width, this.visitedRect.height);
+			const sprite = new ECS.Sprite('', textureCl);
+			const mapCoord = this.mapCoordByIndex(visited);
+			const pos = this.mapToWorld(mapCoord.x, mapCoord.y);
+			sprite.position.set(pos.x, pos.y);
+			this.engine.scene.stage.addChild(sprite);
+			this.visitedBlocks.add(sprite);
+		}
 
-	    if (found) {
-	        // create arrows for the path
-	        for (let i = 0; i < context.pathFound.length - 1; i++) {
-	            let from = context.pathFound[i];
-	            let to = context.pathFound[i + 1];
+		if (found) {
+			// create arrows for the path
+			for (let i = 0; i < context.pathFound.length - 1; i++) {
+				let from = context.pathFound[i];
+				let to = context.pathFound[i + 1];
 
-	            let textureCl = texture.clone();
-	            let sprite = new ECS.Sprite('', textureCl);
-	            let pos = this.mapToWorld(from.x, from.y);
-	            sprite.position.set(pos.x + 16, pos.y + 16);
-	            sprite.anchor.set(0.5);
-	            textureCl.frame = this.arrowRect;
-	            this.engine.scene.stage.addChild(sprite);
-	            this.arrows.add(sprite);
+				const textureCl = textureFromFrame(texture, this.arrowRect.x, this.arrowRect.y, this.arrowRect.width, this.arrowRect.height);
+				const sprite = new ECS.Sprite('', textureCl);
+				const pos = this.mapToWorld(from.x, from.y);
+				sprite.position.set(pos.x + 16, pos.y + 16);
+				sprite.anchor.set(0.5);
+				this.engine.scene.stage.addChild(sprite);
+				this.arrows.add(sprite);
 
 	            let direction = this.getDirection(from, to);
 

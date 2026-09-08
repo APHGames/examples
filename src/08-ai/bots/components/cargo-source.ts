@@ -1,4 +1,4 @@
-import * as ECS from '../../../../libs/pixi-ecs';
+import * as ECS from 'colfio';
 import { GameModel, CargoSourceModel } from '../model';
 import { Attributes } from '../constants';
 import * as PIXI from 'pixi.js';

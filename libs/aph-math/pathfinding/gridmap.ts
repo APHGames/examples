@@ -1,4 +1,4 @@
-import Vector from '../../pixi-ecs/utils/vector';
+import { Vector } from 'colfio';
 
 export const MAP_TYPE_TILE = 1;
 export const MAP_TYPE_OCTILE = 2;

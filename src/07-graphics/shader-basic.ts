@@ -1,36 +1,40 @@
-import * as ECS from '../../libs/pixi-ecs';
+import * as ECS from 'colfio';
 import { ECSExample, getBaseUrl } from '../utils/APHExample';
+import { getLoadedTexture, loadAssets, loadTextAsset } from '../utils/assets';
 import * as PIXI from 'pixi.js';
 
 export class ShaderBasic extends ECSExample {
 
-	load() {
-		const geometry = new PIXI.Geometry().addAttribute('aVertexPosition', // the attribute name
-			PIXI.Buffer.from([-1.0, -1.0, 1.0, -1.0, -1.0, 1.0, 1.0, 1.0]), 2) // vertex position, 2 coordinates for each
-			.addAttribute('aTexturePosition', // the attribute name
-				PIXI.Buffer.from([1.0, 1.0, 0.0, 1.0, 1.0, 0.0, 0.0, 0.0]), 2) // u,v coordinates
-			.addIndex([0, 1, 3, 0, 3, 2] as any) // create index over attribute coordinates -> we have 2 triangles
-			.interleave(); // interleave attributes into one buffer (better for performance)
+	async load() {
+		const geometry = new PIXI.MeshGeometry({
+			positions: new Float32Array([-1.0, -1.0, 1.0, -1.0, -1.0, 1.0, 1.0, 1.0]),
+			uvs: new Float32Array([1.0, 1.0, 0.0, 1.0, 1.0, 0.0, 0.0, 0.0]),
+			indices: new Uint32Array([0, 1, 3, 0, 3, 2]),
+		});
 
-		let loader = this.engine.app.loader;
-		loader
-			.reset()
-			.add('noise_vert', `${getBaseUrl()}/assets/07-graphics/shaders/basic.vert`)
-			.add('noise_frag', `${getBaseUrl()}/assets/07-graphics/shaders/basic.frag`)
-			.add('texture', `${getBaseUrl()}/assets/01-helloworld/crash.png`)
-			.load(() => {
-				const uniforms = {
-					texture: new PIXI.Texture(PIXI.BaseTexture.from('texture')),
-				};
+		let vertexShader = await loadTextAsset('basic_vert_v2', `${getBaseUrl()}/assets/07-graphics/shaders/basic.vert`);
+		const fragmentShader = await loadTextAsset('basic_frag_v2', `${getBaseUrl()}/assets/07-graphics/shaders/basic.frag`);
+		await loadAssets([{ alias: 'texture', src: `${getBaseUrl()}/assets/01-helloworld/crash.png` }]);
+		const texture = getLoadedTexture('texture');
 
-				let vertexShader = loader.resources['noise_vert'].data;
-				let fragmentShader = loader.resources['noise_frag'].data;
+		vertexShader = vertexShader
+			.replace(/aVertexPosition/g, 'aPosition')
+			.replace(/aTexturePosition/g, 'aUV');
 
-				new ECS.Builder(this.engine.scene)
-					.asMesh(geometry, PIXI.Shader.from(vertexShader, fragmentShader, uniforms))
-					.scale(0.5, 1)
-					.withParent(this.engine.scene.stage)
-					.build();
-			});
+		const shader = PIXI.Shader.from({
+			gl: {
+				vertex: vertexShader,
+				fragment: fragmentShader,
+			},
+			resources: {
+				uSampler: texture.source,
+			},
+		});
+
+		new ECS.Builder(this.engine.scene)
+			.asMesh(geometry, shader)
+			.scale(0.5, 1)
+			.withParent(this.engine.scene.stage)
+			.build();
 	}
 }

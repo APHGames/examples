@@ -2,14 +2,13 @@
 import { ECSExample, getBaseUrl } from '../../utils/APHExample';
 import { MAP } from './constants';
 import { Factory } from './factory';
+import { loadAssets } from '../../utils/assets';
 
 export class Pursue extends ECSExample {
 
-	load() {
-		this.engine.app.loader
-			.reset()    // necessary for hot reload
-			.add('pathfinding', `${getBaseUrl()}/assets/07-graphics/vision.png`)
-			.load(() => this.onAssetsLoaded());
+	async load() {
+		await loadAssets([{ alias: 'pathfinding', src: `${getBaseUrl()}/assets/07-graphics/vision.png` }]);
+		this.onAssetsLoaded();
 	}
 
 	onAssetsLoaded() {

@@ -1,5 +1,5 @@
 import * as PIXI from 'pixi.js';
-import * as ECS from '../../libs/pixi-ecs';
+import * as ECS from 'colfio';
 import { ECSExample, getBaseUrl } from '../utils/APHExample';
 
 type FileData = {
@@ -9,7 +9,7 @@ type FileData = {
 }
 
 /**
- * Interface that can be used to replace MockLoader with the actual PIXI loader
+ * Interface that can be used to replace MockLoader with Assets-based loading
  */
 interface Loader {
 	add(alias: string, url: string, onFinish: () => void);
@@ -186,15 +186,7 @@ export class ProgressSequential extends ECSExample {
 				const gfx = cmp.owner.asGraphics();
 				gfx.clear();
 
-				gfx.lineStyle({
-					width: lineWidth,
-					color: 0xEEEEEE
-				});
-
-				gfx.drawRect(0, 0, width, height);
-				gfx.lineStyle({
-					width: 0
-				});
+				gfx.rect(0, 0, width, height).stroke({ width: lineWidth, color: 0xEEEEEE });
 
 				currentProgress = loader.progress / 100;
 
@@ -204,9 +196,8 @@ export class ProgressSequential extends ECSExample {
 					animatedProgress = Math.min(animatedProgress + increment, currentProgress);
 				}
 
-				gfx.beginFill(0x2831ef);
-				gfx.drawRect(lineWidth / 2, lineWidth / 2, animatedProgress * (width - lineWidth), height - lineWidth);
-				gfx.endFill();
+				gfx.rect(lineWidth / 2, lineWidth / 2, animatedProgress * (width - lineWidth), height - lineWidth)
+					.fill({ color: 0x2831ef });
 			}))
 			.build();
 

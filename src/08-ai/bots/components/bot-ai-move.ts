@@ -1,4 +1,4 @@
-import * as ECS from '../../../../libs/pixi-ecs';
+import * as ECS from 'colfio';
 import { MAP_BLOCK_SIZE, Attributes } from '../constants';
 import { GameModel, BotModel } from '../model';
 import { Path, PathContext, Steering } from '../../../../libs/aph-math';

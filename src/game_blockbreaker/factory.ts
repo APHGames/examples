@@ -1,4 +1,4 @@
-import * as ECS from '../../libs/pixi-ecs';
+import * as ECS from 'colfio';
 import { Attrs, Messages, Tags, SCENE_WIDTH, TEXTURE_SCALE, Assets } from './constants';
 import Level, { BRICK_INDEX_NONE } from './level';
 import { PaddleKeyboardController } from './paddle-controller';
@@ -6,7 +6,7 @@ import { BallController } from './ball-controller';
 import { BallCollisionTrigger } from './ball-collision-trigger';
 import { BallCollisionResolver } from './ball-collision-resolver';
 import { GameManager } from './game-manager';
-import * as PIXI from 'pixi.js';
+import { getLoadedTexture, textureFromFrame } from '../utils/assets';
 
 export class Factory {
 	loadLevel(level: Level, scene: ECS.Scene) {
@@ -32,7 +32,7 @@ export class Factory {
 			}
 		}
 
-		const sceneHeight = SCENE_WIDTH / (scene.app.view.width / scene.app.view.height);
+		const sceneHeight = SCENE_WIDTH / (scene.app.canvas.width / scene.app.canvas.height);
 
 		scene.assignGlobalAttribute(Attrs.SCENE_HEIGHT, sceneHeight);
 
@@ -72,9 +72,6 @@ export class Factory {
 	}
 
 	private createTexture(offsetX: number, offsetY: number, width: number, height: number) {
-		let texture = PIXI.Texture.from(Assets.SPRITESHEET);
-		texture = texture.clone();
-		texture.frame = new PIXI.Rectangle(offsetX, offsetY, width, height);
-		return texture;
+		return textureFromFrame(getLoadedTexture(Assets.SPRITESHEET), offsetX, offsetY, width, height);
 	}
 }

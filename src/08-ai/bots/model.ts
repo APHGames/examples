@@ -1,4 +1,4 @@
-import { Vector } from '../../../libs/pixi-ecs';
+import { Vector } from 'colfio';
 import { GameMap, MapBlock } from './gamemap';
 import { MapBlocks, BotStates, CargoTypes } from './constants';
 

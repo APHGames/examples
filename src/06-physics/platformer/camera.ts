@@ -1,50 +1,49 @@
-import * as ECS from '../../../libs/pixi-ecs';
+import * as ECS from 'colfio';
 import { SCENE_WIDTH } from './constants';
 
-// todo this does not work properly
 export const CAMERA_BORDER_X = Math.floor(SCENE_WIDTH / 3);
 export const CAMERA_BORDER_Y = Math.floor(SCENE_WIDTH / 3);
 
-export class Camera extends ECS.Component<{ container: ECS.Container }> {
+/**
+ * Keeps the player near the center of the view by scrolling the map layer.
+ * Clamps against the tile map size (not sprite local bounds — the background
+ * image is larger than the level and would allow bogus vertical scroll).
+ */
+export class Camera extends ECS.Component<{
+	container: ECS.Container;
+	levelWidth: number;
+	levelHeight: number;
+}> {
 
 	onUpdate() {
 		const mapContainer = this.props.container;
-		const levelWidth = this.scene.stage.width;
-		const levelHeight = this.scene.stage.height;
+		const viewW = this.scene.width;
+		const viewH = this.scene.height;
+		const levelWidth = this.props.levelWidth;
+		const levelHeight = this.props.levelHeight;
 		const player = this.owner;
 
-		// move camera with player if he is next to the border of screen
 		let relPosX = player.x + mapContainer.x;
 		let relPosY = player.y + mapContainer.y;
 
 		let diffX = 0;
-
-		// x-axis
 		if (relPosX < CAMERA_BORDER_X) {
-			//move left
 			diffX = CAMERA_BORDER_X - relPosX;
-		} else if (relPosX + player.width > this.scene.width - CAMERA_BORDER_X) {
-			//move right
-			diffX = this.scene.width - CAMERA_BORDER_X - relPosX - player.width;
+		} else if (relPosX + 1 > viewW - CAMERA_BORDER_X) {
+			diffX = viewW - CAMERA_BORDER_X - relPosX - 1;
 		}
-
 		mapContainer.x += diffX;
 
 		let diffY = 0;
-
-		// y-axis
 		if (relPosY < CAMERA_BORDER_Y) {
-			//move down
 			diffY = CAMERA_BORDER_Y - relPosY;
-		} else if (relPosY + player.width > this.scene.height - CAMERA_BORDER_Y) {
-			//move up
-			diffY = this.scene.height - CAMERA_BORDER_Y - relPosY - player.width;
+		} else if (relPosY + 1 > viewH - CAMERA_BORDER_Y) {
+			diffY = viewH - CAMERA_BORDER_Y - relPosY - 1;
 		}
-
 		mapContainer.y += diffY;
 
-		//edge cases
-		mapContainer.x = Math.min(0, Math.max(this.scene.width - levelWidth, mapContainer.x));
-		mapContainer.y = Math.min(0, Math.max(this.scene.height - levelHeight, mapContainer.y));
+		// Keep the map from scrolling past its edges (locks at 0 if the level fits in view)
+		mapContainer.x = Math.min(0, Math.max(viewW - levelWidth, mapContainer.x));
+		mapContainer.y = Math.min(0, Math.max(viewH - levelHeight, mapContainer.y));
 	}
 }

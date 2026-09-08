@@ -45,16 +45,13 @@ export class Lighting extends ThreeJSExample {
 					}
 				};
 
-				// Create the shader material
+				// Create the shader material (derivatives are always available in WebGL2)
 				this.material = new THREE.ShaderMaterial({
 					uniforms: this.uniforms,
 					vertexShader: vertexSh as any,
 					fragmentShader: fragmentSh as any,
 					side: THREE.DoubleSide,
 					transparent: true,
-					extensions: {
-						derivatives: true
-					}
 				});
 
 				// Create the mesh and add it to the scene

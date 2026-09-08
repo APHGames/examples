@@ -1,46 +1,71 @@
 {
   "name": "aphgames-examples",
   "author": "Adam Vesecký",
-  "version": "6.4.0",
+  "version": "7.0.0",
   "license": "MIT",
+  "packageManager": "pnpm@9.15.9",
+  "engines": {
+    "node": ">=18.0.0",
+    "pnpm": ">=9.0.0"
+  },
+  "browserslist": [
+    "last 2 Chrome versions",
+    "last 2 Firefox versions",
+    "last 2 Safari versions"
+  ],
+  "targets": {
+    "default": {
+      "context": "browser",
+      "outputFormat": "esmodule",
+      "isLibrary": false,
+      "includeNodeModules": true,
+      "distDir": "./build",
+      "engines": {
+        "browsers": [
+          "last 2 Chrome versions",
+          "last 2 Firefox versions",
+          "last 2 Safari versions"
+        ]
+      }
+    }
+  },
   "scripts": {
     "dev": "node scripts/prebuild-project && parcel view/index.html --dist-dir build --no-cache",
-    "build": "npm run generate-views && node scripts/prebuild-project && parcel build view/index.html --dist-dir build --no-cache --public-url PUBLICURL --no-source-maps --no-content-hash && node scripts/rename.js && node scripts/fix-links.js",
+    "build": "pnpm run generate-views && node scripts/prebuild-project && parcel build view/index.html --dist-dir build --no-cache --public-url PUBLICURL --no-source-maps --no-content-hash && node scripts/rename.js && node scripts/fix-links.js",
     "lint": "eslint ./src --ext .js,.jsx,.ts,.tsx",
     "generate-views": "node scripts/generate-views.js",
-    "compile-test": "tsc --project tsconfig.json --noemit"
+    "compile-test": "tsc --project tsconfig.json --noEmit"
+  },
+  "alias": {
+    "colfio": "../src/index.ts",
+    "pixi.js": "./node_modules/pixi.js"
   },
   "parcel-namer-rewrite": {
     "chain": "@parcel/namer-default",
-    "hashing": "never",
+    "hashing": "always",
     "rules": {
-      "src/examples.ts": "examples.js"   
+      "src/examples.ts": "examples.js"
     }
   },
   "dependencies": {
-    "eventemitter3": "^4.0.7",
-    "matter-js": "^0.17.1",
-    "pixi-sound": "^3.0.5",
-    "pixi.js": "^6.1.2",
-    "three": "^0.131.3"
+    "@pixi/sound": "^6.0.1",
+    "eventemitter3": "^5.0.1",
+    "matter-js": "^0.20.0",
+    "pixi.js": "^8.20.1",
+    "three": "^0.185.1"
   },
   "devDependencies": {
-    "@types/matter-js": "^0.17.5",
-    "@types/offscreencanvas": "^2019.6.4",
-    "@types/three": "^0.134.0",
-    "@typescript-eslint/eslint-plugin": "^4.29.3",
-    "@typescript-eslint/eslint-plugin-tslint": "^5.1.0",
-    "@typescript-eslint/parser": "^4.29.3",
-    "eslint": "^7.32.0",
-    "eslint-plugin-babel": "^5.3.1",
-    "eslint-plugin-import": "^2.24.2",
-    "eslint-plugin-node": "^11.1.0",
-    "eslint-plugin-prefer-arrow": "^1.2.3",
-    "eslint-plugin-standard": "^5.0.0",
-    "parcel": "^2.9.3",
+    "@types/matter-js": "^0.20.2",
+    "@types/offscreencanvas": "^2019.7.3",
+    "@types/three": "^0.185.0",
+    "@typescript-eslint/eslint-plugin": "^8.70.0",
+    "@typescript-eslint/parser": "^8.70.0",
+    "eslint": "^9.39.5",
+    "eslint-plugin-import": "^2.32.0",
+    "parcel": "^2.16.4",
     "parcel-namer-rewrite": "^2.0.0-rc.3",
-    "punycode": "^1.4.1",
+    "punycode": "^2.3.1",
     "querystring-es3": "^0.2.1",
-    "typescript": "^4.9.5"
+    "typescript": "^5.9.3"
   }
 }

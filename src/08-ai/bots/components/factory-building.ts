@@ -1,4 +1,4 @@
-import * as ECS from '../../../../libs/pixi-ecs';
+import * as ECS from 'colfio';
 import { GameModel } from '../model';
 import { BotFactory } from '../bot-factory';
 import { Attributes } from '../constants';

@@ -1,4 +1,4 @@
-import * as ECS from '../../../libs/pixi-ecs';
+import * as ECS from 'colfio';
 import { CLISpriteRenderer } from '../cli-renderer/cli-sprite-renderer';
 import { Factory } from '../factory';
 

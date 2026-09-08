@@ -1,4 +1,4 @@
-import * as ECS from '../../../libs/pixi-ecs';
+import * as ECS from 'colfio';
 
 /**
  * Component that waits for ENTER || SPACE key and then ends, can be used inside ChainComponent

@@ -1,4 +1,4 @@
-import * as ECS from '../../libs/pixi-ecs';
+import * as ECS from 'colfio';
 import { ECSExample, getBaseUrl } from '../utils/APHExample';
 import { PursuitComponent, EvadeComponent, WanderComponent } from './steering-base';
 
@@ -15,9 +15,8 @@ export class SteeringCombined extends ECSExample {
 	private createRandomObject() {
 	    let scene = this.engine.scene;
 	    let boid = new ECS.Graphics();
-	    boid.beginFill((Math.floor(Math.random() * 0xFF) << 16) + (Math.floor(Math.random() * 0xFF) << 8) + (Math.floor(Math.random() * 0xFF)));
-	    boid.drawPolygon([-10, -10, -10, 10, 15, 0]);
-	    boid.endFill();
+	    boid.poly([-10, -10, -10, 10, 15, 0])
+	        .fill({ color: (Math.floor(Math.random() * 0xFF) << 16) + (Math.floor(Math.random() * 0xFF) << 8) + (Math.floor(Math.random() * 0xFF)) });
 	    boid.position.set(scene.app.screen.width * Math.random(), scene.app.screen.height * Math.random());
 	    boid.scale.set(1 + Math.random() * 3);
 

@@ -1,5 +1,5 @@
 import { GameData } from './model/game-structs';
-import * as ECS from '../../libs/pixi-ecs';
+import * as ECS from 'colfio';
 import { GameState } from './model/state-structs';
 import { Attributes } from './constants';
 

@@ -1,6 +1,7 @@
-import * as ECS from '../../../libs/pixi-ecs';
+import * as ECS from 'colfio';
 import { SPRITE_SIZE, ANIM_FREQUENCY } from '../constants';
 import * as PIXI from 'pixi.js';
+import { setTextureFrame } from '../../utils/assets';
 
 /**
  * Animation of the train crash
@@ -8,23 +9,36 @@ import * as PIXI from 'pixi.js';
 export class TrainCrashAnimator extends ECS.Component {
 
 	currentFrame = 0;
+	baseTexture: PIXI.Texture;
+	frameW = 0;
+	frameH = 0;
+	frameY = 0;
 
 	onInit() {
 		this.fixedFrequency = ANIM_FREQUENCY;
+		const tex = this.owner.asSprite().texture;
+		this.baseTexture = tex;
+		this.frameW = tex.frame.width;
+		this.frameH = tex.frame.height;
+		this.frameY = 8 * SPRITE_SIZE;
 		// set the initial sprite
-		const frame = this.owner.asSprite().texture.frame;
-		this.owner.asSprite().texture.frame = new PIXI.Rectangle(0, 8 * SPRITE_SIZE, frame.width, frame.height);
+		setTextureFrame(this.owner.asSprite(), this.baseTexture, 0, this.frameY, this.frameW, this.frameH);
 	}
 
 	onFixedUpdate() {
-		const frame = this.owner.asSprite().texture.frame;
-
 		if(this.currentFrame >= 7) {
 			// loop last 3 frames
 			this.currentFrame =  7 + (this.currentFrame - 7 + 1) % 3;
 		} else {
 			this.currentFrame++;
 		}
-		this.owner.asSprite().texture.frame = new PIXI.Rectangle(this.currentFrame * SPRITE_SIZE, frame.y, frame.width, frame.height);
+		setTextureFrame(
+			this.owner.asSprite(),
+			this.baseTexture,
+			this.currentFrame * SPRITE_SIZE,
+			this.frameY,
+			this.frameW,
+			this.frameH,
+		);
 	}
 }

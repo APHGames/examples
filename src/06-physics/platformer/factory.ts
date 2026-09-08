@@ -1,10 +1,10 @@
-import * as ECS from '../../../libs/pixi-ecs';
+import * as ECS from 'colfio';
 import { Level } from './level';
-import * as PIXI from 'pixi.js';
 import { TEXTURE_SCALE, SpritesData, MapTileType, Assets, Attributes, DIR_RIGHT, Tags } from './constants';
 import { TextureSwitcher } from './texture-switcher';
 import { Camera } from './camera';
 import { PlayerController } from './player-controller';
+import { getLoadedTexture, textureFromFrame } from '../../utils/assets';
 
 
 export class Factory {
@@ -72,7 +72,11 @@ export class Factory {
 			.asSprite(this.createTexture(textureInfo.x, textureInfo.y, textureInfo.w, textureInfo.h))
 			.withParent(mapLayer)
 			.withComponent(new PlayerController({ keyInput, level }))
-			.withComponent(new Camera({ container: mapLayer }))
+			.withComponent(new Camera({
+				container: mapLayer,
+				levelWidth: level.width,
+				levelHeight: level.height,
+			}))
 			.withComponent(new TextureSwitcher())
 			.withAttribute(Attributes.DIRECTION, DIR_RIGHT)
 			.scale(TEXTURE_SCALE)
@@ -80,13 +84,11 @@ export class Factory {
 	}
 
 	private createTexture(offsetX: number, offsetY: number, width: number, height: number) {
-		let texture = PIXI.Texture.from(Assets.SPRITESHEET).clone();
-		texture.frame = new PIXI.Rectangle(offsetX, offsetY, width, height);
-		return texture;
+		return textureFromFrame(getLoadedTexture(Assets.SPRITESHEET), offsetX, offsetY, width, height);
 	}
 
 	private buildBackground(mapLayer: ECS.Container) {
-		let texture = PIXI.Texture.from(Assets.LEVEL_BACKGROUND).clone();
+		let texture = getLoadedTexture(Assets.LEVEL_BACKGROUND);
 		let background = new ECS.Sprite('background', texture);
 		background.scale.set(TEXTURE_SCALE);
 		mapLayer.addChild(background);

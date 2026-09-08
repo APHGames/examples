@@ -1,7 +1,8 @@
-import * as ECS from '../../../libs/pixi-ecs';
+import * as ECS from 'colfio';
 import { SPRITE_SIZE, Messages } from '../constants';
 import * as PIXI from 'pixi.js';
 import { CarState } from '../model/state-structs';
+import { setTextureFrame } from '../../utils/assets';
 
 /**
  * Synchronizes Railcar with every movement of the train
@@ -10,8 +11,18 @@ import { CarState } from '../model/state-structs';
  */
 export class RailcarSyncComponent extends ECS.Component<CarState> {
 
+	baseTexture: PIXI.Texture;
+	frameX = 0;
+	frameW = 0;
+	frameH = 0;
+
 	onInit() {
 		this.subscribe(Messages.STATE_CHANGE_TRAIN_POSITION);
+		const tex = this.owner.asSprite().texture;
+		this.baseTexture = tex;
+		this.frameX = tex.frame.x;
+		this.frameW = tex.frame.width;
+		this.frameH = tex.frame.height;
 	}
 
 	onMessage(msg: ECS.Message) {
@@ -40,11 +51,13 @@ export class RailcarSyncComponent extends ECS.Component<CarState> {
 				break;
 		}
 
-		const txt = this.owner.asSprite().texture;
-		txt.frame = new PIXI.Rectangle(
-			txt.frame.x,
+		setTextureFrame(
+			this.owner.asSprite(),
+			this.baseTexture,
+			this.frameX,
 			frameIndex * SPRITE_SIZE,
-			txt.frame.width,
-			txt.frame.height);
+			this.frameW,
+			this.frameH,
+		);
 	}
 }

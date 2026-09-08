@@ -1,5 +1,5 @@
 import { BallCollisionMessage, CollisionType } from './ball-collision-trigger';
-import * as ECS from '../../libs/pixi-ecs';
+import * as ECS from 'colfio';
 import { Tags, Messages } from './constants';
 
 export class GameManager extends ECS.Component {

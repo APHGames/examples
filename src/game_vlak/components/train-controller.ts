@@ -1,6 +1,6 @@
 import { Direction } from '../model/game-structs';
 import { Messages, GAME_SPEED } from '../constants';
-import * as ECS from '../../../libs/pixi-ecs';
+import * as ECS from 'colfio';
 import Queue from '../../../libs/aph-math/structs-data/queue';
 import { TrainState } from '../model/state-structs';
 import { Actions } from '../actions';

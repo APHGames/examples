@@ -1,7 +1,7 @@
-import * as ECS from '../../libs/pixi-ecs';
+import * as ECS from 'colfio';
 import { ECSExample, getBaseUrl } from '../utils/APHExample';
 import { colors } from '../utils/colors';
-import * as PIXI from 'pixi.js';
+import { string2hex } from '../utils/assets';
 
 export enum IntegrationType {
 	EULER_EXPLICIT,
@@ -39,16 +39,14 @@ abstract class IntegrationBase extends ECS.Component<IntegrationComponentProps> 
 	    this.owner.position.set(this.state.position.x, this.state.position.y);
 
 	    const color = typeof(this.state.color) === 'number' ? this.state.color
-	        : PIXI.utils.string2hex(this.state.color);
+	        : string2hex(this.state.color);
 
 	    let gr = this.owner.asGraphics();
 	    gr.clear();
-	    gr.beginFill(color);
-	    gr.drawCircle(0, 0, 5);
-	    gr.lineStyle(1, color);
-	    gr.lineTo(this.state.velocity.x, this.state.velocity.y);
-	    gr.endFill();
-	    gr.lineStyle(1, PIXI.utils.string2hex(colors.rhino40));
+	    gr.circle(0, 0, 5).fill({ color });
+	    gr.moveTo(0, 0).lineTo(this.state.velocity.x, this.state.velocity.y)
+	        .stroke({ width: 1, color });
+	    gr.moveTo(this.state.velocity.x, this.state.velocity.y);
 	    // draw history of last X steps
 	    const lastSteps = this.fixedFrequency;
 	    for(let i = this.positionMemory.length - 1;
@@ -56,6 +54,7 @@ abstract class IntegrationBase extends ECS.Component<IntegrationComponentProps> 
 	        const val = this.positionMemory[i];
 	        gr.lineTo(val.x - this.owner.position.x, val.y - this.owner.position.y);
 	    }
+	    gr.stroke({ width: 1, color: string2hex(colors.rhino40) });
 
 
 	    this.positionMemory.push(new ECS.Vector(gr.position.x, gr.position.y));
@@ -156,9 +155,7 @@ export class Missile extends ECSExample {
 	load() {
 		const updateFrequency = (this.engine.config as MissileConfig).frequency ?? 10;
 		let emitter = new ECS.Graphics();
-		emitter.beginFill(PIXI.utils.string2hex(colors.rhino80));
-		emitter.drawPolygon([0, 0, 40, 0, 40, 20, 0, 20, 0, 0]);
-		emitter.endFill();
+		emitter.poly([0, 0, 40, 0, 40, 20, 0, 20, 0, 0]).fill({ color: string2hex(colors.rhino80) });
 		emitter.pivot.set(emitter.width / 2, emitter.height / 2);
 		emitter.position.set(this.engine.scene.app.screen.width * 0.03, this.engine.scene.app.screen.height * 0.9);
 		emitter.rotation = -Math.PI / 3;

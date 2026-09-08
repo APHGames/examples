@@ -1,5 +1,5 @@
 /* eslint-disable no-use-before-define */
-import * as ECS from '../../../libs/pixi-ecs';
+import * as ECS from 'colfio';
 import * as PIXI from 'pixi.js';
 import { MAP_CELL_SIZE, ATTR_BOTMODEL, ATTR_SCENE_MODEL, MAP } from './constants';
 import { BotModel, MAX_PARTICLE_WEIGHT } from './botmodel';
@@ -27,19 +27,18 @@ export class ParticleRenderer extends ECS.Component {
 			const worldPos = sceneModel.mapToWorld(vector.x, vector.y);
 
 			if(elevation !== 0)  {
+				let color = 0xdb2a38;
 				if(elevation < 1) {
-					render.beginFill(0x6da3fc, 0.2);
+					color = 0x6da3fc;
 				} else if (elevation < 3) {
-					render.beginFill(0x0363ff, 0.2);
+					color = 0x0363ff;
 				} else if (elevation < 5) {
-					render.beginFill(0xfffbcc, 0.2);
+					color = 0xfffbcc;
 				} else if (elevation < 8) {
-					render.beginFill(0xdb8937, 0.2);
-				} else {
-					render.beginFill(0xdb2a38, 0.2);
+					color = 0xdb8937;
 				}
-				render.drawRect(worldPos.x, worldPos.y, MAP_CELL_SIZE, MAP_CELL_SIZE);
-				render.endFill();
+				render.rect(worldPos.x, worldPos.y, MAP_CELL_SIZE, MAP_CELL_SIZE)
+					.fill({ color, alpha: 0.2 });
 			}
 		}
 	}

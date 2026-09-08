@@ -1,4 +1,4 @@
-import * as ECS from '../../../libs/pixi-ecs';
+import * as ECS from 'colfio';
 import { AStarSearch, GridMap, MAP_TYPE_TILE, PathFinderContext } from '../../../libs/aph-math';
 import { MapBlocks, MAP_BLOCK_SIZE } from './constants';
 

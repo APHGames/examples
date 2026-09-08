@@ -1,25 +1,21 @@
-import * as ECS from '../../libs/pixi-ecs';
+import * as ECS from 'colfio';
 import { ECSExample, getBaseUrl } from '../utils/APHExample';
 import { CarComponent } from './ackermann/car-component';
 import { CarRenderer } from './ackermann/car-renderer';
 import { CameraController } from './ackermann/camera-controller';
 import { VehicleController } from './ackermann/vehicle-controller';
 import { GridRenderer } from './ackermann/grid-renderer';
-import * as PIXI from 'pixi.js';
+import { loadAssets, getLoadedTexture } from '../utils/assets';
 
 export class AckermannAdvanced extends ECSExample {
 
-	load() {
-		this.engine.app.loader
-			.reset()
-			.add('car', `${getBaseUrl()}/assets/05-dynamics/car.png`)
-			.load(() => this.loadScene());
+	async load() {
+		await loadAssets([{ alias: 'car', src: `${getBaseUrl()}/assets/05-dynamics/car.png` }]);
+		this.loadScene();
 	}
 
 	loadScene() {
-		// load car texture
-		const baseTex = PIXI.BaseTexture.from('car');
-		const carTexture = new PIXI.Texture(baseTex);
+		const carTexture = getLoadedTexture('car');
 		new ECS.Builder(this.engine.scene).asGraphics().withComponent(new GridRenderer())
 			.withParent(this.engine.scene.stage).build();
 

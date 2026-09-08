@@ -1,4 +1,4 @@
-import Vector from '../../pixi-ecs/utils/vector';
+import { Vector } from 'colfio';
 import Queue from '../structs-data/queue';
 import PriorityQueue from '../structs-data/priority-queue';
 import { GridMap } from './gridmap';

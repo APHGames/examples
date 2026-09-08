@@ -1,4 +1,4 @@
-import * as ECS from '../../libs/pixi-ecs';
+import * as ECS from 'colfio';
 import { ECSExample } from '../utils/APHExample';
 
 const FLAG_ROTATING = 1;
@@ -31,16 +31,12 @@ export class Squares extends ECSExample {
 
 	load() {
 		let square1 = new ECS.Graphics();
-		square1.beginFill(0xFF0000);
-		square1.drawRect(0, 0, 200, 200);
-		square1.endFill();
+		square1.rect(0, 0, 200, 200).fill({ color: 0xFF0000 });
 		square1.pivot.set(100, 100);
 		square1.position.set(0.25 * this.canvas.width, 0.5 * this.canvas.height);
 
 		let square2 = new ECS.Graphics();
-		square2.beginFill(0x0000FF);
-		square2.drawRect(0, 0, 200, 200);
-		square2.endFill();
+		square2.rect(0, 0, 200, 200).fill({ color: 0x0000FF });
 		square2.pivot.set(100, 100);
 		square2.position.set(0.75 * this.canvas.width, 0.5 * this.canvas.height);
 

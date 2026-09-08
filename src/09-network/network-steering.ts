@@ -1,4 +1,4 @@
-import * as ECS from '../../libs/pixi-ecs';
+import * as ECS from 'colfio';
 import * as Net from '../../libs/network-emulator';
 import { SteeringComponent } from '../08-ai/pursue/steering';
 import { Steering } from '../../libs/aph-math';
@@ -194,6 +194,7 @@ class NetworkBehavior extends ECS.Component {
 }
 
 export type NetworkSteeringConfig = ECS.EngineConfig & {
+	canvasId?: string;
 	netType: NetworkType;
 }
 
@@ -221,9 +222,8 @@ export class NetworkSteeringBase extends ECSExample {
 		for (let i = 0; i < OBJECTS_NUM; i++) {
 			let wanderBoid = new ECS.Graphics('WANDER');
 			wanderBoid.addTag('BOT');
-			wanderBoid.beginFill(0xFF0000 + Math.floor(i / OBJECTS_NUM * 255));
-			wanderBoid.drawPolygon([-10, -10, -10, 10, 15, 0]);
-			wanderBoid.endFill();
+			wanderBoid.poly([-10, -10, -10, 10, 15, 0])
+				.fill({ color: 0xFF0000 + Math.floor(i / OBJECTS_NUM * 255) });
 			wanderBoid.scale.set(2);
 			wanderBoid.position.set(Math.random() * this.canvas.clientWidth, Math.random() * this.canvas.clientHeight);
 			this.engine.scene.stage.addChild(wanderBoid);
@@ -267,9 +267,9 @@ export class NetworkSteering extends ECSExample {
 		});
 	}
 
-	init(canvas: HTMLCanvasElement | string) {
-		this.client.init(canvas);
-		this.server.init(canvas); // will use canvasId from config
+	async init(canvas: HTMLCanvasElement | string) {
+		await this.client.init(canvas);
+		await this.server.init(canvas);
 	}
 
 	destroy() {

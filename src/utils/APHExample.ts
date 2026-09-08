@@ -1,4 +1,4 @@
-import * as ECS from '../../libs/pixi-ecs';
+import * as ECS from 'colfio';
 import * as PIXI from 'pixi.js';
 import * as THREE from 'three';
 
@@ -13,12 +13,12 @@ export interface APHExample {
 	/**
 	 * Initializes the game loop
 	 */
-	init(canvas: HTMLCanvasElement | string);
+	init(canvas: HTMLCanvasElement | string): void | Promise<void>;
 
 	/**
 	 * Stops the game loop and destroys all resources
 	 */
-	destroy();
+	destroy(): void;
 }
 
 /**
@@ -74,7 +74,7 @@ export abstract class ThreeJSExample implements APHExample {
 }
 
 /**
- * Template for PIXIJs
+ * Template for PIXIJs (raw Pixi, without Colfio)
  */
 export abstract class PIXIExample implements APHExample {
 	app: PIXI.Application;
@@ -85,21 +85,44 @@ export abstract class PIXIExample implements APHExample {
 		this.config = config;
 	}
 
-	init(canvas: HTMLCanvasElement | string, disableLoop = false) {
+	async init(canvas: HTMLCanvasElement | string, disableLoop = false) {
 		if (typeof (canvas) === 'string') {
 			this.canvas = document.getElementById(canvas) as HTMLCanvasElement;
 		} else {
 			this.canvas = canvas as HTMLCanvasElement;
 		}
-		this.app = new PIXI.Application({
-			view: this.canvas,
-			...this.config,
+
+		const {
+			transparent = false,
+			backgroundColor = 0x000000,
+			antialias = true,
+			resolution = 1,
+			width,
+			height,
+			...rest
+		} = this.config || {};
+
+		// Never pass undefined resolution/size into Pixi — `width * undefined` becomes NaN → 0×0 canvas
+		const viewWidth = width ?? (this.canvas.width || 800);
+		const viewHeight = height ?? (this.canvas.height || 600);
+
+		this.app = new PIXI.Application();
+		await this.app.init({
+			canvas: this.canvas,
+			width: viewWidth,
+			height: viewHeight,
+			backgroundAlpha: transparent ? 0 : 1,
+			backgroundColor,
+			antialias,
+			resolution,
+			autoStart: !disableLoop,
+			...rest,
 		});
 
-		this.load();
+		await Promise.resolve(this.load());
 
 		if (!disableLoop) {
-			this.app.ticker.add(deltaTime => this.update(deltaTime));
+			this.app.ticker.add((ticker) => this.update(ticker.deltaTime));
 		}
 	}
 
@@ -107,25 +130,30 @@ export abstract class PIXIExample implements APHExample {
 		this.app.destroy();
 	}
 
-	abstract load();
+	abstract load(): void | Promise<void>;
 
 	abstract update(delta: number);
 
 }
 
 /**
- * Template for ECS examples
+ * Template for ECS / Colfio examples
  */
+export type ECSExampleConfig = ECS.EngineConfig & {
+	/** Optional HTML element id used instead of the canvas passed to init() */
+	canvasId?: string;
+};
+
 export abstract class ECSExample implements APHExample {
 	engine: ECS.Engine;
 	canvas: HTMLCanvasElement;
-	config: ECS.EngineConfig;
+	config: ECSExampleConfig;
 
-	constructor(config?: ECS.EngineConfig) {
+	constructor(config?: ECSExampleConfig) {
 		this.config = config;
 	}
 
-	init(canvas: HTMLCanvasElement | string) {
+	async init(canvas: HTMLCanvasElement | string) {
 		this.engine = new ECS.Engine();
 		if (this.config?.canvasId) {
 			this.canvas = document.getElementById(this.config.canvasId) as HTMLCanvasElement;
@@ -136,8 +164,8 @@ export abstract class ECSExample implements APHExample {
 				this.canvas = canvas as HTMLCanvasElement;
 			}
 		}
-		this.engine.init(this.canvas, this.config);
-		this.load();
+		await this.engine.init(this.canvas, this.config);
+		await Promise.resolve(this.load());
 	}
 
 	destroy() {
@@ -149,6 +177,6 @@ export abstract class ECSExample implements APHExample {
 		// override
 	}
 
-	abstract load();
+	abstract load(): void | Promise<void>;
 
 }

@@ -1,4 +1,4 @@
-import * as ECS from '../../../libs/pixi-ecs';
+import * as ECS from 'colfio';
 import { CarComponent } from './car-component';
 
 export class VehicleController extends ECS.Component {

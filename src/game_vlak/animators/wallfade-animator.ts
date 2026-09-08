@@ -1,4 +1,4 @@
-import * as ECS from '../../../libs/pixi-ecs';
+import * as ECS from 'colfio';
 import { SPRITE_SIZE, LEVEL_ROWS, ANIM_FREQUENCY } from '../constants';
 
 type WallfadeAnimatorProps = {

@@ -1,7 +1,8 @@
-import * as ECS from '../../../libs/pixi-ecs';
+import * as ECS from 'colfio';
 import * as PIXI from 'pixi.js';
 import { GAME_SPEED, Attributes, DIR_RIGHT, DIR_LEFT, MapTileType, Tags } from './constants';
 import { Level } from './level';
+import { boundsToRectangle } from '../../utils/assets';
 
 enum PlayerMoveStates {
 	STAND = 'STAND',
@@ -62,11 +63,11 @@ export class PlayerController extends ECS.Component<{ keyInput: ECS.KeyInputComp
 
 	private handleCollidables() {
 		const collidables = this.scene.findObjectsByTag(Tags.COLLIDABLE);
-		const bbox1 = this.owner.getBounds();
+		const bbox1 = boundsToRectangle(this.owner.getBounds());
 
 
 		for (let col of collidables) {
-			const bbox2 = col.getBounds();
+			const bbox2 = boundsToRectangle(col.getBounds());
 			const horizIntersection = this.horizIntersection(bbox1, bbox2);
 			const vertIntersection = this.vertIntersection(bbox1, bbox2);
 
@@ -181,13 +182,24 @@ export class PlayerController extends ECS.Component<{ keyInput: ECS.KeyInputComp
 
 	private isHorizBlockFree(x: number, y: number) {
 		const platforms = this.props.level.platforms;
-		return platforms[Math.floor(y)][Math.floor(x)] === 0 && platforms[Math.ceil(y)][Math.floor(x)] === 0;
-
+		const y0 = Math.floor(y);
+		const y1 = Math.ceil(y);
+		const xi = Math.floor(x);
+		if (!platforms[y0] || !platforms[y1]) {
+			return false;
+		}
+		return platforms[y0][xi] === 0 && platforms[y1][xi] === 0;
 	}
 
 	private isVertBlockFree(x: number, y: number) {
 		const platforms = this.props.level.platforms;
-		return platforms[Math.floor(y)][Math.floor(x)] === 0 && platforms[Math.floor(y)][Math.ceil(x)] === 0;
+		const yi = Math.floor(y);
+		const x0 = Math.floor(x);
+		const x1 = Math.ceil(x);
+		if (!platforms[yi]) {
+			return false;
+		}
+		return platforms[yi][x0] === 0 && platforms[yi][x1] === 0;
 	}
 
 

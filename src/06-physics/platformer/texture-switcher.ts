@@ -1,9 +1,9 @@
-import * as ECS from '../../../libs/pixi-ecs';
+import * as ECS from 'colfio';
 import * as PIXI from 'pixi.js';
 import { Attributes, DIR_RIGHT, DIR_LEFT } from './constants';
 
 /**
- * This component is assigned to the player and monsters. It changes (flips) their textures when they change direction.
+ * Flips the player sprite when direction changes (Pixi 8–safe texture mirror).
  */
 export class TextureSwitcher extends ECS.Component {
 
@@ -14,19 +14,26 @@ export class TextureSwitcher extends ECS.Component {
 	onInit() {
 		this.direction = this.owner.getAttribute(Attributes.DIRECTION);
 		this.leftTexture = this.owner.asSprite().texture;
-		this.rightTexture = new PIXI.Texture(this.leftTexture.baseTexture, this.leftTexture.frame, null, null, 12);
-
-		if (this.direction === DIR_RIGHT) {
-			this.owner.asSprite().texture = this.rightTexture;
-		}
+		const frame = this.leftTexture.frame.clone();
+		this.rightTexture = new PIXI.Texture({
+			source: this.leftTexture.source,
+			frame,
+			orig: frame.clone(),
+			rotate: PIXI.groupD8.MIRROR_HORIZONTAL,
+		});
+		this.applyTexture();
 	}
 
 	onUpdate() {
-		let lastDirection = this.direction;
-		this.direction = this.owner.getAttribute(Attributes.DIRECTION);
-
-		if (lastDirection !== this.direction) {
-			this.owner.asSprite().texture = this.direction === DIR_LEFT ? this.leftTexture : this.rightTexture;
+		const next = this.owner.getAttribute(Attributes.DIRECTION);
+		if (next !== this.direction) {
+			this.direction = next;
+			this.applyTexture();
 		}
+	}
+
+	private applyTexture() {
+		// spritesheet faces left; mirror for facing right
+		this.owner.asSprite().texture = this.direction === DIR_LEFT ? this.leftTexture : this.rightTexture;
 	}
 }

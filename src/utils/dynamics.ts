@@ -1,5 +1,5 @@
 
-import { Vector } from '../../libs/pixi-ecs';
+import { Vector } from 'colfio';
 
 /**
  * Storage for aceleration and velocity

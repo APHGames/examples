@@ -1,8 +1,9 @@
 /* eslint-disable no-use-before-define */
-import * as ECS from '../../libs/pixi-ecs';
+import * as ECS from 'colfio';
 import { MAP_TYPE_OCTILE, GridMap, Steering } from '../../libs/aph-math';
 import { ECSExample, getBaseUrl } from '../utils/APHExample';
 import * as PIXI from 'pixi.js';
+import { loadAssets, getLoadedTexture, textureFromFrame, setTextureFrame } from '../utils/assets';
 
 let map = [
 	[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -144,26 +145,26 @@ class WanderSteering extends SteeringComponent {
 class BotAnimComponent extends ECS.Component {
 	changeFrequency = 10;
 	lastSwitchTime = 0;
-	texture: PIXI.Texture;
+	baseTexture: PIXI.Texture;
 	currentFrame = 0;
 
 	onInit() {
-	    this.texture = this.owner.asSprite().texture;
-	    // no animation
-	    this.texture.frame = new PIXI.Rectangle(0, 64, 32, 32);
+		this.baseTexture = this.owner.asSprite().texture;
+		// no animation
+		setTextureFrame(this.owner.asSprite(), this.baseTexture, 0, 64, 32, 32);
 	}
 
 	onUpdate(delta: number, absolute: number) {
-	    let velocity = this.owner.getAttribute<ECS.Vector>(ATTR_VELOCITY);
+		let velocity = this.owner.getAttribute<ECS.Vector>(ATTR_VELOCITY);
 
-	    if (velocity.magnitude() < 1) {
-	        // no animation
-	        this.texture.frame = new PIXI.Rectangle(0, 64, 32, 32);
-	    } else {
-	        this.currentFrame = (this.currentFrame + 1) % 3;
-	        // switch animation
-	        this.texture.frame = new PIXI.Rectangle(32 * (this.currentFrame + 1), 64, 32, 32);
-	    }
+		if (velocity.magnitude() < 1) {
+			// no animation
+			setTextureFrame(this.owner.asSprite(), this.baseTexture, 0, 64, 32, 32);
+		} else {
+			this.currentFrame = (this.currentFrame + 1) % 3;
+			// switch animation
+			setTextureFrame(this.owner.asSprite(), this.baseTexture, 32 * (this.currentFrame + 1), 64, 32, 32);
+		}
 	}
 }
 
@@ -190,41 +191,41 @@ class ConeRenderer extends ECS.Component {
 	    let position = new ECS.Vector(this.bot.position.x, this.bot.position.y);
 	    let direction = this.bot.getAttribute<ECS.Vector>(ATTR_VELOCITY).normalize();
 
-	    let render = this.owner.asGraphics();
-	    render.clear();
-	    render.beginFill(this.coneColor, 0.2);
+		let render = this.owner.asGraphics();
+		render.clear();
+		render.rect(0, 0, 0, 0); // keep graphics valid before loop draws
 
-	    let fov = this.fieldOfView / 180 * Math.PI;
-	    let maxDistance = Math.max(this.game.grid.width, this.game.grid.height);
-	    // minimum sampling angle is equal to number of cells we can sample from the max distance
-	    let angleSamples = Math.ceil((maxDistance * 2) / (Math.PI / 2) * fov);
-	    let distanceStep = this.game.mapCellSize / 8;
-	    distanceStep = 32;
-	    let renderedBlocks = new Set<number>();
+		let fov = this.fieldOfView / 180 * Math.PI;
+		let maxDistance = Math.max(this.game.grid.width, this.game.grid.height);
+		// minimum sampling angle is equal to number of cells we can sample from the max distance
+		let angleSamples = Math.ceil((maxDistance * 2) / (Math.PI / 2) * fov);
+		let distanceStep = this.game.mapCellSize / 8;
+		distanceStep = 32;
+		let renderedBlocks = new Set<number>();
 
-	    for (let i = 0; i < angleSamples; i++) {
-	        let currAngle = fov / 2 - fov * (i / angleSamples);
-	        let currDirectionX = Math.cos(currAngle) * direction.x - Math.sin(currAngle) * direction.y;
-	        let currDirectionY = Math.sin(currAngle) * direction.x + Math.cos(currAngle) * direction.y;
-	        let currDirection = new ECS.Vector(currDirectionX, currDirectionY);
-	        let currPosition = position;
-	        let counter = 0;
-	        while (counter++ < 50) {
-	            let mapBlock = this.game.worldToMap(Math.floor(currPosition.x), Math.floor(currPosition.y));
-	            let isVisible = !this.game.grid.notInside(mapBlock) && !this.game.grid.hasObstruction(mapBlock);
-	            if (isVisible) {
-	                if (!renderedBlocks.has(this.game.grid.indexMapper(mapBlock))) {
-	                    let block = this.game.mapToWorld(mapBlock.x, mapBlock.y);
-	                    render.drawRect(block.x, block.y, this.game.mapCellSize, this.game.mapCellSize);
-	                    renderedBlocks.add(this.game.grid.indexMapper(mapBlock));
-	                }
-	                let increment = currDirection.multiply(distanceStep);
-	                currPosition = currPosition.add(new ECS.Vector(increment.x, increment.y));
-	            }
-	        }
-	    }
+		for (let i = 0; i < angleSamples; i++) {
+			let currAngle = fov / 2 - fov * (i / angleSamples);
+			let currDirectionX = Math.cos(currAngle) * direction.x - Math.sin(currAngle) * direction.y;
+			let currDirectionY = Math.sin(currAngle) * direction.x + Math.cos(currAngle) * direction.y;
+			let currDirection = new ECS.Vector(currDirectionX, currDirectionY);
+			let currPosition = position;
+			let counter = 0;
+			while (counter++ < 50) {
+				let mapBlock = this.game.worldToMap(Math.floor(currPosition.x), Math.floor(currPosition.y));
+				let isVisible = !this.game.grid.notInside(mapBlock) && !this.game.grid.hasObstruction(mapBlock);
+				if (isVisible) {
+					if (!renderedBlocks.has(this.game.grid.indexMapper(mapBlock))) {
+						let block = this.game.mapToWorld(mapBlock.x, mapBlock.y);
+						render.rect(block.x, block.y, this.game.mapCellSize, this.game.mapCellSize);
+						renderedBlocks.add(this.game.grid.indexMapper(mapBlock));
+					}
+					let increment = currDirection.multiply(distanceStep);
+					currPosition = currPosition.add(new ECS.Vector(increment.x, increment.y));
+				}
+			}
+		}
 
-	    render.endFill();
+		render.fill({ color: this.coneColor, alpha: 0.2 });
 	}
 }
 
@@ -242,14 +243,12 @@ export class VisionCone extends ECSExample {
 	pathRect = new PIXI.Rectangle(0, 0, 32, 32);
 	obstructionRect = new PIXI.Rectangle(32 * 1, 0, 32, 32);
 
-	load() {
-	    this.mapWidth = map[0].length;
-	    this.mapHeight = map.length;
+	async load() {
+		this.mapWidth = map[0].length;
+		this.mapHeight = map.length;
 
-	    this.engine.app.loader
-	        .reset()    // necessary for hot reload
-	        .add('pathfinding', `${getBaseUrl()}/assets/07-graphics/vision.png`)
-	        .load(() => this.onAssetsLoaded());
+		await loadAssets([{ alias: 'pathfinding', src: `${getBaseUrl()}/assets/07-graphics/vision.png` }]);
+		this.onAssetsLoaded();
 	}
 
 	indexMapper = (vec: ECS.Vector) => {
@@ -283,36 +282,36 @@ export class VisionCone extends ECSExample {
 	}
 
 	addBot(position: ECS.Vector, coneColor: number) {
-	    let bot = new ECS.Sprite('', new PIXI.Texture(PIXI.BaseTexture.from('pathfinding')));
-	    bot.addComponent(new WanderSteering(this, 0, 10, 0.1));
-	    bot.anchor.set(0.5);
-	    bot.addComponent(new BotAnimComponent());
-	    let mapPos = this.mapToWorld(position.x, position.y);
-	    bot.position.set(mapPos.x, mapPos.y);
-	    let renderer = new ECS.Graphics('');
-	    renderer.addComponent(new ConeRenderer(this, bot, coneColor));
-	    this.engine.scene.stage.addChild(renderer);
-	    this.engine.scene.stage.addChild(bot);
+		let bot = new ECS.Sprite('', getLoadedTexture('pathfinding'));
+		bot.addComponent(new WanderSteering(this, 0, 10, 0.1));
+		bot.anchor.set(0.5);
+		bot.addComponent(new BotAnimComponent());
+		let mapPos = this.mapToWorld(position.x, position.y);
+		bot.position.set(mapPos.x, mapPos.y);
+		let renderer = new ECS.Graphics('');
+		renderer.addComponent(new ConeRenderer(this, bot, coneColor));
+		this.engine.scene.stage.addChild(renderer);
+		this.engine.scene.stage.addChild(bot);
 	}
 
 	/**
 	 * Recreates view-model
 	 */
 	recreateMap() {
-	    let texture = new PIXI.Texture(PIXI.BaseTexture.from('pathfinding'));
-	    this.engine.scene.clearScene();
+		const texture = getLoadedTexture('pathfinding');
+		this.engine.scene.clearScene();
 
-	    // create sprites
-	    for (let i = 0; i < this.mapWidth; i++) {
-	        for (let j = 0; j < this.mapHeight; j++) {
-	            let textureCl = texture.clone();
-	            let sprite = new ECS.Sprite('', textureCl);
-	            let pos = this.mapToWorld(i, j);
-	            sprite.position.set(pos.x, pos.y);
-	            textureCl.frame = this.getSpriteFrame(new ECS.Vector(i, j));
-	            this.engine.scene.stage.addChild(sprite);
-	        }
-	    }
+		// create sprites
+		for (let i = 0; i < this.mapWidth; i++) {
+			for (let j = 0; j < this.mapHeight; j++) {
+				const frame = this.getSpriteFrame(new ECS.Vector(i, j));
+				const textureCl = textureFromFrame(texture, frame.x, frame.y, frame.width, frame.height);
+				const sprite = new ECS.Sprite('', textureCl);
+				const pos = this.mapToWorld(i, j);
+				sprite.position.set(pos.x, pos.y);
+				this.engine.scene.stage.addChild(sprite);
+			}
+		}
 	}
 
 
@@ -320,15 +319,16 @@ export class VisionCone extends ECSExample {
 	 * Sets sprite index according to the type of the block of the map
 	 */
 	getSpriteFrame(mapPos: ECS.Vector): PIXI.Rectangle {
-	    let elevation = this.grid.getElevation(mapPos);
-	    let hasObstr = this.grid.hasObstruction(mapPos);
+		let elevation = this.grid.getElevation(mapPos);
+		let hasObstr = this.grid.hasObstruction(mapPos);
 
-	    if (hasObstr) {
-	        return this.obstructionRect;
-	    }
-	    if (elevation === 1) {
-	        return this.pathRect;
-	    }
+		if (hasObstr) {
+			return this.obstructionRect;
+		}
+		if (elevation === 1) {
+			return this.pathRect;
+		}
+		return this.pathRect;
 	}
 
 	/**

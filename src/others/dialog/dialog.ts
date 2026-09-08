@@ -1,23 +1,23 @@
-import * as PIXI from 'pixi.js';
-import * as ECS from '../../../libs/pixi-ecs';
+import * as ECS from 'colfio';
 import { FontParser } from './font-parser';
 import { DialogController, Assets, Attributes } from './dialog-controller';
 import { ECSExample, getBaseUrl } from '../../utils/APHExample';
+import { loadAssets, getLoadedTexture, getLoadedAsset } from '../../utils/assets';
+import type { RawFontData } from './font-parser';
 
 export class Dialog extends ECSExample {
 
-	load() {
-		// must be done before we load the textures
-		PIXI.settings.ROUND_PIXELS = true;
-		PIXI.settings.SCALE_MODE = PIXI.SCALE_MODES.NEAREST;
-
-		this.engine.app.loader
-			.reset()
-			.add(Assets.DIALOG_TEXTURE, `${getBaseUrl()}/assets/others/dialog/dialog.png`)
-			.add(Assets.FONT, `${getBaseUrl()}/assets/others/dialog/font.json`)
-			.add(Assets.FONT_TEXTURE, `${getBaseUrl()}/assets/others/dialog/font.png`)
-			.add(Assets.MARKER_TEXTURE, `${getBaseUrl()}/assets/others/dialog/marker.png`)
-			.load(() => this.onAssetsLoaded());
+	async load() {
+		await loadAssets([
+			{ alias: Assets.DIALOG_TEXTURE, src: `${getBaseUrl()}/assets/others/dialog/dialog.png` },
+			{ alias: Assets.FONT, src: `${getBaseUrl()}/assets/others/dialog/font.json` },
+			{ alias: Assets.FONT_TEXTURE, src: `${getBaseUrl()}/assets/others/dialog/font.png` },
+			{ alias: Assets.MARKER_TEXTURE, src: `${getBaseUrl()}/assets/others/dialog/marker.png` },
+		]);
+		getLoadedTexture(Assets.DIALOG_TEXTURE).source.scaleMode = 'nearest';
+		getLoadedTexture(Assets.FONT_TEXTURE).source.scaleMode = 'nearest';
+		getLoadedTexture(Assets.MARKER_TEXTURE).source.scaleMode = 'nearest';
+		this.onAssetsLoaded();
 	}
 
 	onAssetsLoaded() {
@@ -25,8 +25,8 @@ export class Dialog extends ECSExample {
 		const keyInput = new ECS.KeyInputComponent();
 		scene.addGlobalComponent(keyInput);
 
-		const fontData = this.engine.app.loader.resources[Assets.FONT].data;
-		const fontTxt = PIXI.Texture.from(Assets.FONT_TEXTURE);
+		const fontData = getLoadedAsset<RawFontData>(Assets.FONT);
+		const fontTxt = getLoadedTexture(Assets.FONT_TEXTURE);
 		const font = new FontParser().parseFont(fontData, fontTxt);
 
 		scene.assignGlobalAttribute(Attributes.FONT, font);
@@ -39,7 +39,8 @@ export class Dialog extends ECSExample {
 	}
 
 	onDestroy() {
-		PIXI.settings.SCALE_MODE = PIXI.SCALE_MODES.LINEAR;
-		PIXI.settings.ROUND_PIXELS = false;
+		getLoadedTexture(Assets.DIALOG_TEXTURE).source.scaleMode = 'linear';
+		getLoadedTexture(Assets.FONT_TEXTURE).source.scaleMode = 'linear';
+		getLoadedTexture(Assets.MARKER_TEXTURE).source.scaleMode = 'linear';
 	}
 }

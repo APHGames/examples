@@ -1,6 +1,7 @@
-import * as ECS from '../../libs/pixi-ecs';
+import * as ECS from 'colfio';
 import { Attrs, Tags, Messages, SCENE_WIDTH } from './constants';
 import * as PIXI from 'pixi.js';
+import { boundsToRectangle } from '../utils/assets';
 
 export enum CollisionType {
 	SOLID_OBJECT = 'SOLID_OBJECT',
@@ -26,10 +27,10 @@ export class BallCollisionTrigger extends ECS.Component {
 		const paddle = this.scene.findObjectByTag(Tags.PADDLE);
 
 		const colliders = [...bricks, paddle];
-		const ballBox = ball.getBounds();
+		const ballBox = boundsToRectangle(ball.getBounds());
 
 		for (let collider of colliders) {
-			const cBox = collider.getBounds();
+			const cBox = boundsToRectangle(collider.getBounds());
 			const horizIntersection = this.horizIntersection(ballBox, cBox);
 			const vertIntersection = this.vertIntersection(ballBox, cBox);
 

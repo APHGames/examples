@@ -1,5 +1,5 @@
 import { TrainController } from './train-controller';
-import * as ECS from '../../../libs/pixi-ecs';
+import * as ECS from 'colfio';
 
 /**
  * Keyboard controller that uses a queue if the player presses more buttons at once

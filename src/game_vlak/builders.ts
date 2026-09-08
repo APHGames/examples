@@ -1,5 +1,5 @@
-import * as ECS from '../../libs/pixi-ecs';
-import { isMobileDevice } from '../../libs/pixi-ecs/utils/helpers';
+import * as ECS from 'colfio';
+import { isMobileDevice } from 'colfio';
 import { MapPosition, LevelData, ObjectTypes } from './model/game-structs';
 import { LevelFactory } from './loaders/level-factory';
 import { Tags, SPRITE_SIZE, DEFAULT_FONT, FONT_SIZE_PX, TEXT_COLOR_A, TEXT_COLOR_B, TEXT_COLOR_C, LEVEL_ROWS, LEVEL_COLUMNS } from './constants';
@@ -11,7 +11,7 @@ import { ItemAnimator } from './animators/item-animator';
 import { ScoreCounter } from './components/score-counter';
 import { RailcarSyncComponent } from './components/railcar-sync-component';
 import { CarState } from './model/state-structs';
-import { FuncComponent } from '../../libs/pixi-ecs/components/func-component';
+import { FuncComponent } from 'colfio';
 import { TrainKeyboardController } from './components/train-keyboard-controller';
 
 /**
@@ -28,7 +28,8 @@ export class Builders {
 				KEY_DOWN: ECS.Keys.KEY_DOWN,
 				KEY_LEFT: ECS.Keys.KEY_LEFT,
 				KEY_RIGHT: ECS.Keys.KEY_RIGHT,
-				KEY_X: 8,
+				// custom key code used by the mobile gamepad layout (not in Keys enum)
+				KEY_X: 8 as ECS.GamepadKeyMapper['KEY_X'],
 				KEY_Y: ECS.Keys.KEY_SPACE
 			});
 		} else {
@@ -179,13 +180,12 @@ export class Builders {
 					const scnTextD = cmp.scene.findObjectByName('scnTextD');
 
 					const rect = cmp.owner.asGraphics();
-					rect.beginFill(0x000000);
 					const x = Math.min(scnTextA.position.x, scnTextC.position.x);
 					const y = Math.min(scnTextA.position.y, scnTextC.position.y);
-					rect.drawRect(x, y,
+					rect.rect(x, y,
 						Math.max(scnTextB.getBounds().right, scnTextD.getBounds().right) - x,
-						Math.max(scnTextB.getBounds().bottom, scnTextD.getBounds().bottom) - y);
-					rect.endFill();
+						Math.max(scnTextB.getBounds().bottom, scnTextD.getBounds().bottom) - y)
+						.fill({ color: 0x000000 });
 					rect.zIndex = 10;
 					scnTextA.zIndex = scnTextB.zIndex = scnTextC.zIndex = scnTextD.zIndex = 12;
 					scnTextA.parent.sortableChildren = true;
@@ -225,11 +225,10 @@ export class Builders {
 					const endTextC = cmp.scene.findObjectByName('endTextC');
 
 					const rect = cmp.owner.asGraphics();
-					rect.beginFill(0x000000);
 					const x = endTextB.position.x;
 					const y = endTextA.position.y;
-					rect.drawRect(x, y, endTextB.getBounds().right - x, endTextC.getBounds().bottom - y);
-					rect.endFill();
+					rect.rect(x, y, endTextB.getBounds().right - x, endTextC.getBounds().bottom - y)
+						.fill({ color: 0x000000 });
 					rect.zIndex = 10;
 					endTextA.zIndex = endTextB.zIndex = endTextC.zIndex = 12;
 					endTextA.parent.sortableChildren = true;

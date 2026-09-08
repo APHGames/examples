@@ -1,5 +1,5 @@
 
-import * as ECS from '../../libs/pixi-ecs';
+import * as ECS from 'colfio';
 import { ECSExample, getBaseUrl } from '../utils/APHExample';
 import { QuadTree, QuadTreeItem } from '../../libs/aph-math';
 import * as PIXI from 'pixi.js';
@@ -72,17 +72,15 @@ export class QuadTreeView extends ECSExample {
 	            .doOnUpdate((cmp, delta, absolute) => {
 	                let pixiObj = cmp.owner.asGraphics();
 	                pixiObj.clear();
-	                pixiObj.beginFill(0xe96f6f);
 
 	                for (let item of items) {
-	                    pixiObj.drawCircle(item.x, item.y, 4);
+	                    pixiObj.circle(item.x, item.y, 4).fill({ color: 0xe96f6f });
 	                }
-	                pixiObj.endFill();
 
-	                pixiObj.lineStyle(1, 0x47a1d5);
 	                let drawQuadTree = (renderer: ECS.Graphics, node: QuadTree) => {
 	                    if (node.topRight == null) {
-	                        renderer.drawRect(node.bounds.x, node.bounds.y, node.bounds.width, node.bounds.height);
+	                        renderer.rect(node.bounds.x, node.bounds.y, node.bounds.width, node.bounds.height)
+	                            .stroke({ width: 1, color: 0x47a1d5 });
 	                    } else {
 	                        drawQuadTree(renderer, node.topLeft);
 	                        drawQuadTree(renderer, node.topRight);

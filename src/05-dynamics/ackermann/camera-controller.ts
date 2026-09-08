@@ -1,4 +1,4 @@
-import * as ECS from '../../../libs/pixi-ecs';
+import * as ECS from 'colfio';
 
 const CAMERA_SPEED_COEFF = 0.00004;
 const DISTANCE_THRESHOLD = 4;

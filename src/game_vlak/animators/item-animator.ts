@@ -1,6 +1,7 @@
-import * as ECS from '../../../libs/pixi-ecs';
+import * as ECS from 'colfio';
 import { SPRITE_SIZE, ANIM_FREQUENCY } from '../constants';
 import * as PIXI from 'pixi.js';
+import { setTextureFrame } from '../../utils/assets';
 
 const TOTAL_SPRITES = 3;
 
@@ -10,9 +11,18 @@ const TOTAL_SPRITES = 3;
 export class ItemAnimator extends ECS.Component {
 
 	currentFrame = -1;
+	baseTexture: PIXI.Texture;
+	frameX = 0;
+	frameW = 0;
+	frameH = 0;
 
 	onInit() {
 		this.fixedFrequency = ANIM_FREQUENCY;
+		const tex = this.owner.asSprite().texture;
+		this.baseTexture = tex;
+		this.frameX = tex.frame.x;
+		this.frameW = tex.frame.width;
+		this.frameH = tex.frame.height;
 		this.switchFrame();
 	}
 
@@ -22,8 +32,13 @@ export class ItemAnimator extends ECS.Component {
 
 	private switchFrame() {
 		this.currentFrame = (this.currentFrame + 1) % TOTAL_SPRITES;
-		const currentFrame = this.owner.asSprite().texture.frame;
-		this.owner.asSprite().texture.frame = new PIXI.Rectangle(currentFrame.x,
-			this.currentFrame * SPRITE_SIZE, currentFrame.width, currentFrame.height);
+		setTextureFrame(
+			this.owner.asSprite(),
+			this.baseTexture,
+			this.frameX,
+			this.currentFrame * SPRITE_SIZE,
+			this.frameW,
+			this.frameH,
+		);
 	}
 }

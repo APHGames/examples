@@ -1,7 +1,7 @@
 
-import * as ECS from '../../libs/pixi-ecs';
+import * as ECS from 'colfio';
 import { ECSExample } from '../utils/APHExample';
-import { KeyInputComponent } from '../../libs/pixi-ecs/components/key-input-component';
+import { KeyInputComponent } from 'colfio';
 
 /**
  * Controls:
@@ -179,21 +179,19 @@ const objectEmitter = (scene: ECS.Scene): ECS.Graphics => {
 	const randomPosX = Math.random() * (scene.app.screen.width - size);
 	const randomPosY = Math.random() * (scene.app.screen.height - size);
 
-	obj.beginFill(0xFFFFFF);
 	obj.tint = randomColor;
 
 	// 50% chance for each type
 	if (Math.random() > 0.5) {
-		obj.drawRect(0, 0, size, size);
+		obj.rect(0, 0, size, size).fill({ color: 0xFFFFFF });
 		obj.name = 'SQUARE';
 		obj.addTag('SQUARE');
 	} else {
-		obj.drawCircle(0, 0, size / 2);
+		obj.circle(0, 0, size / 2).fill({ color: 0xFFFFFF });
 		obj.name = 'CIRCLE';
 		obj.addTag('CIRCLE');
 	}
 
-	obj.endFill();
 	obj.position.set(randomPosX, randomPosY);
 
 	let randomDir: Direction = Math.floor(Math.random() * 4);

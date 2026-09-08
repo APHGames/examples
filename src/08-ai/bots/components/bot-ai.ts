@@ -1,4 +1,4 @@
-import * as ECS from '../../../../libs/pixi-ecs';
+import * as ECS from 'colfio';
 import { BotModel, GameModel, CargoSourceModel } from '../model';
 import { BotMove } from './bot-ai-move';
 import { BotStates, CargoTypes, Attributes } from '../constants';

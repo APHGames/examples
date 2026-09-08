@@ -1,4 +1,4 @@
-import * as ECS from '../../libs/pixi-ecs';
+import * as ECS from 'colfio';
 import { ECSExample } from '../utils/APHExample';
 
 
@@ -20,9 +20,7 @@ export class CollisionsBall extends ECSExample {
 			.withComponent(new ECS.FuncComponent('')
 				.doOnInit((cmp) => {
 					const gfx = cmp.owner.asGraphics();
-					gfx.beginFill(0xCDCDCD);
-					gfx.drawCircle(0, 0, radius);
-					gfx.endFill();
+					gfx.circle(0, 0, radius).fill({ color: 0xCDCDCD });
 				}).doOnUpdate((cmp, delta, absolute) => {
 					const pos = cmp.owner.position;
 					const bbox = cmp.owner.getBounds();
@@ -59,9 +57,7 @@ export class CollisionsBalls extends ECSExample {
 			.withComponent(new ECS.FuncComponent('')
 				.doOnInit((cmp) => {
 					const gfx = cmp.owner.asGraphics();
-					gfx.beginFill(0xCDCDCD);
-					gfx.drawCircle(0, 0, radiusA);
-					gfx.endFill();
+					gfx.circle(0, 0, radiusA).fill({ color: 0xCDCDCD });
 				})).build();
 
 		const ballB = new ECS.Builder(this.engine.scene)
@@ -71,9 +67,7 @@ export class CollisionsBalls extends ECSExample {
 			.withComponent(new ECS.FuncComponent('')
 				.doOnInit((cmp) => {
 					const gfx = cmp.owner.asGraphics();
-					gfx.beginFill(0xEFEFEF);
-					gfx.drawCircle(0, 0, radiusB);
-					gfx.endFill();
+					gfx.circle(0, 0, radiusB).fill({ color: 0xEFEFEF });
 				}).doOnUpdate((cmp, delta, absolute) => {
 					const pos = cmp.owner.position;
 					const bbox = cmp.owner.getBounds();
@@ -142,9 +136,7 @@ export class CollisionsRectangles extends ECSExample {
 			.withComponent(new ECS.FuncComponent('')
 				.doOnInit((cmp) => {
 					const gfx = cmp.owner.asGraphics();
-					gfx.beginFill(0xCDCDCD);
-					gfx.drawRect(-sizeA/2, -sizeA/2, sizeA, sizeA);
-					gfx.endFill();
+					gfx.rect(-sizeA/2, -sizeA/2, sizeA, sizeA).fill({ color: 0xCDCDCD });
 				})).build();
 
 		const rectB = new ECS.Builder(this.engine.scene)
@@ -154,9 +146,7 @@ export class CollisionsRectangles extends ECSExample {
 			.withComponent(new ECS.FuncComponent('')
 				.doOnInit((cmp) => {
 					const gfx = cmp.owner.asGraphics();
-					gfx.beginFill(0xEFEFEF);
-					gfx.drawRect(0, 0, sizeB, sizeB);
-					gfx.endFill();
+					gfx.rect(0, 0, sizeB, sizeB).fill({ color: 0xEFEFEF });
 				}).doOnUpdate((cmp, delta, absolute) => {
 					const pos = cmp.owner.position;
 					const bboxA = cmp.owner.getBounds();

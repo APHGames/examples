@@ -1,4 +1,4 @@
-import * as ECS from '../../../libs/pixi-ecs';
+import * as ECS from 'colfio';
 import { Warehouse } from './components/warehouse';
 import DynamicsComponent from '../../utils/dynamics-component';
 import { GameModel, BotModel } from './model';
@@ -12,6 +12,7 @@ import { Progress } from './components/progress';
 import { FactoryBuilding } from './components/factory-building';
 import { CargoSource } from './components/cargo-source';
 import * as PIXI from 'pixi.js';
+import { getLoadedTexture, textureFromFrame } from '../../utils/assets';
 
 /**
  * Factory for game objects
@@ -23,7 +24,7 @@ export class BotFactory {
 		stage.assignAttribute(Attributes.FACTORY, this);
 		stage.asContainer().scale.set(4.7 / model.map.height);
 
-		let texture = new PIXI.Texture(PIXI.BaseTexture.from(Assets.TEXTURE));
+		const texture = getLoadedTexture(Assets.TEXTURE);
 
 		// add sprites
 		for (let i = 0; i < model.map.width; i++) {
@@ -55,8 +56,7 @@ export class BotFactory {
 						throw new Error('Undefined block type');
 				}
 
-				let textureCl = texture.clone();
-				textureCl.frame = spriteRect;
+				const textureCl = textureFromFrame(texture, spriteRect.x, spriteRect.y, spriteRect.width, spriteRect.height);
 				let sprite = new ECS.Sprite('', textureCl);
 				sprite.position.set(i * MAP_BLOCK_SIZE, j * MAP_BLOCK_SIZE);
 				stage.addChild(sprite);
@@ -87,9 +87,8 @@ export class BotFactory {
 
 	createBot(stage: ECS.Container, model: GameModel, position: ECS.Vector): BotModel {
 		let type = BotTypes.BLUE;
-		let texture = new PIXI.Texture(PIXI.BaseTexture.from(Assets.TEXTURE));
-		let textureCl = texture.clone();
-		let agent = new ECS.Sprite('Bot', textureCl);
+		const texture = getLoadedTexture(Assets.TEXTURE);
+		let agent = new ECS.Sprite('Bot', texture);
 
 		stage.addChild(agent);
 

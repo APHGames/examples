@@ -1,5 +1,6 @@
 import * as PIXI from 'pixi.js';
 import { PIXIExample, getBaseUrl } from '../utils/APHExample';
+import { loadTexture } from '../utils/assets';
 
 /**
  * Sprite for pixel-perfect hit test
@@ -111,21 +112,22 @@ class HitTestSprite extends PIXI.Sprite {
 export class PixiHitTest extends PIXIExample {
 	private sonic: PIXI.Sprite;
 
-	load() {
-	    this.sonic = new HitTestSprite(PIXI.Texture.from(`${getBaseUrl()}/assets/02-pixi-intro/sonic.png`));
-	    this.sonic.position.set(this.app.screen.width / 2, this.app.screen.height / 2);
-	    this.sonic.anchor.set(0.5);
-	    this.sonic.interactive = true;
+	async load() {
+		const texture = await loadTexture(`${getBaseUrl()}/assets/02-pixi-intro/sonic.png`);
+		this.sonic = new HitTestSprite(texture);
+		this.sonic.position.set(this.app.screen.width / 2, this.app.screen.height / 2);
+		this.sonic.anchor.set(0.5);
+		this.sonic.eventMode = 'static';
 
-	    this.sonic.on('mouseover', () => {
-	        this.sonic.tint = 0xff0000;
-	    });
+		this.sonic.on('pointerover', () => {
+			this.sonic.tint = 0xff0000;
+		});
 
-	    this.sonic.on('mouseout', () => {
-	        this.sonic.tint = 0xffffff;
-	    });
+		this.sonic.on('pointerout', () => {
+			this.sonic.tint = 0xffffff;
+		});
 
-	    this.app.stage.addChild(this.sonic);
+		this.app.stage.addChild(this.sonic);
 	}
 
 	update() {

@@ -1,4 +1,4 @@
-import * as ECS from '../../libs/pixi-ecs';
+import * as ECS from 'colfio';
 import { Interpolation } from '../../libs/aph-math';
 
 export type InterpolationType = 'linear' | 'easeinout' | 'quadraticEaseIn' | 'quadraticEaseOut' | 'quadraticEaseInOut' | 'sineIn' | 'sineOut' | 'expoIn';

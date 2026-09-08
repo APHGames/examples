@@ -26,7 +26,7 @@ export class ThreeHelloWorld extends ThreeJSExample {
 	                    this.camera = new THREE.Camera();
 	                    this.camera.position.z = 1;
 
-	                    let geometry = new THREE.PlaneBufferGeometry(2, 2);
+	                    let geometry = new THREE.PlaneGeometry(2, 2);
 
 	                    let material = new THREE.ShaderMaterial({
 	                        uniforms: this.uniforms,

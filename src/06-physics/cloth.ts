@@ -1,4 +1,4 @@
-import * as ECS from '../../libs/pixi-ecs';
+import * as ECS from 'colfio';
 import { ECSExample } from '../utils/APHExample';
 
 class Particle {
@@ -11,10 +11,7 @@ class Particle {
 	}
 
 	draw(obj: ECS.Graphics) {
-	    obj.lineStyle(0);
-	    obj.beginFill(0xd54747);
-	    obj.drawCircle(this.pos.x, this.pos.y, 4);
-	    obj.endFill();
+	    obj.circle(this.pos.x, this.pos.y, 4).fill({ color: 0xd54747 });
 	}
 }
 
@@ -37,9 +34,7 @@ class PinConstraint implements Constraint {
 	}
 
 	draw(obj: ECS.Graphics) {
-	    obj.beginFill(0xFFFFFF, 0.55);
-	    obj.drawCircle(this.pos.x, this.pos.y, 12);
-	    obj.endFill();
+	    obj.circle(this.pos.x, this.pos.y, 12).fill({ color: 0xFFFFFF, alpha: 0.55 });
 	}
 }
 
@@ -65,10 +60,9 @@ class DistanceConstraint implements Constraint {
 	}
 
 	draw(obj: ECS.Graphics) {
-	    obj.lineStyle(1, 0xd54747);
 	    obj.moveTo(this.particleA.pos.x, this.particleA.pos.y);
 	    obj.lineTo(this.particleB.pos.x, this.particleB.pos.y);
-	    obj.endFill();
+	    obj.stroke({ width: 1, color: 0xd54747 });
 	}
 }
 
@@ -149,9 +143,7 @@ export class ClothView extends ECSExample {
 
 	    let nearest = this.findNearestParticle();
 	    if (nearest) {
-	        obj.beginFill(0xACB0FA);
-	        obj.drawCircle(nearest.pos.x, nearest.pos.y, 8);
-	        obj.endFill();
+	        obj.circle(nearest.pos.x, nearest.pos.y, 8).fill({ color: 0xACB0FA });
 	    }
 	}
 

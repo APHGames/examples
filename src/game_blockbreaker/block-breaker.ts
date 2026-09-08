@@ -1,10 +1,10 @@
-import * as PIXI from 'pixi.js';
-import PIXISound from 'pixi-sound';
-import * as ECS from '../../libs/pixi-ecs';
+import * as ECS from 'colfio';
 import { Assets } from './constants';
 import { Factory } from './factory';
 import { ECSExample, getBaseUrl } from '../utils/APHExample';
 import LevelParser from './level-parser';
+import { loadAssets, loadTextAsset } from '../utils/assets';
+
 export class BlockBreaker extends ECSExample {
 
 	constructor(config: ECS.EngineConfig = {}) {
@@ -16,21 +16,19 @@ export class BlockBreaker extends ECSExample {
 		});
 	}
 
-	load() {
-
-		this.engine.app.loader
-			.reset()
-			.add(Assets.SPRITESHEET, `${getBaseUrl()}/assets/game_blockbreaker/spritesheet.png`)
-			.add(Assets.LEVELS, `${getBaseUrl()}/assets/game_blockbreaker/levels.txt`)
-			.load(() => this.loadGame());
+	async load() {
+		await loadAssets([
+			{ alias: Assets.SPRITESHEET, src: `${getBaseUrl()}/assets/game_blockbreaker/spritesheet.png` },
+		]);
+		const levelsStr = await loadTextAsset(Assets.LEVELS, `${getBaseUrl()}/assets/game_blockbreaker/levels.txt`);
+		this.loadGame(levelsStr);
 	}
 
 
-	loadGame() {
-		const levelsStr = this.engine.app.loader.resources[Assets.LEVELS].data;
-	    const parser = new LevelParser();
-	    const levels = parser.parse(levelsStr);
-	    const factory = new Factory();
-	    factory.loadLevel(levels[0], this.engine.scene);
+	loadGame(levelsStr: string) {
+		const parser = new LevelParser();
+		const levels = parser.parse(levelsStr);
+		const factory = new Factory();
+		factory.loadLevel(levels[0], this.engine.scene);
 	}
 }

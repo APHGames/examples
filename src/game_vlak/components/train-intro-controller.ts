@@ -1,5 +1,5 @@
 import { TrainController } from './train-controller';
-import * as ECS from '../../../libs/pixi-ecs';
+import * as ECS from 'colfio';
 import { Direction } from '../model/game-structs';
 import { Builders } from '../builders';
 

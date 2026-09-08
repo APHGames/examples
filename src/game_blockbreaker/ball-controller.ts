@@ -1,4 +1,4 @@
-import * as ECS from '../../libs/pixi-ecs';
+import * as ECS from 'colfio';
 import { Attrs, Messages, Tags, BallStates, SCENE_WIDTH } from './constants';
 
 const releaseSpeed = 0.1;

@@ -1,7 +1,7 @@
-import * as ECS from '../../libs/pixi-ecs';
+import * as ECS from 'colfio';
 import { ECSExample, getBaseUrl } from '../utils/APHExample';
 import { colors } from '../utils/colors';
-import * as PIXI from 'pixi.js';
+import { string2hex } from '../utils/assets';
 
 export enum IntegrationType {
 	EULER_EXPLICIT,
@@ -43,14 +43,13 @@ abstract class IntegrationBase extends ECS.Component<IntegrationComponentProps> 
 		this.owner.position.set(this.state.position.x, this.state.position.y);
 
 		const color = typeof (this.state.color) === 'number' ? this.state.color :
-			PIXI.utils.string2hex(this.state.color);
+			string2hex(this.state.color);
 
 		let gr = this.owner.asGraphics();
 		gr.clear();
-		gr.beginFill(color);
-		gr.drawCircle(0, 0, 10);
-		gr.lineStyle(1, color);
-		gr.lineTo(this.state.velocity.x, this.state.velocity.y);
+		gr.circle(0, 0, 10).fill({ color });
+		gr.moveTo(0, 0).lineTo(this.state.velocity.x, this.state.velocity.y)
+			.stroke({ width: 1, color });
 	}
 
 	abstract updateDynamics(delta: number);
@@ -93,11 +92,8 @@ export class Rotation extends ECSExample {
 		const { width, height } = this.engine.scene.app.screen;
 		const updateFrequency = (this.engine.config as RotationConfig).frequency ?? 10;
 		let center = new ECS.Graphics();
-		center.beginFill(0xFFFFFF);
-		center.drawCircle(width / 2, height / 2, 50);
-		center.endFill();
+		center.circle(width / 2, height / 2, 50).fill({ color: 0xFFFFFF });
 
-		center.lineStyle(2, 0x555555);
 		center.arc(width / 2, height / 2, height / 5, 0, 2 * Math.PI, false);
 		center.moveTo(width / 2 + height / 4, height / 2);
 		center.arc(width / 2, height / 2, height / 4, 0, 2 * Math.PI, false);
@@ -105,6 +101,7 @@ export class Rotation extends ECSExample {
 		center.arc(width / 2, height / 2, height / 3, 0, 2 * Math.PI, false);
 		center.moveTo(width / 2 + height / 2, height / 2);
 		center.arc(width / 2, height / 2, height / 2, 0, 2 * Math.PI, false);
+		center.stroke({ width: 2, color: 0x555555 });
 
 		this.engine.scene.stage.addChild(center);
 
@@ -121,7 +118,6 @@ export class Rotation extends ECSExample {
 		let origin = new ECS.Vector(this.engine.scene.app.screen.width / 2, this.engine.scene.app.screen.height / 2);
 
 		let projectile = new ECS.Graphics();
-		projectile.endFill();
 		projectile.pivot.set(1, 1);
 
 		let component: ECS.Component<IntegrationComponentProps>;

@@ -1,4 +1,4 @@
-import * as ECS from '../../../libs/pixi-ecs';
+import * as ECS from 'colfio';
 import { Wheel } from './wheel';
 import { CarComponent } from './car-component';
 import { calcAbsPos } from './utils';
@@ -28,16 +28,13 @@ export class CarRenderer extends ECS.Component<CarRendererProps> {
 
 	renderAxis(ctx: ECS.Graphics, offsetX: number, offsetY: number) {
 		const car = this.props.car;
-		ctx.lineStyle({
-			width: 2,
-			color: DEFAULT_COLOR
-		});
 		const xOffset = Math.sin(car.rotation) * 0.5 * car.props.wheelBase;
 		const yOffset = Math.cos(car.rotation) * 0.5 * car.props.wheelBase;
 		const frontCoord = new ECS.Vector(xOffset + car.owner.position.x, yOffset + car.owner.position.y);
 		const backCoord = new ECS.Vector(car.owner.position.x - xOffset, car.owner.position.y - yOffset);
 		ctx.moveTo(frontCoord.x - offsetX, frontCoord.y - offsetY);
 		ctx.lineTo(backCoord.x - offsetX, backCoord.y - offsetY);
+		ctx.stroke({ width: 2, color: DEFAULT_COLOR });
 	}
 
 	renderWheel(wheel: Wheel, ctx: ECS.Graphics, offsetX: number, offsetY: number) {
@@ -48,27 +45,18 @@ export class CarRenderer extends ECS.Component<CarRendererProps> {
 		const frontCoord = new ECS.Vector(rotOffsetX + center.x, rotOffsetY + center.y);
 		const backCoord = new ECS.Vector(center.x - rotOffsetX, center.y - rotOffsetY);
 
-		ctx.lineStyle({
-			width: 5,
-			color: DEFAULT_COLOR
-		});
 		ctx.moveTo(frontCoord.x - offsetX, frontCoord.y - offsetY);
 		ctx.lineTo(backCoord.x - offsetX, backCoord.y - offsetY); //Draw center
+		ctx.stroke({ width: 5, color: DEFAULT_COLOR });
 
-		ctx.lineStyle({
-			width: 2,
-			color: DEFAULT_COLOR
-		});
 		ctx.moveTo(center.x - offsetX, center.y - offsetY);
 		ctx.lineTo(backCoord.x - offsetX, backCoord.y - offsetY); //Axel
+		ctx.stroke({ width: 2, color: DEFAULT_COLOR });
 		// draw center
 		const centerOfParent = this.calcAbsPosToCar(wheel.xOffset, 0);
-		ctx.lineStyle({
-			width: 2,
-			color: DEFAULT_COLOR
-		});
 		ctx.moveTo(center.x - offsetX, center.y - offsetY);
 		ctx.lineTo(centerOfParent.x - offsetX, centerOfParent.y - offsetY);
+		ctx.stroke({ width: 2, color: DEFAULT_COLOR });
 	}
 
 
@@ -78,11 +66,8 @@ export class CarRenderer extends ECS.Component<CarRendererProps> {
 		const ackermanRadius = Math.abs(car.steerRadius);
 
 		if (ackermanRadius > 1 && ackermanRadius < car.props.maxSteeringRadius) {
-			ctx.drawCircle(ackermanPos.x - offsetX, ackermanPos.y - offsetY, 2);
-			ctx.lineStyle({
-				width: 3,
-				color: 0xcf2f25
-			});
+			ctx.circle(ackermanPos.x - offsetX, ackermanPos.y - offsetY, 2)
+				.fill({ color: 0xcf2f25 });
 
 			// draw a line from the center to both front wheels
 			for (let wheel of [car.wheels.frontLeft, car.wheels.frontRight]) {
@@ -91,7 +76,8 @@ export class CarRenderer extends ECS.Component<CarRendererProps> {
 				ctx.lineTo(ackermanPos.x - offsetX, ackermanPos.y - offsetY);
 			}
 
-			ctx.drawCircle(ackermanPos.x - offsetX, ackermanPos.y - offsetY, ackermanRadius);
+			ctx.circle(ackermanPos.x - offsetX, ackermanPos.y - offsetY, ackermanRadius);
+			ctx.stroke({ width: 3, color: 0xcf2f25 });
 		}
 	}
 

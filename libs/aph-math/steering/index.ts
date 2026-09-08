@@ -1,4 +1,4 @@
-import { Vector } from '../../pixi-ecs';
+import { Vector } from 'colfio';
 import { Path, PathContext } from '../pathfinding/path';
 
 export const seek = (target: Vector, position: Vector, currentVelocity: Vector, maxVelocity: number, slowingRadius?: number): Vector => {

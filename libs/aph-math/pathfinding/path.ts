@@ -1,4 +1,4 @@
-import Vector from '../../pixi-ecs/utils/vector';
+import { Vector } from 'colfio';
 
 export class PathContext {
 	currentPointIndex: number = -1;
