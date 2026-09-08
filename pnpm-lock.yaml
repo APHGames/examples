@@ -11,6 +11,9 @@ importers:
       '@pixi/sound':
         specifier: ^6.0.1
         version: 6.0.1(pixi.js@8.20.1)
+      colfio:
+        specifier: ^0.4.0
+        version: 0.4.0(pixi.js@8.20.1)
       eventemitter3:
         specifier: ^5.0.1
         version: 5.0.4
@@ -869,6 +872,12 @@ packages:
   clone@2.1.2:
     resolution: {integrity: sha512-3Pe/CF1Nn94hyhIYpjtiLhdCoEoz0DqQ+988E9gmeEdQZlojxnOb74wctFyuwWQHzqyf9X7C7MG8juUpqBJT8w==}
     engines: {node: '>=0.8'}
+
+  colfio@0.4.0:
+    resolution: {integrity: sha512-PiYkFc6qy21q7x6a90LZ4KLmqpBcUL1GzCFdQoGRaDLW7oh3gtUwv0C4A5wJdveosx/459EyEJeW6bQyODzHUQ==}
+    engines: {node: '>=18.0.0', pnpm: '>=9.0.0'}
+    peerDependencies:
+      pixi.js: '>=8.0.0'
 
   color-convert@2.0.1:
     resolution: {integrity: sha512-RRECPsj7iu/xb5oKYcsFHSppFNnsj/52OVTRKb4zP5onXwVF3zVmmToNcOfGC+CRDpfK/U584fMg38ZHCaElKQ==}
@@ -2937,6 +2946,10 @@ snapshots:
   chrome-trace-event@1.0.4: {}
 
   clone@2.1.2: {}
+
+  colfio@0.4.0(pixi.js@8.20.1):
+    dependencies:
+      pixi.js: 8.20.1
 
   color-convert@2.0.1:
     dependencies:

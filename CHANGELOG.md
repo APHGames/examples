@@ -1,6 +1,21 @@
 # Changelog
 All notable changes to this project/subject will be documented in this file.
 
+## [7.0.0] - 2026-09-09
+
+### Changed
+- Migrated examples to **PixiJS 8** and **COLF.IO 0.4.0**
+- Consume `colfio` as an npm dependency (`colfio@^0.4.0`) instead of aliasing `../src`
+- Switched package manager to **pnpm**; replaced `pixi-sound` with `@pixi/sound`
+- Async example bootstrap (`await engine.init` / Pixi `Assets`)
+
+### Fixed
+- Platformer `TextureSwitcher` attribute typing for published Colfio typings
+
+### Removed
+- Vendored `libs/pixi-ecs` tree (use published Colfio)
+- Local Parcel/TS path aliases that pointed at the sibling Colfio checkout
+
 ## [6.4.0] - 2023-12-16
 ### Added
 Networking emulator

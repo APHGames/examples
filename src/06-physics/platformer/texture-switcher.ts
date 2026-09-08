@@ -12,7 +12,7 @@ export class TextureSwitcher extends ECS.Component {
 	rightTexture: PIXI.Texture;
 
 	onInit() {
-		this.direction = this.owner.getAttribute(Attributes.DIRECTION);
+		this.direction = this.owner.getAttribute<number>(Attributes.DIRECTION);
 		this.leftTexture = this.owner.asSprite().texture;
 		const frame = this.leftTexture.frame.clone();
 		this.rightTexture = new PIXI.Texture({
@@ -25,7 +25,7 @@ export class TextureSwitcher extends ECS.Component {
 	}
 
 	onUpdate() {
-		const next = this.owner.getAttribute(Attributes.DIRECTION);
+		const next = this.owner.getAttribute<number>(Attributes.DIRECTION);
 		if (next !== this.direction) {
 			this.direction = next;
 			this.applyTexture();

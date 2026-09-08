@@ -15,7 +15,6 @@
 		"strict": false,
 		"baseUrl": ".",
 		"paths": {
-			"colfio": ["../src/index.ts"],
 			"pixi.js": ["./node_modules/pixi.js"]
 		}
 	},

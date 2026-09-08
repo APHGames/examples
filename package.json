@@ -37,7 +37,6 @@
     "compile-test": "tsc --project tsconfig.json --noEmit"
   },
   "alias": {
-    "colfio": "../src/index.ts",
     "pixi.js": "./node_modules/pixi.js"
   },
   "parcel-namer-rewrite": {
@@ -49,6 +48,7 @@
   },
   "dependencies": {
     "@pixi/sound": "^6.0.1",
+    "colfio": "^0.4.0",
     "eventemitter3": "^5.0.1",
     "matter-js": "^0.20.0",
     "pixi.js": "^8.20.1",
