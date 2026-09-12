@@ -1,0 +1,29 @@
+import { Component } from 'colfio';
+import Dynamics from './dynamics';
+
+export default class DynamicsComponent extends Component {
+	protected dynamics: Dynamics;
+	protected gameSpeed: number;
+	protected attrName: string;
+
+	constructor(attrName: string, gameSpeed: number = 1) {
+		super();
+		this.attrName = attrName;
+		this.gameSpeed = gameSpeed;
+	}
+
+	onInit() {
+		this.dynamics = this.owner.getAttribute(this.attrName);
+		if (this.dynamics == null) {
+			this.dynamics = new Dynamics();
+			this.owner.assignAttribute(this.attrName, this.dynamics);
+		}
+	}
+
+	onUpdate(delta: number, _absolute: number) {
+		this.dynamics.applyVelocity(delta, this.gameSpeed);
+		const deltaPos = this.dynamics.calcPositionChange(delta, this.gameSpeed);
+		this.owner.pixiObj.position.x += deltaPos.x;
+		this.owner.pixiObj.position.y += deltaPos.y;
+	}
+}

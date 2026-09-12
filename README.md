@@ -19,7 +19,7 @@
 Do not mix `npm install` with an existing pnpm `node_modules` — if install fails after switching package managers, delete `node_modules` (and any `package-lock.json`) then run `pnpm install` again.
 
 ## Versioning
-- examples package: **7.0.0**
+- examples package: **7.1.0**
 - depends on [colfio 0.4.0](https://github.com/colfio/colfio/releases/tag/0.4.0) (`colfio@^0.4.0` on npm)
 
 ## Deployment

@@ -1,6 +1,14 @@
 # Changelog
 All notable changes to this project/subject will be documented in this file.
 
+## [7.1.0] - 2026-09-12
+
+### Added
+- Incorporated **Arkanoid**, **Pacman**, and **Paratrooper** minigames into the examples (PixiJS 8 + `colfio` from npm)
+
+### Changed
+- Moved Tetris, Vlak, and Block Breaker into `src/games` / `assets/games` and dropped the `game_` prefix
+
 ## [7.0.0] - 2026-09-09
 
 ### Changed

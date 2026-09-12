@@ -384,19 +384,37 @@
 	{
 		"group": "Minigames",
 		"name": "Block Breaker",
-		"file_name": "game_blockbreaker",
+		"file_name": "blockbreaker",
 		"object": "BlockBreaker"
 	},
 	{
 		"group": "Minigames",
 		"name": "Tetris",
-		"file_name": "game_vlak",
+		"file_name": "tetris",
 		"object": "Tetris"
 	},
 	{
 		"group": "Minigames",
 		"name": "Vlak",
-		"file_name": "game_tetris",
+		"file_name": "vlak",
 		"object": "Vlak"
+	},
+	{
+		"group": "Minigames",
+		"name": "Arkanoid",
+		"file_name": "arkanoid",
+		"object": "Arkanoid"
+	},
+	{
+		"group": "Minigames",
+		"name": "Pacman",
+		"file_name": "pacman",
+		"object": "Pacman"
+	},
+	{
+		"group": "Minigames",
+		"name": "Paratrooper",
+		"file_name": "paratrooper",
+		"object": "Paratrooper"
 	}
 ]

@@ -58,9 +58,12 @@ import { Pursue } from './08-ai/pursue';
 import { PixiHitTest } from './others/pixi-hittest';
 import { Dialog } from './others/dialog/dialog';
 import { ProgressParallel, ProgressSequential } from './others/progress';
-import { BlockBreaker } from './game_blockbreaker/block-breaker';
-import { Vlak } from './game_vlak';
-import { Tetris } from './game_tetris';
+import { BlockBreaker } from './games/blockbreaker/block-breaker';
+import { Vlak } from './games/vlak';
+import { Tetris } from './games/tetris';
+import { Arkanoid } from './games/arkanoid';
+import { Pacman } from './games/pacman';
+import { Paratrooper } from './games/paratrooper';
 
 
 // create a global variable with respective examples
@@ -132,4 +135,7 @@ import { Tetris } from './game_tetris';
 	BlockBreaker,
 	Vlak,
 	Tetris,
+	Arkanoid,
+	Pacman,
+	Paratrooper,
 };
